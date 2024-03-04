@@ -60,3 +60,6 @@ print(bpmnDictionary)
 
 
 #python 3.6
+#TODO: controllare se simpy funziona con python 3.6 altrimenti parser lo si tiene in 3.6 e simpy lo si usa in versione differente tipo dockerizzando o simili.
+# Poi aggiungere parsing per tag privato simulaizone
+# Fare core simulation con simpy, chiedere info su tag privato per implementare direttamente quella sintassi
