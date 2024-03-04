@@ -1,68 +1,62 @@
-from bpmn_python import BpmnParser
+import bpmn_python.bpmn_diagram_rep as diagram
+import xml.etree.ElementTree as ET
 
-def parse_bpmn(filepath):
-  """
-  Parses a BPMN file and returns a nested dictionary representing the process.
+name="ch7_CreditAppSimulation.bpmn"
 
-  Args:
-      filepath: Path to the BPMN file.
+# QBP TAG
+tree = ET.parse(name)
 
-  Returns:
-      A nested dictionary representing the BPMN process.
-  """
-  # Load the BPMN diagram
-  diagram = BpmnParser.from_xml_file(filepath)
+# Get the root element of the XML document
+root = tree.getroot()
 
-  # Initialize the result dictionary
-  process_data = {}
+# Find the <qbp> tag
+qbp_tag = root.find('.//qbp')
 
-  # Function to recursively parse elements and their attributes
-  def parse_element(element, parent_id=None):
-    element_data = {
-      'name': element.name,
-      'type': element.__class__.__name__,
+# If the <qbp> tag exists, print its contents
+if qbp_tag is not None:
+    print(ET.tostring(qbp_tag, encoding='unicode'))
+else:
+    print("No <qbp> tag found in the BPMN XML file.")
+
+
+
+# BPMN STRUCTURE
+bpmnGraph = diagram.BpmnDiagramGraph()
+bpmnGraph.create_new_diagram_graph(diagram_name="diagram1")
+
+# Load existing BPMN diagram
+bpmnGraph.load_diagram_from_xml_file(name)
+
+# Manually construct a dictionary from the bpmnGraph
+bpmnDictionary = {
+    'diagram_attributes': bpmnGraph.diagram_attributes,
+    'plane_attributes': bpmnGraph.plane_attributes,
+    'sequence_flows': bpmnGraph.sequence_flows,
+    'collaboration': bpmnGraph.collaboration,
+}
+
+process_elements = {}
+for process_id, process_element in bpmnGraph.process_elements.items():
+    node_details = {}
+    for node_id in process_element['node_ids']:
+        node_info = bpmnGraph.diagram_graph.node[node_id]
+        node_details[node_id] = {
+            'name': node_info.get('name', 'Unnamed'),
+            'type': node_info.get('type', 'Unknown'),
+        }
+    process_elements[process_id] = {
+        'name': process_element.get('name', 'Unnamed'),
+        'isClosed': process_element.get('isClosed', 'false'),
+        'isExecutable': process_element.get('isExecutable', 'false'),
+        'processType': process_element.get('processType', 'None'),
+        'node_ids': process_element.get('node_ids', []),
+        'node_details': node_details,
     }
+bpmnDictionary['process_elements'] = process_elements
 
-    # Extract element specific attributes
-    if element.type == 'Task':
-      element_data['duration'] = element.duration
 
-    elif element.type in ['ExclusiveGateway', 'InclusiveGateway']:
-      element_data['conditions'] = {}
-      for condition in element.outgoing:
-        element_data['conditions'][condition.condition_expression] = condition.target_ref
+# Print the dictionary
+print(bpmnDictionary)
 
-    # Add next elements for tasks and gateways
-    if element.type in ['Task', 'Gateway']:
-      next_elements = []
-      for outgoing in element.outgoing:
-        next_elements.append(outgoing.target_ref)
-      element_data['next'] = next_elements
 
-    # Recursively parse child elements
-    for child in element.children:
-      child_id = child.id
-      element_data[child_id] = parse_element(child, child_id)
-
-    # Update parent data with this element data
-    if parent_id:
-      process_data[parent_id][child_id] = element_data
-    else:
-      process_data[element.id] = element_data
-
-    return element_data
-
-  # Start parsing from the start event
-  start_event = diagram.find_element_by_type('StartEvent')[0]
-  parse_element(start_event)
-
-  return process_data
-
-# Example usage
-filepath = "your_bpmn_file.bpmn"
-process_data = parse_bpmn(filepath)
-
-# Access data structure:
-# process_data contains the nested dictionary representing the BPMN process
-# Each entry represents an element (activity or gateway) with its details
-# You can traverse the structure to access specific information
+#python 3.6
