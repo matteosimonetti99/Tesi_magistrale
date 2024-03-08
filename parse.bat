@@ -8,5 +8,3 @@ REM Call the Python interpreter from your virtual environment
 REM Restore back to the original directory (optional)
 cd ..
 
-REM Pause to keep the command prompt window open (optional)
-pause
