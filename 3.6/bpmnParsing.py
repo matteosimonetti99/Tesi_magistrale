@@ -2,7 +2,7 @@ from bpmn_python import bpmn_diagram_rep as diagram
 import xml.etree.ElementTree as ET
 import json
 
-baseName="toParse"
+baseName="mainMinimalCustomSimPar"
 name="../bpmn_input_file_here/"+baseName+".bpmn"
 
 # QBP TAG

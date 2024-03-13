@@ -5,1580 +5,217 @@
     },
     "plane_attributes": {
         "id": "BPMNPlane_1",
-        "bpmnElement": "Collaboration_0uer7wt"
+        "bpmnElement": "Collaboration_1sc7sh0"
     },
     "sequence_flows": {
-        "Flow_06hpvk0": {
+        "Flow_1sx6vzu": {
             "name": "",
-            "sourceRef": "Activity_0eh7ooi",
-            "targetRef": "Event_1gysaix"
+            "sourceRef": "Event_1njp3xz",
+            "targetRef": "Activity_15gzc1b"
         },
-        "Flow_0l2unwv": {
+        "Flow_133z3ak": {
             "name": "",
-            "sourceRef": "Event_1gysaix",
-            "targetRef": "Gateway_0k3x0jz"
+            "sourceRef": "Activity_15gzc1b",
+            "targetRef": "Event_1go337f"
         },
-        "Flow_0zo268c": {
+        "Flow_1nqsh1h": {
             "name": "",
-            "sourceRef": "Gateway_0999os3",
-            "targetRef": "Event_1huuuk2"
+            "sourceRef": "Gateway_1ngxc9b",
+            "targetRef": "Activity_14rjj9v"
         },
-        "Flow_0cp5dgv": {
+        "Flow_0bvtaqu": {
             "name": "",
-            "sourceRef": "Event_1huuuk2",
-            "targetRef": "Gateway_039duvg"
+            "sourceRef": "Gateway_1ngxc9b",
+            "targetRef": "Activity_0uqn82h"
         },
-        "Flow_0ipjju8": {
+        "Flow_01te68a": {
             "name": "",
-            "sourceRef": "Gateway_0k3x0jz",
-            "targetRef": "Gateway_0999os3"
+            "sourceRef": "Activity_14rjj9v",
+            "targetRef": "Gateway_0dt65kg"
         },
-        "Flow_09qxmm3": {
+        "Flow_0lxvh79": {
             "name": "",
-            "sourceRef": "Gateway_0999os3",
-            "targetRef": "Event_03da50o"
+            "sourceRef": "Activity_0uqn82h",
+            "targetRef": "Gateway_0dt65kg"
         },
-        "Flow_1sp19ye": {
+        "Flow_0klgydr": {
             "name": "",
-            "sourceRef": "Event_03da50o",
-            "targetRef": "Gateway_06h0khc"
+            "sourceRef": "Gateway_0dt65kg",
+            "targetRef": "Event_1b9cqpn"
         },
-        "Flow_1c65jjv": {
-            "name": "No",
-            "sourceRef": "Gateway_039duvg",
-            "targetRef": "Gateway_06h0khc"
-        },
-        "Flow_0mv7fxv": {
-            "name": "Yes",
-            "sourceRef": "Gateway_039duvg",
-            "targetRef": "Activity_0r448bh"
-        },
-        "Flow_182dcmv": {
-            "name": "",
-            "sourceRef": "Gateway_06h0khc",
-            "targetRef": "Event_0znqzxp"
-        },
-        "Flow_1imcv78": {
-            "name": "",
-            "sourceRef": "Event_0znqzxp",
-            "targetRef": "Gateway_0k3x0jz"
-        },
-        "Flow_04s7ocu": {
-            "name": "",
-            "sourceRef": "Activity_0r448bh",
-            "targetRef": "Event_1ecclca"
-        },
-        "Flow_0ly5f3r": {
-            "name": "",
-            "sourceRef": "Event_1v2t2ni",
-            "targetRef": "Activity_0eh7ooi"
-        },
-        "Flow_1exmrdi": {
-            "name": "",
-            "sourceRef": "Event_0gkbxrv",
-            "targetRef": "Event_0u2t19q"
-        },
-        "Flow_0uq7hxd": {
-            "name": "",
-            "sourceRef": "Event_0u2t19q",
-            "targetRef": "Gateway_1qbhspb"
-        },
-        "Flow_0k2a7ft": {
-            "name": "",
-            "sourceRef": "Gateway_0t7rda8",
-            "targetRef": "Event_0gkbxrv"
-        },
-        "Flow_0irzmjh": {
-            "name": "",
-            "sourceRef": "Event_1n3driv",
-            "targetRef": "Gateway_0t7rda8"
-        },
-        "Flow_0wfut9g": {
-            "name": "",
-            "sourceRef": "Gateway_0t7rda8",
-            "targetRef": "Event_1y611rs"
-        },
-        "Flow_0tt9hvs": {
-            "name": "",
-            "sourceRef": "Activity_0hqiwpm",
-            "targetRef": "Gateway_0m8x5ww"
-        },
-        "Flow_1joz8g2": {
-            "name": "No",
-            "sourceRef": "Gateway_0m8x5ww",
-            "targetRef": "Event_0qqc30c"
-        },
-        "Flow_0zl9jkg": {
-            "name": "Yes",
-            "sourceRef": "Gateway_0m8x5ww",
-            "targetRef": "Gateway_0wt8gou"
-        },
-        "Flow_00oethm": {
-            "name": "",
-            "sourceRef": "Event_0qqc30c",
-            "targetRef": "Event_0bt8j55"
-        },
-        "Flow_0aexb3l": {
-            "name": "",
-            "sourceRef": "Event_0bt8j55",
-            "targetRef": "Activity_1xuhshv"
-        },
-        "Flow_1b3b9j5": {
-            "name": "",
-            "sourceRef": "Activity_1xuhshv",
-            "targetRef": "Event_02bcf51"
-        },
-        "Flow_0f9dy38": {
-            "name": "",
-            "sourceRef": "Event_1tgu2d5",
-            "targetRef": "Gateway_0wt8gou"
-        },
-        "Flow_0s7h9gv": {
-            "name": "",
-            "sourceRef": "Gateway_0wt8gou",
-            "targetRef": "Activity_0hqiwpm"
-        },
-        "Flow_09c0nx6": {
-            "name": "",
-            "sourceRef": "Gateway_1qbhspb",
-            "targetRef": "Event_1tgu2d5"
-        },
-        "Flow_1mydnqx": {
-            "name": "",
-            "sourceRef": "Event_1y611rs",
-            "targetRef": "Gateway_1qbhspb"
-        },
-        "Flow_0r8l9rd": {
-            "name": "",
-            "sourceRef": "Event_0wmc3v1",
-            "targetRef": "Event_1n3driv"
-        },
-        "Flow_1agc7cu": {
-            "name": "",
-            "sourceRef": "Event_1ttph7j",
-            "targetRef": "Gateway_0owv4nf"
-        },
-        "Flow_0ocrj85": {
-            "name": "No",
-            "sourceRef": "Gateway_0owv4nf",
-            "targetRef": "Gateway_0tcrn19"
-        },
-        "Flow_16t6fix": {
-            "name": "Yes",
-            "sourceRef": "Gateway_0owv4nf",
-            "targetRef": "Gateway_111vhyr"
-        },
-        "Flow_0pqr9qj": {
-            "name": "",
-            "sourceRef": "Gateway_111vhyr",
-            "targetRef": "Activity_02z1hfv"
-        },
-        "Flow_1kr968r": {
-            "name": "",
-            "sourceRef": "Activity_0kle6jy",
-            "targetRef": "Gateway_0u6sdvz"
-        },
-        "Flow_1mmzdqj": {
-            "name": "Yes",
-            "sourceRef": "Gateway_0u6sdvz",
-            "targetRef": "Gateway_111vhyr"
-        },
-        "Flow_0jxnrld": {
-            "name": "No",
-            "sourceRef": "Gateway_0u6sdvz",
-            "targetRef": "Activity_1vkvhfl"
-        },
-        "Flow_1n697zt": {
-            "name": "",
-            "sourceRef": "Activity_1vkvhfl",
-            "targetRef": "Event_1q240pp"
-        },
-        "Flow_1pfdrnc": {
-            "name": "",
-            "sourceRef": "Event_1q240pp",
-            "targetRef": "Event_0mrhyil"
-        },
-        "Flow_1cz7f5h": {
-            "name": "",
-            "sourceRef": "Event_0mrhyil",
-            "targetRef": "Gateway_1098r1s"
-        },
-        "Flow_0jbw06y": {
-            "name": "Yes",
-            "sourceRef": "Gateway_1098r1s",
-            "targetRef": "Event_1uur3ib"
-        },
-        "Flow_0hni3vj": {
-            "name": "",
-            "sourceRef": "Event_1uur3ib",
-            "targetRef": "Gateway_0tcrn19"
-        },
-        "Flow_0k4xne4": {
-            "name": "",
-            "sourceRef": "Gateway_0tcrn19",
-            "targetRef": "Activity_0kle6jy"
-        },
-        "Flow_0955bsv": {
-            "name": "",
-            "sourceRef": "Activity_02z1hfv",
-            "targetRef": "Event_11ftjt1"
-        },
-        "Flow_1cb6zmh": {
-            "name": "No",
-            "sourceRef": "Gateway_1098r1s",
-            "targetRef": "Event_1h5822k"
-        },
-        "Flow_0597f84": {
-            "name": "",
-            "sourceRef": "Event_16629uz",
-            "targetRef": "Activity_0gq4lpw"
-        },
-        "Flow_05zz013": {
-            "name": "",
-            "sourceRef": "Activity_0gq4lpw",
-            "targetRef": "Event_0t4m36c"
-        },
-        "Flow_0cl0hev": {
-            "name": "",
-            "sourceRef": "Event_0y3enou",
-            "targetRef": "Gateway_0dws69k"
-        },
-        "Flow_0chn1g7": {
-            "name": "No",
-            "sourceRef": "Gateway_0dws69k",
-            "targetRef": "Activity_1xudfh7"
-        },
-        "Flow_1ffc3oy": {
-            "name": "Yes",
-            "sourceRef": "Gateway_0dws69k",
-            "targetRef": "Gateway_0yklph1"
-        },
-        "Flow_00i84s7": {
-            "name": "",
-            "sourceRef": "Gateway_0yklph1",
-            "targetRef": "Event_12cbk6q"
-        },
-        "Flow_1xl1uof": {
-            "name": "",
-            "sourceRef": "Activity_1xudfh7",
-            "targetRef": "Gateway_1hjenj9"
-        },
-        "Flow_0y6qksl": {
-            "name": "No",
-            "sourceRef": "Gateway_1hjenj9",
-            "targetRef": "Activity_1scyd0h"
-        },
-        "Flow_07949ma": {
-            "name": "",
-            "sourceRef": "Activity_1scyd0h",
-            "targetRef": "Activity_0qria9z"
-        },
-        "Flow_0smspic": {
-            "name": "",
-            "sourceRef": "Activity_0qria9z",
-            "targetRef": "Gateway_0isllzm"
-        },
-        "Flow_01k13f6": {
-            "name": "Yes",
-            "sourceRef": "Gateway_0isllzm",
-            "targetRef": "Activity_0sxpgfo"
-        },
-        "Flow_12m2qtl": {
-            "name": "",
-            "sourceRef": "Activity_0sxpgfo",
-            "targetRef": "Activity_1aip0rl"
-        },
-        "Flow_0is7ymq": {
-            "name": "",
-            "sourceRef": "Activity_1aip0rl",
-            "targetRef": "Gateway_1j1hn8a"
-        },
-        "Flow_0nsujjh": {
-            "name": "",
-            "sourceRef": "Gateway_0d1sopy",
-            "targetRef": "Activity_1i2iqnb"
-        },
-        "Flow_0jeb42r": {
-            "name": "",
-            "sourceRef": "Activity_1i2iqnb",
-            "targetRef": "Gateway_0yklph1"
-        },
-        "Flow_0hw9s53": {
-            "name": "Yes",
-            "sourceRef": "Gateway_1hjenj9",
-            "targetRef": "Gateway_0d1sopy"
-        },
-        "Flow_08afh1x": {
-            "name": "",
-            "sourceRef": "Event_0ia5tr5",
-            "targetRef": "Activity_1oqfifw"
-        },
-        "Flow_0sb9ag9": {
-            "name": "No",
-            "sourceRef": "Gateway_0isllzm",
-            "targetRef": "Event_0ia5tr5"
-        },
-        "Flow_0atf5ur": {
-            "name": "",
-            "sourceRef": "Gateway_1j1hn8a",
-            "targetRef": "Gateway_0d1sopy"
-        },
-        "Flow_0oy645h": {
-            "name": "",
-            "sourceRef": "Activity_1oqfifw",
-            "targetRef": "Gateway_1j1hn8a"
-        },
-        "Flow_1xjanp0": {
-            "name": "",
-            "sourceRef": "Event_0blzvd1",
-            "targetRef": "Activity_119qo6s"
-        },
-        "Flow_0mlb4dl": {
-            "name": "",
-            "sourceRef": "Event_03s6h0t",
-            "targetRef": "Event_0rwnc4h"
-        },
-        "Flow_1hm80nt": {
-            "name": "",
-            "sourceRef": "Activity_1swc3oh",
-            "targetRef": "Activity_06l0h8c"
-        },
-        "Flow_1onm75k": {
-            "name": "",
-            "sourceRef": "Activity_119qo6s",
-            "targetRef": "Activity_1swc3oh"
-        },
-        "Flow_0qe19q3": {
-            "name": "",
-            "sourceRef": "Activity_06l0h8c",
-            "targetRef": "Event_0fqpb0l"
-        },
-        "Flow_1bjxyy4": {
-            "name": "",
-            "sourceRef": "Event_1ybckfx",
-            "targetRef": "Activity_0iki3w5"
-        },
-        "Flow_004t8mq": {
-            "name": "",
-            "sourceRef": "Gateway_07a43ri",
-            "targetRef": "Event_1ybckfx"
-        },
-        "Flow_0sqht8o": {
-            "name": "",
-            "sourceRef": "Activity_0iki3w5",
-            "targetRef": "Event_1du1adw"
-        },
-        "Flow_1hhy1td": {
-            "name": "",
-            "sourceRef": "Event_1du1adw",
-            "targetRef": "Event_172ze8v"
-        },
-        "Flow_07z5el2": {
-            "name": "",
-            "sourceRef": "Event_0fqpb0l",
-            "targetRef": "Gateway_0r84cly"
-        },
-        "Flow_1qay1mo": {
-            "name": "",
-            "sourceRef": "Event_10n3d4i",
-            "targetRef": "Gateway_12y1jsu"
-        },
-        "Flow_1ifi3cn": {
-            "name": "",
-            "sourceRef": "Gateway_12y1jsu",
-            "targetRef": "Activity_17zlzzc"
-        },
-        "Flow_16r665o": {
-            "name": "",
-            "sourceRef": "Gateway_12y1jsu",
-            "targetRef": "Activity_1gb6rd4"
-        },
-        "Flow_0p4fon7": {
-            "name": "",
-            "sourceRef": "Gateway_12y1jsu",
-            "targetRef": "Activity_0tgpfe8"
-        },
-        "Flow_1tkolbb": {
-            "name": "",
-            "sourceRef": "Activity_0tgpfe8",
-            "targetRef": "Gateway_12n4xdy"
-        },
-        "Flow_1sy71vk": {
-            "name": "",
-            "sourceRef": "Activity_1gb6rd4",
-            "targetRef": "Gateway_12n4xdy"
-        },
-        "Flow_0lli4ki": {
-            "name": "",
-            "sourceRef": "Activity_17zlzzc",
-            "targetRef": "Gateway_12n4xdy"
-        },
-        "Flow_18ahixj": {
-            "name": "",
-            "sourceRef": "Gateway_12n4xdy",
-            "targetRef": "Event_151zto3"
-        },
-        "Flow_02t3m8n": {
-            "name": "",
-            "sourceRef": "Event_151zto3",
-            "targetRef": "Gateway_1bdxdth"
-        },
-        "Flow_1azcutn": {
-            "name": "",
-            "sourceRef": "Event_0u93gzp",
-            "targetRef": "Gateway_1bdxdth"
-        },
-        "Flow_0wt99jw": {
-            "name": "",
-            "sourceRef": "Gateway_1bdxdth",
-            "targetRef": "Event_10n3d4i"
-        },
-        "Flow_1oolxmt": {
-            "name": "",
-            "sourceRef": "Gateway_1bdxdth",
-            "targetRef": "Event_1r3kujm"
-        },
-        "Flow_0nxawxg": {
-            "name": "",
-            "sourceRef": "Event_1r3kujm",
-            "targetRef": "Event_1egpbrk"
-        },
-        "Flow_1cmvr4y": {
-            "name": "",
-            "sourceRef": "Gateway_0r84cly",
-            "targetRef": "Gateway_07a43ri"
-        },
-        "Flow_03qilai": {
-            "name": "",
-            "sourceRef": "Activity_0keal12",
-            "targetRef": "Gateway_0r84cly"
-        },
-        "Flow_07ls9mx": {
-            "name": "",
-            "sourceRef": "Activity_1iamf1v",
-            "targetRef": "Activity_0keal12"
-        },
-        "Flow_0ptu3k2": {
-            "name": "",
-            "sourceRef": "Activity_0g5703z",
-            "targetRef": "Activity_1iamf1v"
-        },
-        "Flow_0x2brn2": {
+        "Flow_1t1kp8t": {
             "name": "",
-            "sourceRef": "Event_1rzhaej",
-            "targetRef": "Activity_0g5703z"
+            "sourceRef": "StartEvent_09cyjfc",
+            "targetRef": "Gateway_1ngxc9b"
         },
-        "Flow_0puncf3": {
+        "Flow_1o7qnb3": {
             "name": "",
-            "sourceRef": "Gateway_07a43ri",
-            "targetRef": "Event_1rzhaej"
+            "sourceRef": "Event_0pg18xv",
+            "targetRef": "Event_0iqs5ri"
         }
     },
     "collaboration": {
-        "id": "Collaboration_0uer7wt",
+        "id": "Collaboration_1sc7sh0",
         "participants": {
-            "Participant_0z5dizv": {
-                "name": "Client",
-                "processRef": "Process_062xbyx",
+            "Participant_0u94lq8": {
+                "name": "main",
+                "processRef": "Process_1eu3tym",
                 "isHorizontal": "true",
-                "width": "1938",
-                "height": "390",
+                "width": "1350",
+                "height": "380",
                 "x": "160",
-                "y": "80"
+                "y": "40"
             },
-            "Participant_1qpplhn": {
-                "name": "Restaurant",
-                "processRef": "Process_1gsl47j",
+            "Participant_07b5w7o": {
+                "name": "second",
+                "processRef": "Process_0ylak8v",
                 "isHorizontal": "true",
-                "width": "1938",
-                "height": "750",
-                "x": "160",
-                "y": "500"
-            },
-            "Participant_1hw03vs": {
-                "name": "supplier",
-                "processRef": "Process_1ysifh1",
-                "isHorizontal": "true",
-                "width": "1938",
-                "height": "70",
-                "x": "160",
-                "y": "1300"
+                "width": "1340",
+                "height": "250",
+                "x": "170",
+                "y": "470"
             }
         },
         "messageFlows": {
-            "Flow_1j29dsj": {
-                "id": "Flow_1j29dsj",
+            "Flow_0s96r1u": {
+                "id": "Flow_0s96r1u",
                 "name": "",
-                "sourceRef": "Event_1n3driv",
-                "targetRef": "Event_0blzvd1"
-            },
-            "Flow_1i515sy": {
-                "id": "Flow_1i515sy",
-                "name": "",
-                "sourceRef": "Activity_119qo6s",
-                "targetRef": "Event_0gkbxrv"
-            },
-            "Flow_1qbsoy2": {
-                "id": "Flow_1qbsoy2",
-                "name": "",
-                "sourceRef": "Event_0u2t19q",
-                "targetRef": "Activity_119qo6s"
-            },
-            "Flow_1i2wj5w": {
-                "id": "Flow_1i2wj5w",
-                "name": "",
-                "sourceRef": "Activity_119qo6s",
-                "targetRef": "Event_1y611rs"
-            },
-            "Flow_0feuycv": {
-                "id": "Flow_0feuycv",
-                "name": "",
-                "sourceRef": "Activity_06l0h8c",
-                "targetRef": "Event_1tgu2d5"
-            },
-            "Flow_08rl748": {
-                "id": "Flow_08rl748",
-                "name": "",
-                "sourceRef": "Activity_17zlzzc",
-                "targetRef": "Participant_1hw03vs"
-            },
-            "Flow_1j0r8gf": {
-                "id": "Flow_1j0r8gf",
-                "name": "",
-                "sourceRef": "Event_0qqc30c",
-                "targetRef": "Event_1ybckfx"
-            },
-            "Flow_1061z49": {
-                "id": "Flow_1061z49",
-                "name": "",
-                "sourceRef": "Activity_0iki3w5",
-                "targetRef": "Event_0bt8j55"
-            },
-            "Flow_067mfny": {
-                "id": "Flow_067mfny",
-                "name": "",
-                "sourceRef": "Activity_0keal12",
-                "targetRef": "Activity_0hqiwpm"
-            },
-            "Flow_0hs5484": {
-                "id": "Flow_0hs5484",
-                "name": "",
-                "sourceRef": "Activity_1xuhshv",
-                "targetRef": "Event_1du1adw"
-            },
-            "Flow_1rbpn1a": {
-                "id": "Flow_1rbpn1a",
-                "name": "",
-                "sourceRef": "Activity_0hqiwpm",
-                "targetRef": "Event_10n3d4i"
+                "sourceRef": "Event_0iqs5ri",
+                "targetRef": "Activity_0uqn82h"
             }
         }
     },
     "process_elements": {
-        "Process_062xbyx": {
+        "Process_1eu3tym": {
             "name": "",
             "isClosed": "false",
             "isExecutable": "false",
             "processType": "None",
             "node_ids": [
-                "Event_0u2t19q",
-                "Event_0gkbxrv",
-                "Gateway_0t7rda8",
-                "Gateway_0m8x5ww",
-                "Event_0qqc30c",
-                "Activity_1xuhshv",
-                "Event_02bcf51",
-                "Event_0bt8j55",
-                "Gateway_0wt8gou",
-                "Event_1tgu2d5",
-                "Gateway_1qbhspb",
-                "Event_1y611rs",
-                "Event_0wmc3v1",
-                "Event_1n3driv",
-                "Activity_0hqiwpm",
-                "DataObject_194ul0x"
+                "Gateway_1ngxc9b",
+                "Activity_14rjj9v",
+                "Gateway_0dt65kg",
+                "StartEvent_09cyjfc",
+                "Event_1b9cqpn",
+                "Activity_0uqn82h"
             ],
             "node_details": {
-                "Event_0u2t19q": {
-                    "name": "Waiting disponibility communicated",
-                    "type": "intermediateThrowEvent",
-                    "previous": [
-                        "Event_0gkbxrv"
-                    ],
-                    "next": [
-                        "Gateway_1qbhspb"
-                    ]
-                },
-                "Event_0gkbxrv": {
-                    "name": "Waiting disponibility asked",
-                    "type": "intermediateCatchEvent",
-                    "previous": [
-                        "Gateway_0t7rda8",
-                        "Activity_119qo6s"
-                    ],
-                    "next": [
-                        "Event_0u2t19q"
-                    ]
-                },
-                "Gateway_0t7rda8": {
-                    "name": "",
-                    "type": "eventBasedGateway",
-                    "previous": [
-                        "Event_1n3driv"
-                    ],
-                    "next": [
-                        "Event_0gkbxrv",
-                        "Event_1y611rs"
-                    ]
-                },
-                "Gateway_0m8x5ww": {
-                    "name": "Does the client want more food?",
+                "Gateway_1ngxc9b": {
+                    "name": "xor open",
                     "type": "exclusiveGateway",
                     "previous": [
-                        "Activity_0hqiwpm"
+                        "StartEvent_09cyjfc"
                     ],
                     "next": [
-                        "Event_0qqc30c",
-                        "Gateway_0wt8gou"
+                        "Activity_14rjj9v",
+                        "Activity_0uqn82h"
                     ]
                 },
-                "Event_0qqc30c": {
-                    "name": "Ask the bill",
-                    "type": "intermediateThrowEvent",
-                    "previous": [
-                        "Gateway_0m8x5ww"
-                    ],
-                    "next": [
-                        "Event_0bt8j55"
-                    ]
-                },
-                "Activity_1xuhshv": {
-                    "name": "Pay the bill",
+                "Activity_14rjj9v": {
+                    "name": "xor1",
                     "type": "task",
                     "previous": [
-                        "Event_0bt8j55"
+                        "Gateway_1ngxc9b"
                     ],
                     "next": [
-                        "Event_02bcf51"
+                        "Gateway_0dt65kg"
                     ]
                 },
-                "Event_02bcf51": {
-                    "name": "",
-                    "type": "endEvent",
-                    "previous": [
-                        "Activity_1xuhshv"
-                    ],
-                    "next": []
-                },
-                "Event_0bt8j55": {
-                    "name": "Bill received",
-                    "type": "intermediateCatchEvent",
-                    "previous": [
-                        "Event_0qqc30c",
-                        "Activity_0iki3w5"
-                    ],
-                    "next": [
-                        "Activity_1xuhshv"
-                    ]
-                },
-                "Gateway_0wt8gou": {
-                    "name": "",
+                "Gateway_0dt65kg": {
+                    "name": "xor close",
                     "type": "exclusiveGateway",
                     "previous": [
-                        "Gateway_0m8x5ww",
-                        "Event_1tgu2d5"
+                        "Activity_14rjj9v",
+                        "Activity_0uqn82h"
                     ],
                     "next": [
-                        "Activity_0hqiwpm"
+                        "Event_1b9cqpn"
                     ]
                 },
-                "Event_1tgu2d5": {
-                    "name": "Tablet activated",
-                    "type": "intermediateCatchEvent",
-                    "previous": [
-                        "Gateway_1qbhspb",
-                        "Activity_06l0h8c"
-                    ],
-                    "next": [
-                        "Gateway_0wt8gou"
-                    ]
-                },
-                "Gateway_1qbhspb": {
-                    "name": "",
-                    "type": "exclusiveGateway",
-                    "previous": [
-                        "Event_0u2t19q",
-                        "Event_1y611rs"
-                    ],
-                    "next": [
-                        "Event_1tgu2d5"
-                    ]
-                },
-                "Event_1y611rs": {
-                    "name": "Table found",
-                    "type": "intermediateCatchEvent",
-                    "previous": [
-                        "Gateway_0t7rda8",
-                        "Activity_119qo6s"
-                    ],
-                    "next": [
-                        "Gateway_1qbhspb"
-                    ]
-                },
-                "Event_0wmc3v1": {
+                "StartEvent_09cyjfc": {
                     "name": "",
                     "type": "startEvent",
                     "previous": [],
                     "next": [
-                        "Event_1n3driv"
+                        "Gateway_1ngxc9b"
                     ]
                 },
-                "Event_1n3driv": {
-                    "name": "Request a table",
-                    "type": "intermediateThrowEvent",
+                "Event_1b9cqpn": {
+                    "name": "",
+                    "type": "endEvent",
                     "previous": [
-                        "Event_0wmc3v1"
+                        "Gateway_0dt65kg"
                     ],
-                    "next": [
-                        "Gateway_0t7rda8"
-                    ]
+                    "next": []
                 },
-                "Activity_0hqiwpm": {
-                    "name": "Order handling",
+                "Activity_0uqn82h": {
+                    "name": "xor2 (subproc)",
                     "type": "subProcess",
                     "subprocess_details": {
-                        "Activity_0eh7ooi": {
-                            "name": "Choose what to eat",
-                            "type": "task",
-                            "previous": [
-                                "Event_1v2t2ni"
-                            ],
-                            "next": [
-                                "Event_1gysaix"
-                            ]
-                        },
-                        "Event_1gysaix": {
-                            "name": "Submit order",
-                            "type": "intermediateThrowEvent",
-                            "previous": [
-                                "Activity_0eh7ooi"
-                            ],
-                            "next": [
-                                "Gateway_0k3x0jz"
-                            ]
-                        },
-                        "Event_1huuuk2": {
-                            "name": "Food arrived",
-                            "type": "intermediateCatchEvent",
-                            "previous": [
-                                "Gateway_0999os3"
-                            ],
-                            "next": [
-                                "Gateway_039duvg"
-                            ]
-                        },
-                        "Gateway_0999os3": {
-                            "name": "",
-                            "type": "eventBasedGateway",
-                            "previous": [
-                                "Gateway_0k3x0jz"
-                            ],
-                            "next": [
-                                "Event_1huuuk2",
-                                "Event_03da50o"
-                            ]
-                        },
-                        "Event_03da50o": {
-                            "name": "Client tired of waiting",
-                            "type": "intermediateCatchEvent",
-                            "previous": [
-                                "Gateway_0999os3"
-                            ],
-                            "next": [
-                                "Gateway_06h0khc"
-                            ]
-                        },
-                        "Gateway_039duvg": {
-                            "name": "Is the client satisfied?",
-                            "type": "exclusiveGateway",
-                            "previous": [
-                                "Event_1huuuk2"
-                            ],
-                            "next": [
-                                "Gateway_06h0khc",
-                                "Activity_0r448bh"
-                            ]
-                        },
-                        "Event_0znqzxp": {
-                            "name": "Send a complaint",
-                            "type": "intermediateThrowEvent",
-                            "previous": [
-                                "Gateway_06h0khc"
-                            ],
-                            "next": [
-                                "Gateway_0k3x0jz"
-                            ]
-                        },
-                        "Gateway_06h0khc": {
-                            "name": "",
-                            "type": "exclusiveGateway",
-                            "previous": [
-                                "Event_03da50o",
-                                "Gateway_039duvg"
-                            ],
-                            "next": [
-                                "Event_0znqzxp"
-                            ]
-                        },
-                        "Activity_0r448bh": {
-                            "name": "Consume food",
-                            "type": "task",
-                            "previous": [
-                                "Gateway_039duvg"
-                            ],
-                            "next": [
-                                "Event_1ecclca"
-                            ]
-                        },
-                        "Gateway_0k3x0jz": {
-                            "name": "",
-                            "type": "exclusiveGateway",
-                            "previous": [
-                                "Event_1gysaix",
-                                "Event_0znqzxp"
-                            ],
-                            "next": [
-                                "Gateway_0999os3"
-                            ]
-                        },
-                        "Event_1ecclca": {
-                            "name": "",
-                            "type": "endEvent",
-                            "previous": [
-                                "Activity_0r448bh"
-                            ],
-                            "next": []
-                        },
-                        "Event_1v2t2ni": {
+                        "Event_1njp3xz": {
                             "name": "",
                             "type": "startEvent",
                             "previous": [],
                             "next": [
-                                "Activity_0eh7ooi"
+                                "Activity_15gzc1b"
+                            ]
+                        },
+                        "Event_1go337f": {
+                            "name": "",
+                            "type": "endEvent",
+                            "previous": [
+                                "Activity_15gzc1b"
+                            ],
+                            "next": []
+                        },
+                        "Activity_15gzc1b": {
+                            "name": "sub_1",
+                            "type": "task",
+                            "previous": [
+                                "Event_1njp3xz"
+                            ],
+                            "next": [
+                                "Event_1go337f"
                             ]
                         }
                     },
                     "previous": [
-                        "Gateway_0wt8gou",
-                        "Activity_0keal12"
+                        "Gateway_1ngxc9b",
+                        "Event_0iqs5ri"
                     ],
                     "next": [
-                        "Gateway_0m8x5ww"
+                        "Gateway_0dt65kg"
                     ]
-                },
-                "DataObject_194ul0x": {
-                    "name": "",
-                    "type": "dataObject",
-                    "previous": [],
-                    "next": []
                 }
             }
         },
-        "Process_1gsl47j": {
+        "Process_0ylak8v": {
             "name": "",
             "isClosed": "false",
             "isExecutable": "false",
             "processType": "None",
             "node_ids": [
-                "Event_03s6h0t",
-                "Activity_119qo6s",
-                "Event_0blzvd1",
-                "Event_0rwnc4h",
-                "Activity_0iki3w5",
-                "Event_1ybckfx",
-                "Activity_1swc3oh",
-                "Activity_06l0h8c",
-                "Event_0fqpb0l",
-                "Event_172ze8v",
-                "Activity_11279tq",
-                "Activity_0tgpfe8",
-                "Activity_1gb6rd4",
-                "Activity_17zlzzc",
-                "DataObject_00quium",
-                "DataObject_004cmuw",
-                "DataObject_1mm00e2",
-                "Event_151zto3",
-                "Gateway_1bdxdth",
-                "Event_10n3d4i",
-                "Event_1r3kujm",
-                "Event_1egpbrk",
-                "Event_0u93gzp",
-                "Gateway_0r84cly",
-                "Gateway_07a43ri",
-                "DataObject_0nt5asz",
-                "Activity_0keal12",
-                "Activity_1iamf1v",
-                "Activity_0g5703z",
-                "Event_1rzhaej",
-                "Event_1du1adw",
-                "Gateway_12y1jsu",
-                "Gateway_12n4xdy"
+                "Event_0iqs5ri",
+                "Event_0pg18xv"
             ],
             "node_details": {
-                "Event_03s6h0t": {
-                    "name": "Can't wait",
-                    "type": "boundaryEvent",
-                    "previous": [],
-                    "next": [
-                        "Event_0rwnc4h"
-                    ]
-                },
-                "Activity_119qo6s": {
-                    "name": "Find a table",
-                    "type": "subProcess",
-                    "subprocess_details": {
-                        "Event_1ttph7j": {
-                            "name": "",
-                            "type": "startEvent",
-                            "previous": [],
-                            "next": [
-                                "Gateway_0owv4nf"
-                            ]
-                        },
-                        "Gateway_0owv4nf": {
-                            "name": "Has the client reserved a table?",
-                            "type": "exclusiveGateway",
-                            "previous": [
-                                "Event_1ttph7j"
-                            ],
-                            "next": [
-                                "Gateway_0tcrn19",
-                                "Gateway_111vhyr"
-                            ]
-                        },
-                        "Activity_0kle6jy": {
-                            "name": "Check if there is an empty table",
-                            "type": "task",
-                            "previous": [
-                                "Gateway_0tcrn19"
-                            ],
-                            "next": [
-                                "Gateway_0u6sdvz"
-                            ]
-                        },
-                        "Gateway_111vhyr": {
-                            "name": "",
-                            "type": "exclusiveGateway",
-                            "previous": [
-                                "Gateway_0owv4nf",
-                                "Gateway_0u6sdvz"
-                            ],
-                            "next": [
-                                "Activity_02z1hfv"
-                            ]
-                        },
-                        "Activity_02z1hfv": {
-                            "name": "Flag the table as occupied",
-                            "type": "task",
-                            "previous": [
-                                "Gateway_111vhyr"
-                            ],
-                            "next": [
-                                "Event_11ftjt1"
-                            ]
-                        },
-                        "Gateway_0u6sdvz": {
-                            "name": "",
-                            "type": "exclusiveGateway",
-                            "previous": [
-                                "Activity_0kle6jy"
-                            ],
-                            "next": [
-                                "Gateway_111vhyr",
-                                "Activity_1vkvhfl"
-                            ]
-                        },
-                        "Activity_1vkvhfl": {
-                            "name": "Check how much time the client should wait",
-                            "type": "task",
-                            "previous": [
-                                "Gateway_0u6sdvz"
-                            ],
-                            "next": [
-                                "Event_1q240pp"
-                            ]
-                        },
-                        "Event_1q240pp": {
-                            "name": "Ask if he can wait that amount of time",
-                            "type": "intermediateThrowEvent",
-                            "previous": [
-                                "Activity_1vkvhfl"
-                            ],
-                            "next": [
-                                "Event_0mrhyil"
-                            ]
-                        },
-                        "Event_0mrhyil": {
-                            "name": "Answer received",
-                            "type": "intermediateCatchEvent",
-                            "previous": [
-                                "Event_1q240pp"
-                            ],
-                            "next": [
-                                "Gateway_1098r1s"
-                            ]
-                        },
-                        "Gateway_1098r1s": {
-                            "name": "Can he wait?",
-                            "type": "exclusiveGateway",
-                            "previous": [
-                                "Event_0mrhyil"
-                            ],
-                            "next": [
-                                "Event_1uur3ib",
-                                "Event_1h5822k"
-                            ]
-                        },
-                        "Event_1uur3ib": {
-                            "name": "Wait the amount of time",
-                            "type": "intermediateCatchEvent",
-                            "previous": [
-                                "Gateway_1098r1s"
-                            ],
-                            "next": [
-                                "Gateway_0tcrn19"
-                            ]
-                        },
-                        "Gateway_0tcrn19": {
-                            "name": "",
-                            "type": "exclusiveGateway",
-                            "previous": [
-                                "Gateway_0owv4nf",
-                                "Event_1uur3ib"
-                            ],
-                            "next": [
-                                "Activity_0kle6jy"
-                            ]
-                        },
-                        "Event_11ftjt1": {
-                            "name": "Table found",
-                            "type": "endEvent",
-                            "previous": [
-                                "Activity_02z1hfv"
-                            ],
-                            "next": []
-                        },
-                        "Event_1h5822k": {
-                            "name": "Can't wait",
-                            "type": "endEvent",
-                            "previous": [
-                                "Gateway_1098r1s"
-                            ],
-                            "next": []
-                        }
-                    },
-                    "previous": [
-                        "Event_0blzvd1",
-                        "Event_0u2t19q"
-                    ],
-                    "next": [
-                        "Activity_1swc3oh"
-                    ]
-                },
-                "Event_0blzvd1": {
-                    "name": "Table requested",
-                    "type": "startEvent",
-                    "previous": [
-                        "Event_1n3driv"
-                    ],
-                    "next": [
-                        "Activity_119qo6s"
-                    ]
-                },
-                "Event_0rwnc4h": {
-                    "name": "",
+                "Event_0iqs5ri": {
+                    "name": "msg end 2_1",
                     "type": "endEvent",
                     "previous": [
-                        "Event_03s6h0t"
+                        "Event_0pg18xv"
                     ],
                     "next": []
                 },
-                "Activity_0iki3w5": {
-                    "name": "Prepare bill",
-                    "type": "task",
-                    "previous": [
-                        "Event_1ybckfx"
-                    ],
-                    "next": [
-                        "Event_1du1adw"
-                    ]
-                },
-                "Event_1ybckfx": {
-                    "name": "BIll asked",
-                    "type": "intermediateCatchEvent",
-                    "previous": [
-                        "Gateway_07a43ri",
-                        "Event_0qqc30c"
-                    ],
-                    "next": [
-                        "Activity_0iki3w5"
-                    ]
-                },
-                "Activity_1swc3oh": {
-                    "name": "Bring the client to the table",
-                    "type": "task",
-                    "previous": [
-                        "Activity_119qo6s"
-                    ],
-                    "next": [
-                        "Activity_06l0h8c"
-                    ]
-                },
-                "Activity_06l0h8c": {
-                    "name": "Turn on the tablet with the menu",
-                    "type": "task",
-                    "previous": [
-                        "Activity_1swc3oh"
-                    ],
-                    "next": [
-                        "Event_0fqpb0l"
-                    ]
-                },
-                "Event_0fqpb0l": {
-                    "name": "Start kitchen",
-                    "type": "intermediateThrowEvent",
-                    "previous": [
-                        "Activity_06l0h8c"
-                    ],
-                    "next": [
-                        "Gateway_0r84cly"
-                    ]
-                },
-                "Event_172ze8v": {
-                    "name": "Client ended",
-                    "type": "endEvent",
-                    "previous": [
-                        "Event_1du1adw"
-                    ],
-                    "next": []
-                },
-                "Activity_11279tq": {
-                    "name": "Handle complaint",
-                    "type": "subProcess",
-                    "subprocess_details": {
-                        "Event_16629uz": {
-                            "name": "Complaint received",
-                            "type": "startEvent",
-                            "previous": [],
-                            "next": [
-                                "Activity_0gq4lpw"
-                            ]
-                        },
-                        "Activity_0gq4lpw": {
-                            "name": "Solve the problem",
-                            "type": "task",
-                            "previous": [
-                                "Event_16629uz"
-                            ],
-                            "next": [
-                                "Event_0t4m36c"
-                            ]
-                        },
-                        "Event_0t4m36c": {
-                            "name": "",
-                            "type": "endEvent",
-                            "previous": [
-                                "Activity_0gq4lpw"
-                            ],
-                            "next": []
-                        }
-                    },
-                    "previous": [],
-                    "next": []
-                },
-                "Activity_0tgpfe8": {
-                    "name": "Gather desserts",
-                    "type": "task",
-                    "previous": [
-                        "Gateway_12y1jsu"
-                    ],
-                    "next": [
-                        "Gateway_12n4xdy"
-                    ]
-                },
-                "Activity_1gb6rd4": {
-                    "name": "Gather drinks",
-                    "type": "task",
-                    "previous": [
-                        "Gateway_12y1jsu"
-                    ],
-                    "next": [
-                        "Gateway_12n4xdy"
-                    ]
-                },
-                "Activity_17zlzzc": {
-                    "name": "Prepare food",
-                    "type": "subProcess",
-                    "subprocess_details": {
-                        "Event_0y3enou": {
-                            "name": "",
-                            "type": "startEvent",
-                            "previous": [],
-                            "next": [
-                                "Gateway_0dws69k"
-                            ]
-                        },
-                        "Gateway_0dws69k": {
-                            "name": "Is the dish ready?",
-                            "type": "exclusiveGateway",
-                            "previous": [
-                                "Event_0y3enou"
-                            ],
-                            "next": [
-                                "Activity_1xudfh7",
-                                "Gateway_0yklph1"
-                            ]
-                        },
-                        "Activity_1xudfh7": {
-                            "name": "Check if the amount of ingredients is above threeshold",
-                            "type": "task",
-                            "previous": [
-                                "Gateway_0dws69k"
-                            ],
-                            "next": [
-                                "Gateway_1hjenj9"
-                            ]
-                        },
-                        "Gateway_0yklph1": {
-                            "name": "",
-                            "type": "exclusiveGateway",
-                            "previous": [
-                                "Gateway_0dws69k",
-                                "Activity_1i2iqnb"
-                            ],
-                            "next": [
-                                "Event_12cbk6q"
-                            ]
-                        },
-                        "Event_12cbk6q": {
-                            "name": "",
-                            "type": "endEvent",
-                            "previous": [
-                                "Gateway_0yklph1"
-                            ],
-                            "next": []
-                        },
-                        "Gateway_1hjenj9": {
-                            "name": "Are ingredients above threeshold?",
-                            "type": "exclusiveGateway",
-                            "previous": [
-                                "Activity_1xudfh7"
-                            ],
-                            "next": [
-                                "Activity_1scyd0h",
-                                "Gateway_0d1sopy"
-                            ]
-                        },
-                        "Gateway_0d1sopy": {
-                            "name": "",
-                            "type": "exclusiveGateway",
-                            "previous": [
-                                "Gateway_1hjenj9",
-                                "Gateway_1j1hn8a"
-                            ],
-                            "next": [
-                                "Activity_1i2iqnb"
-                            ]
-                        },
-                        "Activity_1scyd0h": {
-                            "name": "Go to food storage area",
-                            "type": "task",
-                            "previous": [
-                                "Gateway_1hjenj9"
-                            ],
-                            "next": [
-                                "Activity_0qria9z"
-                            ]
-                        },
-                        "Activity_0qria9z": {
-                            "name": "Check if restock can be done from food storage area",
-                            "type": "task",
-                            "previous": [
-                                "Activity_1scyd0h"
-                            ],
-                            "next": [
-                                "Gateway_0isllzm"
-                            ]
-                        },
-                        "Gateway_0isllzm": {
-                            "name": "Can restock be done?",
-                            "type": "exclusiveGateway",
-                            "previous": [
-                                "Activity_0qria9z"
-                            ],
-                            "next": [
-                                "Activity_0sxpgfo",
-                                "Event_0ia5tr5"
-                            ]
-                        },
-                        "Activity_0sxpgfo": {
-                            "name": "Restock ingredients",
-                            "type": "task",
-                            "previous": [
-                                "Gateway_0isllzm"
-                            ],
-                            "next": [
-                                "Activity_1aip0rl"
-                            ]
-                        },
-                        "Activity_1aip0rl": {
-                            "name": "Go back to kitchen",
-                            "type": "task",
-                            "previous": [
-                                "Activity_0sxpgfo"
-                            ],
-                            "next": [
-                                "Gateway_1j1hn8a"
-                            ]
-                        },
-                        "Activity_1i2iqnb": {
-                            "name": "Prepare the dish",
-                            "type": "task",
-                            "previous": [
-                                "Gateway_0d1sopy"
-                            ],
-                            "next": [
-                                "Gateway_0yklph1"
-                            ]
-                        },
-                        "Event_0ia5tr5": {
-                            "name": "Call supplier",
-                            "type": "intermediateThrowEvent",
-                            "previous": [
-                                "Gateway_0isllzm"
-                            ],
-                            "next": [
-                                "Activity_1oqfifw"
-                            ]
-                        },
-                        "Activity_1oqfifw": {
-                            "name": "Remove dish from menu for today",
-                            "type": "task",
-                            "previous": [
-                                "Event_0ia5tr5"
-                            ],
-                            "next": [
-                                "Gateway_1j1hn8a"
-                            ]
-                        },
-                        "Gateway_1j1hn8a": {
-                            "name": "",
-                            "type": "exclusiveGateway",
-                            "previous": [
-                                "Activity_1aip0rl",
-                                "Activity_1oqfifw"
-                            ],
-                            "next": [
-                                "Gateway_0d1sopy"
-                            ]
-                        }
-                    },
-                    "previous": [
-                        "Gateway_12y1jsu"
-                    ],
-                    "next": [
-                        "Gateway_12n4xdy"
-                    ]
-                },
-                "DataObject_00quium": {
+                "Event_0pg18xv": {
                     "name": "",
-                    "type": "dataObject",
-                    "previous": [],
-                    "next": []
-                },
-                "DataObject_004cmuw": {
-                    "name": "",
-                    "type": "dataObject",
-                    "previous": [],
-                    "next": []
-                },
-                "DataObject_1mm00e2": {
-                    "name": "",
-                    "type": "dataObject",
-                    "previous": [],
-                    "next": []
-                },
-                "Event_151zto3": {
-                    "name": "Order is ready",
-                    "type": "intermediateThrowEvent",
-                    "previous": [
-                        "Gateway_12n4xdy"
-                    ],
-                    "next": [
-                        "Gateway_1bdxdth"
-                    ]
-                },
-                "Gateway_1bdxdth": {
-                    "name": "",
-                    "type": "eventBasedGateway",
-                    "previous": [
-                        "Event_151zto3",
-                        "Event_0u93gzp"
-                    ],
-                    "next": [
-                        "Event_10n3d4i",
-                        "Event_1r3kujm"
-                    ]
-                },
-                "Event_10n3d4i": {
-                    "name": "Order received",
-                    "type": "intermediateCatchEvent",
-                    "previous": [
-                        "Gateway_1bdxdth",
-                        "Activity_0hqiwpm"
-                    ],
-                    "next": [
-                        "Gateway_12y1jsu"
-                    ]
-                },
-                "Event_1r3kujm": {
-                    "name": "Client ended",
-                    "type": "intermediateCatchEvent",
-                    "previous": [
-                        "Gateway_1bdxdth"
-                    ],
-                    "next": [
-                        "Event_1egpbrk"
-                    ]
-                },
-                "Event_1egpbrk": {
-                    "name": "",
-                    "type": "endEvent",
-                    "previous": [
-                        "Event_1r3kujm"
-                    ],
-                    "next": []
-                },
-                "Event_0u93gzp": {
-                    "name": "Start kitchen",
                     "type": "startEvent",
                     "previous": [],
                     "next": [
-                        "Gateway_1bdxdth"
-                    ]
-                },
-                "Gateway_0r84cly": {
-                    "name": "",
-                    "type": "exclusiveGateway",
-                    "previous": [
-                        "Event_0fqpb0l",
-                        "Activity_0keal12"
-                    ],
-                    "next": [
-                        "Gateway_07a43ri"
-                    ]
-                },
-                "Gateway_07a43ri": {
-                    "name": "",
-                    "type": "eventBasedGateway",
-                    "previous": [
-                        "Gateway_0r84cly"
-                    ],
-                    "next": [
-                        "Event_1ybckfx",
-                        "Event_1rzhaej"
-                    ]
-                },
-                "DataObject_0nt5asz": {
-                    "name": "",
-                    "type": "dataObject",
-                    "previous": [],
-                    "next": []
-                },
-                "Activity_0keal12": {
-                    "name": "Bring food to the table",
-                    "type": "task",
-                    "previous": [
-                        "Activity_1iamf1v"
-                    ],
-                    "next": [
-                        "Gateway_0r84cly"
-                    ]
-                },
-                "Activity_1iamf1v": {
-                    "name": "Read table number from order",
-                    "type": "task",
-                    "previous": [
-                        "Activity_0g5703z"
-                    ],
-                    "next": [
-                        "Activity_0keal12"
-                    ]
-                },
-                "Activity_0g5703z": {
-                    "name": "Go into the kitchen",
-                    "type": "task",
-                    "previous": [
-                        "Event_1rzhaej"
-                    ],
-                    "next": [
-                        "Activity_1iamf1v"
-                    ]
-                },
-                "Event_1rzhaej": {
-                    "name": "Order is ready",
-                    "type": "intermediateCatchEvent",
-                    "previous": [
-                        "Gateway_07a43ri"
-                    ],
-                    "next": [
-                        "Activity_0g5703z"
-                    ]
-                },
-                "Event_1du1adw": {
-                    "name": "Payment done",
-                    "type": "intermediateCatchEvent",
-                    "previous": [
-                        "Activity_0iki3w5",
-                        "Activity_1xuhshv"
-                    ],
-                    "next": [
-                        "Event_172ze8v"
-                    ]
-                },
-                "Gateway_12y1jsu": {
-                    "name": "",
-                    "type": "inclusiveGateway",
-                    "previous": [
-                        "Event_10n3d4i"
-                    ],
-                    "next": [
-                        "Activity_17zlzzc",
-                        "Activity_1gb6rd4",
-                        "Activity_0tgpfe8"
-                    ]
-                },
-                "Gateway_12n4xdy": {
-                    "name": "",
-                    "type": "inclusiveGateway",
-                    "previous": [
-                        "Activity_0tgpfe8",
-                        "Activity_1gb6rd4",
-                        "Activity_17zlzzc"
-                    ],
-                    "next": [
-                        "Event_151zto3"
+                        "Event_0iqs5ri"
                     ]
                 }
             }
-        },
-        "Process_1ysifh1": {
-            "name": "",
-            "isClosed": "false",
-            "isExecutable": "false",
-            "processType": "None",
-            "node_ids": [],
-            "node_details": {}
         }
     }
 }
