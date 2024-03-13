@@ -1,9 +1,9 @@
-import bpmn_python.bpmn_diagram_rep as diagram
+from bpmn_python import bpmn_diagram_rep as diagram
 import xml.etree.ElementTree as ET
 import json
 
-
-name="../ch7_CreditAppSimulation.bpmn"
+baseName="toParse"
+name="../bpmn_input_file_here/"+baseName+".bpmn"
 
 # QBP TAG
 tree = ET.parse(name)
@@ -46,6 +46,17 @@ for process_id, process_element in bpmnGraph.process_elements.items():
             'name': node_info.get('node_name', 'Unnamed'),
             'type': node_info.get('type', 'Unknown'),
         }
+        if node_info.get('type', 'Unknown') == 'subProcess':
+            # Add subprocess details
+            subprocess_details = {}
+            for child_node_id in node_info.get('node_ids', []):
+                child_node_info = bpmnGraph.diagram_graph.node[child_node_id]
+                subprocess_details[child_node_id] = {
+                    'name': child_node_info.get('node_name', 'Unnamed'),
+                    'type': child_node_info.get('type', 'Unknown'),
+                }
+            node_details[node_id]['subprocess_details'] = subprocess_details
+
     process_elements[process_id] = {
         'name': process_element.get('name', 'Unnamed'),
         'isClosed': process_element.get('isClosed', 'false'),
@@ -58,9 +69,5 @@ bpmnDictionary['process_elements'] = process_elements
 
 
 # Print the dictionary
-with open("../tempp.txt", "w") as outfile:
+with open("../tempp.json", "w") as outfile:
     json.dump(bpmnDictionary, outfile, indent=4)
-
-#python 3.6
-# Poi aggiungere parsing per tag privato simulaizone
-# Fare core simulation con simpy, chiedere info su tag privato per implementare direttamente quella sintassi
