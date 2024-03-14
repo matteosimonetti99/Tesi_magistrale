@@ -1,4 +1,0 @@
-requirements_3.6.txt:
-pyparsing e networkx 2.4.7 e 1.11 sono per far funzionare bpmn-python, non vanno updated
-USE PYTHON 3.6
-

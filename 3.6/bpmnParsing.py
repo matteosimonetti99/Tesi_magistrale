@@ -1,25 +1,45 @@
 from bpmn_python import bpmn_diagram_rep as diagram
 import xml.etree.ElementTree as ET
 import json
+import sys
+import os
 
 baseName="mainMinimalCustomSimPar"
+tagName="simParam"
+simParamPath="../json/simParam.json"
+bpmnPath="../json/bpmn.json"
+
+
+if os.path.isfile(simParamPath):
+    os.remove(simParamPath)
+if os.path.isfile(bpmnPath):
+    os.remove(bpmnPath)
+
+if len(sys.argv) > 1 and sys.argv[1].strip():
+    baseName=sys.argv[1]
+
+# simParam TAG
 name="../bpmn_input_file_here/"+baseName+".bpmn"
+try:
+    tree = ET.parse(name)
+    root = tree.getroot()
+    simParam_tag = root.find('.//' + tagName)
+except FileNotFoundError:
+    print(f"-----ERROR-----: bpmn file not found")
+    sys.exit()
+except ET.ParseError:
+    print(f"-----ERROR-----: bpmn file bad syntax")
+    sys.exit()
+except Exception as e:
+    print(f"An error occurred: {e}")
+    sys.exit()
 
-# QBP TAG
-tree = ET.parse(name)
-
-# Get the root element of the XML document
-root = tree.getroot()
-
-# Find the <qbp> tag
-qbp_tag = root.find('.//qbp')
-
-# If the <qbp> tag exists, print its contents
-if qbp_tag is not None:
-    print(ET.tostring(qbp_tag, encoding='unicode'))
-else:
-    print("No <qbp> tag found in the BPMN XML file.")
-
+if simParam_tag is not None:
+    # Convert to string and remove the <simParam> and </simParam> tags
+    simParam_str = ET.tostring(simParam_tag, encoding='unicode')
+    simParam_str = simParam_str.replace('<'+tagName+'>', '').replace('</'+tagName+'>', '')
+    with open(simParamPath, "w") as outfile:
+        outfile.write(simParam_str)
 
 
 # BPMN STRUCTURE
@@ -69,5 +89,5 @@ bpmnDictionary['process_elements'] = process_elements
 
 
 # Print the dictionary
-with open("../tempp.json", "w") as outfile:
+with open(bpmnPath, "w") as outfile:
     json.dump(bpmnDictionary, outfile, indent=4)
