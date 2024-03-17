@@ -172,7 +172,6 @@
   </bpmndi:BPMNDiagram>
   <simParam>
     {
-      "id": "qbp_db14c583-bea4-0c46-92f1-b5e9ca6b9e8f",
       "processInstances": [
         {
           "type": "A",
@@ -194,8 +193,6 @@
       },
       "timetables": [
         {
-          "id": "QBP_DEFAULT_TIMETABLE",
-          "default": "true",
           "name": "Default",
           "rules": {
             "rule": {
@@ -207,8 +204,6 @@
           }
         },
         {
-          "id": "QBP_247_TIMETABLE",
-          "default": "false",
           "name": "24/7",
           "rules": {
             "rule": {
@@ -222,14 +217,12 @@
       ],
       "resources": [
         {
-          "id": "QBP_DEFAULT_RESOURCE",
           "name": "Res1",
           "totalAmount": "1",
           "costPerHour": "1",
           "timetableId": "QBP_DEFAULT_TIMETABLE"
         },
         {
-          "id": "qbp_078815c5-f2e8-0044-14f2-9bd4dc7ddc01",
           "name": "Res2",
           "totalAmount": "2",
           "costPerHour": "2",
@@ -238,7 +231,6 @@
       ],
       "elements": [
         {
-          "id": "qbp_6cd19a71-968f-7a06-50df-4d7cfbcfe5e3",
           "worklistId":1,
           "elementId": "Activity_15gzc1b",
           "fixedCost": "5",
@@ -253,18 +245,18 @@
           },
           "resourceIds": [
             {
-              "resourceId": "qbp_078815c5-f2e8-0044-14f2-9bd4dc7ddc01",
+              "resourceName": "Res2",
               "amountNeeded": 1,
               "groupId":1,
               "_COMMENTO":"GROUP indica che affinchè la task sia svolgibile devono essere presenti un amountNeeded di ogni risorsa di quel groupId (quindi è un AND)"
             },
             {
-              "resourceId": "QBP_DEFAULT_RESOURCE",
+              "resourceName": "Res1",
               "amountNeeded": 2,
               "groupId":1
             },
             {
-              "resourceId": "qbp_078815c5-f2e8-0044-14f2-9bd4dc7ddc01",
+              "resourceName": "Res2",
               "amountNeeded": 3,
               "groupId":2
             }
@@ -272,7 +264,6 @@
           "durationThresholdTimeUnit": "seconds"
         },
         {
-          "id": "qbp_a84d9f0e-cba9-5277-062e-27407b8525af",
           "worklistId":1,
           "elementId": "Activity_14rjj9v",
           "fixedCost": "4",
@@ -287,12 +278,12 @@
           },
           "resourceIds": [
             {
-              "resourceId": "qbp_078815c5-f2e8-0044-14f2-9bd4dc7ddc01",
+              "resourceName": "Res2",
               "amountNeeded": 1,
               "groupId":1
             },
             {
-              "resourceId": "QBP_DEFAULT_RESOURCE",
+              "resourceName": "Res1",
               "amountNeeded": 2,
               "groupId":1
             }
@@ -300,7 +291,6 @@
           "durationThresholdTimeUnit": "seconds"
         },
         {
-          "id": "qbp_3913d051-1aff-c07b-47cc-4ed4fe2d34f1",
           "elementId": "Activity_0uqn82h",
           "durationDistribution": {
             "type": "FIXED",
@@ -311,7 +301,7 @@
           },
           "resourceIds": [
             {
-              "resourceId": "qbp_078815c5-f2e8-0044-14f2-9bd4dc7ddc01",
+              "resourceName": "Res2",
               "amountNeeded": 1,
               "groupId":1
             }
