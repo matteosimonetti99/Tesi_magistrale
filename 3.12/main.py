@@ -2,6 +2,7 @@ import parsingAgain
 import json
 import sys
 import simpy
+from collections import deque
 
 
 simParamPath="../json/simParam.json"
@@ -38,6 +39,8 @@ except Exception as e:
 
 
 
+
+
 class Process:
     def __init__(self, env, name, process_details):
         self.env = env
@@ -48,33 +51,43 @@ class Process:
     def run(self):
         # Start from the startEvent
         start_node_id = next(node_id for node_id, node in self.process_details['node_details'].items() if node['type'] == 'startEvent')
-        yield from self.run_node(start_node_id)
+        yield from self.run_node(start_node_id, None)
 
-    def run_node(self, node_id):
-        node = self.process_details['node_details'][node_id]
-        if node['type'] == 'startEvent':
-            yield self.env.timeout(1)
-        elif node['type'] == 'task':
-            yield self.env.timeout(1)  # replace with your task duration
-        elif node['type'] == 'exclusiveGateway':
-            # XOR logic: choose one path randomly
-            next_node_id = random.choice(node['next'])
-            yield from self.run_node(next_node_id)
-        elif node['type'] == 'parallelGateway':
-            # AND logic: run all paths sequentially
-            for next_node_id in node['next']:
-                yield from self.run_node(next_node_id)
-        elif node['type'] == 'subProcess':
-            # Run the subprocess
-            for sub_node_id in node['subprocess_details']['node_ids']:
-                yield from self.run_node(sub_node_id)
-        elif node['type'] == 'endEvent':
-            return
+    def run_node(self, start_node_id, closing_gateway):
+        # Create a queue and add the start node to it
+        queue = deque([(start_node_id, closing_gateway)])
 
-        # Run the next nodes
-        for next_node_id in node['next']:
-            yield from self.run_node(next_node_id)
+        while queue:
+            # Get the next node from the queue
+            node_id, closing_gateway = queue.popleft()
+            node = self.process_details['node_details'][node_id]
 
+            if node['type'] == 'startEvent':
+                yield self.env.timeout(1)
+            elif node['type'] == 'task':
+                yield self.env.timeout(1)  # replace with your task duration
+            elif node['type'] == 'exclusiveGateway':
+                # XOR logic: choose one path randomly
+                next_node_id = random.choice(node['next'])
+                queue.append((next_node_id, closing_gateway))
+            elif node['type'] == 'parallelGateway':
+                # AND logic: add all paths to the queue
+                for next_node_id in node['next']:
+                    queue.append((next_node_id, node['next'][0]))
+            elif node['type'] == 'subProcess':
+                # Run the subprocess
+                for sub_node_id in node['subprocess_details']['node_ids']:
+                    queue.append((sub_node_id, closing_gateway))
+            elif node['type'] == 'endEvent':
+                if closing_gateway is not None and node_id != closing_gateway:
+                    continue
+                else:
+                    return
+
+            # Run the next nodes
+            if closing_gateway is None or node_id != closing_gateway:
+                for next_node_id in node['next']:
+                    queue.append((next_node_id, closing_gateway))
 
 def simulate_bpmn(bpmn_dict):
     env = simpy.Environment()
@@ -85,3 +98,4 @@ def simulate_bpmn(bpmn_dict):
 
 # replace with your bpmn_dict
 simulate_bpmn(bpmn_dict)
+
