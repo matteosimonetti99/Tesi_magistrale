@@ -40,7 +40,7 @@ def parse_again():
                     if 'subprocess_details' in node and source_id in node['subprocess_details']:
                         node['subprocess_details'][source_id]['next'].append(target_id)
 
-        # Find the process that contains the target node
+        """# Find the process that contains the target node
         for process in bpmn_dict['process_elements'].values():
             if target_id in process['node_details']:
                 process['node_details'][target_id]['previous'].append(source_id)
@@ -48,7 +48,18 @@ def parse_again():
                 # Check if the target node is in a subprocess
                 for node in process['node_details'].values():
                     if 'subprocess_details' in node and target_id in node['subprocess_details']:
-                        node['subprocess_details'][target_id]['previous'].append(source_id)
+                        node['subprocess_details'][target_id]['previous'].append(source_id)"""
+                        
+    # After populating 'next', check for parallelGateways with only one 'next' element
+    for process in bpmn_dict['process_elements'].values():
+        for node in process['node_details'].values():
+            if node['type'] == 'parallelGateway' and len(node['next']) == 1:
+                node['type'] = 'parallelGateway_close'
+            if 'subprocess_details' in node:
+                for sub_node in node['subprocess_details'].values():
+                    if sub_node['type'] == 'parallelGateway' and len(sub_node['next']) == 1:
+                        sub_node['type'] = 'parallelGateway_close'
+
 
     # Populate 'previous' based on message flows
     for flow_id, flow in bpmn_dict['collaboration']['messageFlows'].items():
