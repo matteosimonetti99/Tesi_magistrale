@@ -11,15 +11,15 @@
       <bpmn:incoming>Flow_0zdt0sg</bpmn:incoming>
       <bpmn:outgoing>Flow_1atxssx</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:task id="Activity_14rjj9v" name="xor1">
+    <bpmn:task id="Activity_14rjj9v" name="par1">
       <bpmn:incoming>Flow_1nqsh1h</bpmn:incoming>
       <bpmn:outgoing>Flow_1nob91q</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:task id="Activity_0qykc8o" name="par1 (msg to black)">
+    <bpmn:task id="Activity_0qykc8o" name="par11">
       <bpmn:incoming>Flow_1nob91q</bpmn:incoming>
       <bpmn:outgoing>Flow_1kn2x5s</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:task id="Activity_1ijxuyk" name="par2">
+    <bpmn:task id="Activity_1ijxuyk" name="par22">
       <bpmn:incoming>Flow_1ur494q</bpmn:incoming>
       <bpmn:outgoing>Flow_0st4cij</bpmn:outgoing>
     </bpmn:task>
@@ -54,22 +54,6 @@
     <bpmn:sequenceFlow id="Flow_05wu31n" sourceRef="StartEvent_09cyjfc" targetRef="Gateway_01s1pgm" />
     <bpmn:sequenceFlow id="Flow_0d86tug" sourceRef="Gateway_0a5f12j" targetRef="Gateway_01s1pgm" />
     <bpmn:sequenceFlow id="Flow_16n1wa9" sourceRef="Gateway_0a5f12j" targetRef="Event_1b9cqpn" />
-    <bpmn:subProcess id="Activity_0uqn82h" name="xor2 (subproc)">
-      <bpmn:incoming>Flow_0bvtaqu</bpmn:incoming>
-      <bpmn:outgoing>Flow_1ur494q</bpmn:outgoing>
-      <bpmn:startEvent id="Event_1njp3xz">
-        <bpmn:outgoing>Flow_1sx6vzu</bpmn:outgoing>
-      </bpmn:startEvent>
-      <bpmn:task id="Activity_12afiek" name="sub_1">
-        <bpmn:incoming>Flow_1sx6vzu</bpmn:incoming>
-        <bpmn:outgoing>Flow_0gk5xyl</bpmn:outgoing>
-      </bpmn:task>
-      <bpmn:sequenceFlow id="Flow_1sx6vzu" sourceRef="Event_1njp3xz" targetRef="Activity_12afiek" />
-      <bpmn:endEvent id="Event_1go337f">
-        <bpmn:incoming>Flow_0gk5xyl</bpmn:incoming>
-      </bpmn:endEvent>
-      <bpmn:sequenceFlow id="Flow_0gk5xyl" sourceRef="Activity_12afiek" targetRef="Event_1go337f" />
-    </bpmn:subProcess>
     <bpmn:sequenceFlow id="Flow_1nob91q" sourceRef="Activity_14rjj9v" targetRef="Activity_0qykc8o" />
     <bpmn:sequenceFlow id="Flow_1ur494q" sourceRef="Activity_0uqn82h" targetRef="Activity_1ijxuyk" />
     <bpmn:parallelGateway id="Gateway_1ngxc9b" name="Parallel open">
@@ -77,6 +61,10 @@
       <bpmn:outgoing>Flow_1nqsh1h</bpmn:outgoing>
       <bpmn:outgoing>Flow_0bvtaqu</bpmn:outgoing>
     </bpmn:parallelGateway>
+    <bpmn:task id="Activity_0uqn82h" name="par2">
+      <bpmn:incoming>Flow_0bvtaqu</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ur494q</bpmn:outgoing>
+    </bpmn:task>
   </bpmn:process>
   <bpmn:process id="Process_0ylak8v">
     <bpmn:startEvent id="Event_0pg18xv">
@@ -167,15 +155,14 @@
           <dc:Bounds x="1358" y="125" width="25" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0mctgbm_di" bpmnElement="Activity_0uqn82h">
+        <dc:Bounds x="630" y="170" width="100" height="80" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1ltwc30_di" bpmnElement="Gateway_1ngxc9b">
         <dc:Bounds x="515" y="75" width="50" height="50" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="508" y="45" width="65" height="14" />
         </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0ovsycj_di" bpmnElement="Activity_0uqn82h">
-        <dc:Bounds x="630" y="170" width="100" height="80" />
-        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0zdt0sg_di" bpmnElement="Flow_0zdt0sg">
         <di:waypoint x="325" y="100" />
@@ -300,31 +287,9 @@
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
-  <bpmndi:BPMNDiagram id="BPMNDiagram_0udaww4">
-    <bpmndi:BPMNPlane id="BPMNPlane_1c3z4sp" bpmnElement="Activity_0uqn82h">
-      <bpmndi:BPMNShape id="Event_1njp3xz_di" bpmnElement="Event_1njp3xz">
-        <dc:Bounds x="192" y="102" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_12afiek_di" bpmnElement="Activity_12afiek">
-        <dc:Bounds x="280" y="80" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1go337f_di" bpmnElement="Event_1go337f">
-        <dc:Bounds x="432" y="102" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Flow_1sx6vzu_di" bpmnElement="Flow_1sx6vzu">
-        <di:waypoint x="228" y="120" />
-        <di:waypoint x="280" y="120" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0gk5xyl_di" bpmnElement="Flow_0gk5xyl">
-        <di:waypoint x="380" y="120" />
-        <di:waypoint x="432" y="120" />
-      </bpmndi:BPMNEdge>
-    </bpmndi:BPMNPlane>
-  </bpmndi:BPMNDiagram>
 
   <simParam>
-    {   "QUESTI PARAMETRI SONO COPIA INCOLLATI, SONO FITTIZI":"",
+    {
       "processInstances": [
         {
           "type": "A",
