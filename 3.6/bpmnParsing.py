@@ -1,10 +1,12 @@
+import sys
+sys.path.append("..") #se ci sono errori è questo da 3.11 a 3.12
 from bpmn_python import bpmn_diagram_rep as diagram
 import xml.etree.ElementTree as ET
 import json
 import sys
 import os
 
-baseName="mainMinimalCustomSimPar"
+baseName="andVisualization"
 tagName="simParam"
 simParamPath="../json/simParam.json"
 bpmnPath="../json/bpmn.json"
