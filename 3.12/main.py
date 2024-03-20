@@ -84,9 +84,11 @@ class Process:
             # AND logic: run all paths concurrently and wait for all to finish, process is created for each path to ensure parallelism
             events = [self.env.process(self.run_node(next_node_id, subprocess_node)) for next_node_id in node['next']]
             yield self.env.all_of(events)
+            #TODO: quando all_of è fatto bisogna proseguire col node dopo il close
 
         elif node['type'] == 'parallelGateway_close':
             return
+            
             #yield from self.run_node(next_node_after_parallel, subprocess_node)
 
         elif node['type'] == 'subProcess':
