@@ -94,7 +94,7 @@ class Process:
             yield from self.run_node(start_node_id, subprocess_node=node_id)
             next_node_id = node['next'][0]
             # After the subprocess is executed, continue with the node next to the subprocess
-            yield from self.run_node(next_node_id, parallel_counter)
+            yield from self.run_node(next_node_id)
         elif node['type'] == 'endEvent':
             return
 
