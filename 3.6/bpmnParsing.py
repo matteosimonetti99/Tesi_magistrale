@@ -7,25 +7,25 @@ import sys
 import os
 
 baseName="andVisualization"
-tagName="simParam"
-simParamPath="../json/simParam.json"
+tagName="diagbp"
+diagbpPath="../json/diagbp.json"
 bpmnPath="../json/bpmn.json"
 
 
-if os.path.isfile(simParamPath):
-    os.remove(simParamPath)
+if os.path.isfile(diagbpPath):
+    os.remove(diagbpPath)
 if os.path.isfile(bpmnPath):
     os.remove(bpmnPath)
 
 if len(sys.argv) > 1 and sys.argv[1].strip():
     baseName=sys.argv[1]
 
-# simParam TAG
+# diagbp TAG
 name="../bpmn_input_file_here/"+baseName+".bpmn"
 try:
     tree = ET.parse(name)
     root = tree.getroot()
-    simParam_tag = root.find('.//' + tagName)
+    diagbp_tag = root.find('.//' + tagName)
 except FileNotFoundError:
     print(f"-----ERROR-----: bpmn file not found")
     sys.exit()
@@ -36,12 +36,12 @@ except Exception as e:
     print(f"An error occurred: {e}")
     sys.exit()
 
-if simParam_tag is not None:
-    # Convert to string and remove the <simParam> and </simParam> tags
-    simParam_str = ET.tostring(simParam_tag, encoding='unicode')
-    simParam_str = simParam_str.replace('<'+tagName+'>', '').replace('</'+tagName+'>', '')
-    with open(simParamPath, "w") as outfile:
-        outfile.write(simParam_str)
+if diagbp_tag is not None:
+    # Convert to string and remove the <diagbp> and </diagbp> tags
+    diagbp_str = ET.tostring(diagbp_tag, encoding='unicode')
+    diagbp_str = diagbp_str.replace('<'+tagName+'>', '').replace('</'+tagName+'>', '')
+    with open(diagbpPath, "w") as outfile:
+        outfile.write(diagbp_str)
 
 
 # BPMN STRUCTURE

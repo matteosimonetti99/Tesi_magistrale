@@ -323,7 +323,7 @@
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 
-  <simParam>
+  <diagbp>
     {   "QUESTI PARAMETRI SONO COPIA INCOLLATI, SONO FITTIZI":"",
       "processInstances": [
         {
@@ -481,5 +481,5 @@
         }
       ]
     }
-  </simParam>
+  </diagbp>
 </bpmn:definitions>

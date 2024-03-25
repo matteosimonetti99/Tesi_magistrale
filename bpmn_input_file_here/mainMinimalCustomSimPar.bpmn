@@ -170,7 +170,7 @@
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
-  <simParam>
+  <diagbp>
     {
       "processInstances": [
         {
@@ -328,5 +328,5 @@
         }
       ]
     }
-  </simParam>
+  </diagbp>
 </bpmn:definitions>

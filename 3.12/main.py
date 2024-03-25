@@ -10,7 +10,7 @@ import time
 
 
 
-simParamPath="../json/simParam.json"
+diagbpPath="../json/diagbp.json"
 bpmnPath="../json/bpmn.json"
 
 parsingAgain.parse_again()
@@ -29,8 +29,8 @@ except Exception as e:
     sys.exit()
 
 try:
-    with open(simParamPath, "r") as file:
-        simParam = json.load(file)
+    with open(diagbpPath, "r") as file:
+        diagbp = json.load(file)
 except FileNotFoundError:
     print(f"-----ERROR-----: simulation parameters not found")
     sys.exit()
