@@ -48,17 +48,19 @@ except Exception as e:
 
 class Process:
     executed_nodes = set()  # Class variable to keep track of executed nodes
-    def __init__(self, env, name, process_details):
+    def __init__(self, env, name, process_details, start_delay=0, instance_type="default"):
         self.env = env
         self.name = name
         self.process_details = process_details
         self.stack=[]
+        self.start_delay = start_delay
         self.action = env.process(self.run())
 
     def printState(self, node, node_id):
         print(f"Running node: {node_id} ({node['name']}), type: {node['type']}, pool: {self.name}. time: {self.env.now}")
 
     def run(self):
+        yield self.env.timeout(self.start_delay) #delay start because of arrival rate.
         start_node_id = next((node_id for node_id, node in self.process_details['node_details'].items() if node['type'] == 'startEvent'), None)
         if start_node_id is None:
             return
@@ -114,13 +116,15 @@ class Process:
 
 
 def simulate_bpmn(bpmn_dict):
+    #add diagbp e da lì num_instances, delay_between_instances (gestisci linear e vari altri tipi, per ora è impostato come solo linear), instanceType, prob xor, task times.
     env = simpy.Environment()
-    for participant_id, participant in bpmn_dict['collaboration']['participants'].items():
-        process_details = bpmn_dict['process_elements'][participant['processRef']]
-        Process(env, participant['name'], process_details)
+    for i in range(num_instances):
+        #num_instances è la somma di tutti gli instance type.
+        for participant_id, participant in bpmn_dict['collaboration']['participants'].items():
+            process_details = bpmn_dict['process_elements'][participant['processRef']]
+            Process(env, participant['name'], process_details, start_delay=i*delay_between_instances, instance_type=prendiDaDiagbp)
     env.run()
 
 
-# replace with your bpmn_dict
 simulate_bpmn(bpmn)
 

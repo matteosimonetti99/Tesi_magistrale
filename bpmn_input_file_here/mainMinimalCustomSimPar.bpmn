@@ -248,7 +248,8 @@
               "resourceName": "Res2",
               "amountNeeded": 1,
               "groupId":1,
-              "_COMMENTO":"GROUP indica che affinchè la task sia svolgibile devono essere presenti un amountNeeded di ogni risorsa di quel groupId (quindi è un AND)"
+              "_COMMENTO":"GROUP indica che affinchè la task sia svolgibile devono essere presenti un amountNeeded di ogni risorsa di quel groupId (quindi è un AND)
+              In questo caso servono 1*Res2 e 2*Res1 oppure 3*Res2"
             },
             {
               "resourceName": "Res1",
