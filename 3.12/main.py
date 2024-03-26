@@ -2,6 +2,7 @@ import parsingAgain
 import json
 import sys
 import simpy
+import numpy as np
 from collections import deque
 
 #to remove, credo
@@ -41,8 +42,14 @@ except Exception as e:
     print(f"An error occurred: {e}")
     sys.exit()
 
+num_instances = sum(instance['count'] for instance in data['processInstances'])
+instance_types = data['processInstances']
+delay_between_instances = data['arrivalRateDistribution'] #bisogna accedere a type, mean, arg1, arg2
+xor_probabilities = {flow['elementId']: float(flow['executionProbability']) for flow in data['sequenceFlows']}
+task_durations = {element['elementId']: element['durationDistribution'] for element in data['elements']} #bisogna accedere a type, mean, arg1, arg2
 
-
+#qui si chiama la func in timeCalculator, si chiama singolarmente per delay e foreach element in task_durations. Nel secondo si sostituisce il valore per ogni entry del dizionario
+#nel primo si crea un array di len=num_instances che contenga i vari delay
 
 
 
@@ -74,7 +81,7 @@ class Process:
             node = self.process_details['node_details'][subprocess_node]['subprocess_details'][node_id]
 
         if node['type'] == 'startEvent':
-            yield self.env.timeout(1)
+            yield self.env.timeout(0)
             next_node_id = node['next'][0]
             self.printState(node,node_id)
             yield from self.run_node(next_node_id, subprocess_node)
@@ -82,7 +89,7 @@ class Process:
             if len(node['previous'])>0:
                 while not all(prev_node in Process.executed_nodes for prev_node in node['previous']):
                     yield self.env.timeout(1)
-            yield self.env.timeout(1) # replace with your task duration
+            yield self.env.timeout(task_durations[node_id]) # task duration is used here
             Process.executed_nodes.add(node_id)
             self.printState(node,node_id)
             next_node_id = node['next'][0]
@@ -122,7 +129,7 @@ def simulate_bpmn(bpmn_dict):
         #num_instances è la somma di tutti gli instance type.
         for participant_id, participant in bpmn_dict['collaboration']['participants'].items():
             process_details = bpmn_dict['process_elements'][participant['processRef']]
-            Process(env, participant['name'], process_details, start_delay=i*delay_between_instances, instance_type=prendiDaDiagbp)
+            Process(env, participant['name'], process_details, start_delay=delay_between_instances[i], instance_type=prendiDaDiagbp)
     env.run()
 
 
