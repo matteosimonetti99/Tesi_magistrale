@@ -131,6 +131,12 @@
                 "name": "",
                 "sourceRef": "Activity_10x08n3",
                 "targetRef": "Event_0pg18xv"
+            },
+            "Flow_0c6ek63": {
+                "id": "Flow_0c6ek63",
+                "name": "",
+                "sourceRef": "Event_0iqs5ri",
+                "targetRef": "Activity_0uqn82h"
             }
         }
     },
@@ -155,7 +161,7 @@
             ],
             "node_details": {
                 "Activity_10x08n3": {
-                    "name": "1",
+                    "name": "main_1",
                     "type": "task",
                     "previous": [],
                     "next": [
@@ -163,7 +169,7 @@
                     ]
                 },
                 "Activity_14rjj9v": {
-                    "name": "xor1",
+                    "name": "par11",
                     "type": "task",
                     "previous": [],
                     "next": [
@@ -171,7 +177,7 @@
                     ]
                 },
                 "Activity_0qykc8o": {
-                    "name": "par1 (msg to black)",
+                    "name": "par12",
                     "type": "task",
                     "previous": [],
                     "next": [
@@ -179,7 +185,7 @@
                     ]
                 },
                 "Activity_1ijxuyk": {
-                    "name": "par2",
+                    "name": "par22",
                     "type": "task",
                     "previous": [],
                     "next": [
@@ -226,7 +232,7 @@
                     "next": []
                 },
                 "Activity_0uqn82h": {
-                    "name": "xor2 (subproc)",
+                    "name": "par21 (subproc)",
                     "type": "subProcess",
                     "subprocess_details": {
                         "Event_1njp3xz": {
@@ -252,7 +258,9 @@
                             "next": []
                         }
                     },
-                    "previous": [],
+                    "previous": [
+                        "Event_0iqs5ri"
+                    ],
                     "next": [
                         "Activity_1ijxuyk"
                     ]

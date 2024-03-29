@@ -10,6 +10,8 @@ from collections import deque
 import random
 import time
 
+#sys.setrecursionlimit(100000)
+
 
 
 diagbpPath="../json/diagbp.json"
@@ -47,14 +49,15 @@ except Exception as e:
 
 
 num_instances = sum(instance['count'] for instance in diagbp['processInstances'])
+print("NUM_INSTANCES: "+ str(num_instances))
 instance_types = diagbp['processInstances']
 xor_probabilities = {flow['elementId']: float(flow['executionProbability']) for flow in diagbp['sequenceFlows']}
 
 # Generate the delays
 delay_between_instances = diagbp['arrivalRateDistribution'] #array contains: type, mean, arg1, arg2
-delays = []
+delays = [0]
 total_delay = 0
-for _ in range(num_instances):
+for _ in range(num_instances-1):
     delay = timeCalculator.convert_to_seconds(delay_between_instances)
     total_delay += delay #each delay is therefore equal to itself + the previous delay
     delays.append(total_delay)
@@ -65,17 +68,18 @@ task_durations = {element['elementId']: element['durationDistribution'] for elem
 
 class Process:
     executed_nodes = set()  # Class variable to keep track of executed nodes
-    def __init__(self, env, name, process_details, start_delay=0, instance_type="default"):
+    def __init__(self, env, name, process_details, num, start_delay=0, instance_type="default"):
         self.env = env
         self.name = name
         self.process_details = process_details
         self.stack=[]
         self.start_delay = start_delay
         self.instance_type = instance_type
+        self.num = num
         self.action = env.process(self.run())
 
     def printState(self, node, node_id):
-        print(f"Running node: {node_id} ({node['name']}), type: {node['type']}, pool: {self.name}. time: {self.env.now}")
+        print(f"#{self.num}: {node_id} ({node['name']}), type: {node['type']}, pool: {self.name}. time: {self.env.now}. type:{self.instance_type}.")
 
     def run(self):
         yield self.env.timeout(self.start_delay) #delay start because of arrival rate.
@@ -110,10 +114,19 @@ class Process:
 
         elif node['type'] == 'exclusiveGateway': #TODO integra instance_type
             # Get the flows from bpmn.json that start from the current XOR
-            flows_from_xor = [flow for flow in bpmn['sequence_flows'].values() if flow['sourceRef'] == node_id]
+            flows_from_xor = [(flow_id, flow) for flow_id, flow in bpmn['sequence_flows'].items() if flow['sourceRef'] == node_id]
             # Create a dictionary mapping target nodes to their probabilities
-            node_probabilities = {flow['targetRef']: float(diagbp['sequenceFlows'][flow['elementId']]['executionProbability']) for flow in flows_from_xor}
-            next_node_id = np.random.choice(list(node_probabilities.keys()), p=list(node_probabilities.values()))
+            node_probabilities = {}
+            for flow_id, flow in flows_from_xor:
+                # Find the corresponding flow in diagbp.json
+                diagbp_flow = next((item for item in diagbp['sequenceFlows'] if item['elementId'] == flow_id), None)
+                if diagbp_flow is not None:
+                    node_probabilities[flow['targetRef']] = float(diagbp_flow['executionProbability'])
+            # Check if node_probabilities is empty, if yes then the xor has only one next elem.
+            if not node_probabilities:
+                next_node_id = node['next'][0]
+            else:
+                next_node_id = np.random.choice(list(node_probabilities.keys()), p=list(node_probabilities.values()))
             self.printState(node,node_id)
             yield from self.run_node(next_node_id, subprocess_node)
 
@@ -128,7 +141,7 @@ class Process:
 
         elif node['type'] == 'parallelGateway_close':
             self.stack.append(node['next'][0])
-            self.printState(node,node_id)
+            #self.printState(node,node_id)
             return
             
         elif node['type'] == 'subProcess':
@@ -140,6 +153,7 @@ class Process:
             yield from self.run_node(next_node_id)
 
         elif node['type'] == 'endEvent':
+            self.printState(node,node_id)
             return
 
 
@@ -153,7 +167,7 @@ def simulate_bpmn(bpmn_dict):
 
         for participant_id, participant in bpmn_dict['collaboration']['participants'].items():
             process_details = bpmn_dict['process_elements'][participant['processRef']]
-            Process(env, participant['name'], process_details, start_delay=delays[i], instance_type=instance_type)
+            Process(env, participant['name'], process_details, num=i+1, start_delay=delays[i], instance_type=instance_type)
 
         instance_count += 1
         if instance_count >= instance_types[instance_index]['count']:

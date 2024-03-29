@@ -31,7 +31,7 @@ def convert_to_seconds(input_dict):
         duration = max(0, np.random.normal(mean, std_dev))
     elif type_ == "EXPONENTIAL":
         duration = np.random.exponential(mean)
-    elif type_ == "UNIFORM":
+    elif type_ == "UNIFORM": #UNIFORM DOESN'T USE MEAN
         low = float(input_dict["arg1"])
         high = float(input_dict["arg2"])
         duration = np.random.uniform(low, high)

@@ -5,6 +5,7 @@ import xml.etree.ElementTree as ET
 import json
 import sys
 import os
+import diagbpTagGenerator
 
 baseName="andVisualization"
 tagName="diagbp"
@@ -35,13 +36,6 @@ except ET.ParseError:
 except Exception as e:
     print(f"An error occurred: {e}")
     sys.exit()
-
-if diagbp_tag is not None:
-    # Convert to string and remove the <diagbp> and </diagbp> tags
-    diagbp_str = ET.tostring(diagbp_tag, encoding='unicode')
-    diagbp_str = diagbp_str.replace('<'+tagName+'>', '').replace('</'+tagName+'>', '')
-    with open(diagbpPath, "w") as outfile:
-        outfile.write(diagbp_str)
 
 
 # BPMN STRUCTURE
@@ -93,3 +87,12 @@ bpmnDictionary['process_elements'] = process_elements
 # Print the dictionary
 with open(bpmnPath, "w") as outfile:
     json.dump(bpmnDictionary, outfile, indent=4)
+
+if diagbp_tag is not None:
+    # Convert to string and remove the <diagbp> and </diagbp> tags
+    diagbp_str = ET.tostring(diagbp_tag, encoding='unicode')
+    diagbp_str = diagbp_str.replace('<'+tagName+'>', '').replace('</'+tagName+'>', '')
+    with open(diagbpPath, "w") as outfile:
+        outfile.write(diagbp_str)
+else:
+    diagbpTagGenerator.diagbp(diagbpPath, bpmnDictionary)
