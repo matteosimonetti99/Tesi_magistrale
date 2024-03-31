@@ -131,12 +131,6 @@
                 "name": "",
                 "sourceRef": "Activity_10x08n3",
                 "targetRef": "Event_0pg18xv"
-            },
-            "Flow_0c6ek63": {
-                "id": "Flow_0c6ek63",
-                "name": "",
-                "sourceRef": "Event_0iqs5ri",
-                "targetRef": "Activity_0uqn82h"
             }
         }
     },
@@ -258,9 +252,7 @@
                             "next": []
                         }
                     },
-                    "previous": [
-                        "Event_0iqs5ri"
-                    ],
+                    "previous": [],
                     "next": [
                         "Activity_1ijxuyk"
                     ]

@@ -79,7 +79,7 @@ class Process:
         self.action = env.process(self.run())
 
     def printState(self, node, node_id):
-        print(f"#{self.num}: {node_id} ({node['name']}), type: {node['type']}, pool: {self.name}. time: {self.env.now}. type:{self.instance_type}.")
+        print(f"#{self.num}: {node_id} ({node['name']}), type: {node['type']}, pool: {self.name}. instance_type:{self.instance_type}. time: {self.env.now}.")
 
     def run(self):
         yield self.env.timeout(self.start_delay) #delay start because of arrival rate.
