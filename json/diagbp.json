@@ -1,5 +1,5 @@
 
-    {   "QUESTI PARAMETRI SONO COPIA INCOLLATI, SONO FITTIZI":"",
+    {
       "processInstances": [
         {
           "type": "A",
@@ -10,8 +10,7 @@
           "count": 35
         }
       ],
-      "startDateTime": "2024-03-13T08:00:00.000Z",
-      "currency": "EUR",
+      "startDateTime": "2024-03-13T08:00:00",
       "arrivalRateDistribution": {
         "type": "FIXED",
         "mean": "60",
@@ -24,8 +23,8 @@
           "name": "Default",
           "rules": {
             "rule": {
-              "fromTime": "09:00:00.000+00:00",
-              "toTime": "17:00:00.000+00:00",
+              "fromTime": "09:00",
+              "toTime": "17:00",
               "fromWeekDay": "MONDAY",
               "toWeekDay": "FRIDAY"
             }
@@ -35,8 +34,8 @@
           "name": "24/7",
           "rules": {
             "rule": {
-              "fromTime": "00:00:00.000+00:00",
-              "toTime": "23:59:59.999+00:00",
+              "fromTime": "00:00",
+              "toTime": "23:59",
               "fromWeekDay": "MONDAY",
               "toWeekDay": "SUNDAY"
             }
@@ -48,13 +47,13 @@
           "name": "Res1",
           "totalAmount": "1",
           "costPerHour": "1",
-          "timetableId": "QBP_DEFAULT_TIMETABLE"
+          "timetableName": "Default"
         },
         {
           "name": "Res2",
           "totalAmount": "2",
           "costPerHour": "2",
-          "timetableId": "QBP_247_TIMETABLE"
+          "timetableName": "24/7"
         }
       ],
       "elements": [
@@ -76,7 +75,7 @@
               "resourceName": "Res2",
               "amountNeeded": 1,
               "groupId":1,
-              "_COMMENTO":"GROUP indica che affinchè la task sia svolgibile devono essere presenti un amountNeeded di ogni risorsa di quel groupId (quindi è un AND)"
+              "_COMMENTO":"GROUP indica che affinche' la task sia svolgibile devono essere presenti un amountNeeded di ogni risorsa di quel groupId (quindi e' un AND)"
             },
             {
               "resourceName": "Res1",
@@ -216,7 +215,7 @@
               "type": "B"
             }
           ],
-          "_COMMENTO":"types indica che se sono in un istanza di quel type, allora la scelta è forzata su questa direzione"
+          "_COMMENTO":"types indica che se sono in un istanza di quel type, allora la scelta e' forzata su questa direzione"
         },
         {
           "elementId": "Flow_0d86tug",
