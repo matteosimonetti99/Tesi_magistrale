@@ -91,6 +91,11 @@
         "Flow_10o3gaz": {
             "name": "",
             "sourceRef": "Event_016qlk7",
+            "targetRef": "Event_1f85ia9"
+        },
+        "Flow_10nu6ge": {
+            "name": "",
+            "sourceRef": "Event_1f85ia9",
             "targetRef": "Event_0iqs5ri"
         }
     },
@@ -114,15 +119,6 @@
                 "height": "250",
                 "x": "170",
                 "y": "470"
-            },
-            "Participant_0wzebvs": {
-                "name": "black",
-                "processRef": "Process_15u79g0",
-                "isHorizontal": "true",
-                "width": "1250",
-                "height": "190",
-                "x": "200",
-                "y": "770"
             }
         },
         "messageFlows": {
@@ -131,6 +127,24 @@
                 "name": "",
                 "sourceRef": "Activity_10x08n3",
                 "targetRef": "Event_0pg18xv"
+            },
+            "Flow_0fywt1g": {
+                "id": "Flow_0fywt1g",
+                "name": "",
+                "sourceRef": "Event_016qlk7",
+                "targetRef": "Activity_0uqn82h"
+            },
+            "Flow_0nc29hm": {
+                "id": "Flow_0nc29hm",
+                "name": "",
+                "sourceRef": "Activity_0uqn82h",
+                "targetRef": "Event_1f85ia9"
+            },
+            "Flow_11xrdbz": {
+                "id": "Flow_11xrdbz",
+                "name": "",
+                "sourceRef": "Event_0iqs5ri",
+                "targetRef": "Activity_1ijxuyk"
             }
         }
     },
@@ -181,7 +195,9 @@
                 "Activity_1ijxuyk": {
                     "name": "par22",
                     "type": "task",
-                    "previous": [],
+                    "previous": [
+                        "Event_0iqs5ri"
+                    ],
                     "next": [
                         "Gateway_0xussxu"
                     ]
@@ -252,7 +268,9 @@
                             "next": []
                         }
                     },
-                    "previous": [],
+                    "previous": [
+                        "Event_016qlk7"
+                    ],
                     "next": [
                         "Activity_1ijxuyk"
                     ]
@@ -276,9 +294,9 @@
             "node_ids": [
                 "Event_0pg18xv",
                 "Activity_182s0e0",
-                "Event_0iqs5ri",
                 "Event_016qlk7",
-                "DataObject_0syl5yz"
+                "Event_0iqs5ri",
+                "Event_1f85ia9"
             ],
             "node_details": {
                 "Event_0pg18xv": {
@@ -299,35 +317,31 @@
                         "Event_016qlk7"
                     ]
                 },
+                "Event_016qlk7": {
+                    "name": "msgThrow",
+                    "type": "intermediateThrowEvent",
+                    "previous": [],
+                    "next": [
+                        "Event_1f85ia9"
+                    ]
+                },
                 "Event_0iqs5ri": {
                     "name": "msg end 2_1",
                     "type": "endEvent",
                     "previous": [],
                     "next": []
                 },
-                "Event_016qlk7": {
-                    "name": "msg2_1",
-                    "type": "intermediateThrowEvent",
-                    "previous": [],
+                "Event_1f85ia9": {
+                    "name": "msgCatch",
+                    "type": "intermediateCatchEvent",
+                    "previous": [
+                        "Activity_0uqn82h"
+                    ],
                     "next": [
                         "Event_0iqs5ri"
                     ]
-                },
-                "DataObject_0syl5yz": {
-                    "name": "",
-                    "type": "dataObject",
-                    "previous": [],
-                    "next": []
                 }
             }
-        },
-        "Process_15u79g0": {
-            "name": "",
-            "isClosed": "false",
-            "isExecutable": "false",
-            "processType": "None",
-            "node_ids": [],
-            "node_details": {}
         }
     }
 }

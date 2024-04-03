@@ -12,7 +12,7 @@ def convert_to_seconds(input_dict):
     }
 
     # Get the type
-    type_ = input_dict["type"]
+    type_ = input_dict["type"].upper()
 
     # Get the mean value
     mean = float(input_dict["mean"])

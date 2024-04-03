@@ -48,7 +48,7 @@ except Exception as e:
 
 
 
-num_instances = sum(instance['count'] for instance in diagbp['processInstances'])
+num_instances = sum(int(instance['count']) for instance in diagbp['processInstances'])
 print("NUM_INSTANCES: "+ str(num_instances))
 instance_types = diagbp['processInstances']
 xor_probabilities = {flow['elementId']: float(flow['executionProbability']) for flow in diagbp['sequenceFlows']}
@@ -79,7 +79,7 @@ class Process:
         self.action = env.process(self.run())
 
     def printState(self, node, node_id):
-        print(f"#{self.num}: {node_id} ({node['name']}), type: {node['type']}, pool: {self.name}. instance_type:{self.instance_type}. time: {self.env.now}.")
+        print(f"#{self.num}|{self.name}: {node_id} ({node['name']}), type: {node['type']}, instance_type:{self.instance_type}. time: {self.env.now}.")
 
     def run(self):
         yield self.env.timeout(self.start_delay) #delay start because of arrival rate.
@@ -148,10 +148,25 @@ class Process:
             start_node_id = next(sub_node_id for sub_node_id, sub_node in node['subprocess_details'].items() if sub_node['type'] == 'startEvent')
             self.printState(node,node_id)
             yield from self.run_node(start_node_id, subprocess_node=node_id)
+            Process.executed_nodes.add(node_id)
             next_node_id = node['next'][0]
             # After the subprocess is executed, continue with the node next to the subprocess
             yield from self.run_node(next_node_id)
-
+        elif node['type'] == 'intermediateThrowEvent':
+            next_node_id = node['next'][0]
+            Process.executed_nodes.add(node_id)
+            self.printState(node,node_id)
+            yield from self.run_node(next_node_id)
+            return
+        elif node['type'] == 'intermediateCatchEvent':
+            next_node_id = node['next'][0]
+            if len(node['previous'])>0: #wait for msg
+                while not all(prev_node in Process.executed_nodes for prev_node in node['previous']):
+                    yield self.env.timeout(1)
+            Process.executed_nodes.add(node_id)
+            self.printState(node,node_id)
+            yield from self.run_node(next_node_id)
+            return
         elif node['type'] == 'endEvent':
             self.printState(node,node_id)
             return
@@ -170,7 +185,7 @@ def simulate_bpmn(bpmn_dict):
             Process(env, participant['name'], process_details, num=i+1, start_delay=delays[i], instance_type=instance_type)
 
         instance_count += 1
-        if instance_count >= instance_types[instance_index]['count']:
+        if instance_count >= int(instance_types[instance_index]['count']):
             instance_index += 1
             instance_count = 0
     env.run()

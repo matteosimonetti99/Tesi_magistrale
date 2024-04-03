@@ -7,6 +7,13 @@ import sys
 import os
 import diagbpTagGenerator
 
+
+ET.register_namespace('', 'http://www.omg.org/spec/BPMN/20100524/MODEL')
+ET.register_namespace('bpmndi', 'http://www.omg.org/spec/BPMN/20100524/DI')
+ET.register_namespace('dc', 'http://www.omg.org/spec/DD/20100524/DC')
+ET.register_namespace('di', 'http://www.omg.org/spec/DD/20100524/DI')
+
+
 baseName="andVisualization"
 tagName="diagbp"
 diagbpPath="../json/diagbp.json"
@@ -23,6 +30,7 @@ if len(sys.argv) > 1 and sys.argv[1].strip():
 
 # diagbp TAG
 name="../bpmn_input_file_here/"+baseName+".bpmn"
+
 try:
     tree = ET.parse(name)
     root = tree.getroot()
@@ -96,3 +104,14 @@ if diagbp_tag is not None:
         outfile.write(diagbp_str)
 else:
     diagbpTagGenerator.diagbp(diagbpPath, bpmnDictionary)
+    with open(diagbpPath, 'r') as f:
+        diagbp_text = f.read()
+    with open(name, 'r') as file:
+        bpmn_content = file.read()
+    bpmn_content = bpmn_content.replace('</bpmn:definitions>', f'<diagbp>{diagbp_text}</diagbp>\n</bpmn:definitions>')
+    confirm=""
+    while confirm=="":
+        confirm = input("Do you want to save those simulation parameters into the bpmn file? (Y/N) ")
+    if (confirm=="y" or confirm=="Y"):
+        with open(name, 'w') as file:
+            file.write(bpmn_content)
