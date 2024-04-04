@@ -1,6 +1,6 @@
 {
     "processInstances": [],
-    "startDateTime": "2024-04-04T19:34:37",
+    "startDateTime": "2024-04-04T20:04:17",
     "arrivalRateDistribution": {
         "type": "",
         "mean": "",
@@ -9,20 +9,7 @@
         "timeUnit": ""
     },
     "timetables": [],
-    "resources": [
-        {
-            "name": "asd",
-            "totalAmount": "1",
-            "costPerHour": "1",
-            "timetableName": "asd"
-        },
-        {
-            "name": "asdd",
-            "totalAmount": "2",
-            "costPerHour": "2",
-            "timetableName": "asdd"
-        }
-    ],
+    "resources": [],
     "elements": [
         {
             "elementId": "Activity_10x08n3",
@@ -37,7 +24,8 @@
                 "timeUnit": ""
             },
             "durationThreshold": "",
-            "durationThresholdTimeUnit": ""
+            "durationThresholdTimeUnit": "",
+            "resourceIds": []
         },
         {
             "elementId": "Activity_14rjj9v",
@@ -52,22 +40,24 @@
                 "timeUnit": ""
             },
             "durationThreshold": "",
-            "durationThresholdTimeUnit": ""
+            "durationThresholdTimeUnit": "",
+            "resourceIds": []
         },
         {
             "elementId": "Activity_0qykc8o",
-            "worklistId": "1",
-            "fixedCost": "1",
-            "costThreshold": "1",
+            "worklistId": "",
+            "fixedCost": "",
+            "costThreshold": "",
             "durationDistribution": {
-                "type": "fixed",
-                "mean": "1",
-                "arg1": "0",
-                "arg2": "0",
-                "timeUnit": "seconds"
+                "type": "",
+                "mean": "",
+                "arg1": "",
+                "arg2": "",
+                "timeUnit": ""
             },
-            "durationThreshold": "100",
-            "durationThresholdTimeUnit": ""
+            "durationThreshold": "",
+            "durationThresholdTimeUnit": "",
+            "resourceIds": []
         },
         {
             "elementId": "Activity_1ijxuyk",
@@ -82,7 +72,8 @@
                 "timeUnit": ""
             },
             "durationThreshold": "",
-            "durationThresholdTimeUnit": ""
+            "durationThresholdTimeUnit": "",
+            "resourceIds": []
         },
         {
             "elementId": "Activity_12afiek",
@@ -97,7 +88,8 @@
                 "timeUnit": ""
             },
             "durationThreshold": "",
-            "durationThresholdTimeUnit": ""
+            "durationThresholdTimeUnit": "",
+            "resourceIds": []
         },
         {
             "elementId": "Activity_182s0e0",
@@ -112,8 +104,27 @@
                 "timeUnit": ""
             },
             "durationThreshold": "",
-            "durationThresholdTimeUnit": ""
+            "durationThresholdTimeUnit": "",
+            "resourceIds": []
         }
     ],
-    "sequenceFlows": []
+    "sequenceFlows": [
+        {
+            "elementId": "Flow_0d86tug",
+            "executionProbability": "0.4",
+            "types": [
+                {
+                    "type": "a"
+                },
+                {
+                    "type": "b"
+                }
+            ]
+        },
+        {
+            "elementId": "Flow_16n1wa9",
+            "executionProbability": "0.6",
+            "types": []
+        }
+    ]
 }

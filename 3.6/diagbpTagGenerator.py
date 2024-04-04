@@ -203,7 +203,7 @@ def diagbp(diagbpPath, bpmn_dict):
             while True:
                 i=i+1
                 singleType={}
-                singleType["type"] = input(f"Insert the instance type n.{i} that is forced to go into this sequence flow: ")
+                singleType["type"] = input(f"Insert the instance type n.{i} that is forced to go into this sequence flow (leave blank to skip): ")
                 if not singleType["type"]:
                     break
                 types.append(singleType)
