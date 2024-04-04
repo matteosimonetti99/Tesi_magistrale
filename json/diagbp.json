@@ -1,22 +1,119 @@
 {
-  "processInstances": [
-    {
-      "type": "a",
-      "count": "10"
+    "processInstances": [],
+    "startDateTime": "2024-04-04T19:34:37",
+    "arrivalRateDistribution": {
+        "type": "",
+        "mean": "",
+        "arg1": "",
+        "arg2": "",
+        "timeUnit": ""
     },
-    {
-      "type": "b",
-      "count": "20"
-    },
-    {}
-  ],
-  "startDateTime": "2024-04-04T14:57:56",
-  "arrivalRateDistribution": {
-    "type": "NORMAL",
-    "mean": "10",
-    "arg1": "1",
-    "arg2": "0",
-    "timeUnit": "days"
-  },
-  "timetables": []
+    "timetables": [],
+    "resources": [
+        {
+            "name": "asd",
+            "totalAmount": "1",
+            "costPerHour": "1",
+            "timetableName": "asd"
+        },
+        {
+            "name": "asdd",
+            "totalAmount": "2",
+            "costPerHour": "2",
+            "timetableName": "asdd"
+        }
+    ],
+    "elements": [
+        {
+            "elementId": "Activity_10x08n3",
+            "worklistId": "",
+            "fixedCost": "",
+            "costThreshold": "",
+            "durationDistribution": {
+                "type": "",
+                "mean": "",
+                "arg1": "",
+                "arg2": "",
+                "timeUnit": ""
+            },
+            "durationThreshold": "",
+            "durationThresholdTimeUnit": ""
+        },
+        {
+            "elementId": "Activity_14rjj9v",
+            "worklistId": "",
+            "fixedCost": "",
+            "costThreshold": "",
+            "durationDistribution": {
+                "type": "",
+                "mean": "",
+                "arg1": "",
+                "arg2": "",
+                "timeUnit": ""
+            },
+            "durationThreshold": "",
+            "durationThresholdTimeUnit": ""
+        },
+        {
+            "elementId": "Activity_0qykc8o",
+            "worklistId": "1",
+            "fixedCost": "1",
+            "costThreshold": "1",
+            "durationDistribution": {
+                "type": "fixed",
+                "mean": "1",
+                "arg1": "0",
+                "arg2": "0",
+                "timeUnit": "seconds"
+            },
+            "durationThreshold": "100",
+            "durationThresholdTimeUnit": ""
+        },
+        {
+            "elementId": "Activity_1ijxuyk",
+            "worklistId": "",
+            "fixedCost": "",
+            "costThreshold": "",
+            "durationDistribution": {
+                "type": "",
+                "mean": "",
+                "arg1": "",
+                "arg2": "",
+                "timeUnit": ""
+            },
+            "durationThreshold": "",
+            "durationThresholdTimeUnit": ""
+        },
+        {
+            "elementId": "Activity_12afiek",
+            "worklistId": "",
+            "fixedCost": "",
+            "costThreshold": "",
+            "durationDistribution": {
+                "type": "",
+                "mean": "",
+                "arg1": "",
+                "arg2": "",
+                "timeUnit": ""
+            },
+            "durationThreshold": "",
+            "durationThresholdTimeUnit": ""
+        },
+        {
+            "elementId": "Activity_182s0e0",
+            "worklistId": "",
+            "fixedCost": "",
+            "costThreshold": "",
+            "durationDistribution": {
+                "type": "",
+                "mean": "",
+                "arg1": "",
+                "arg2": "",
+                "timeUnit": ""
+            },
+            "durationThreshold": "",
+            "durationThresholdTimeUnit": ""
+        }
+    ],
+    "sequenceFlows": []
 }

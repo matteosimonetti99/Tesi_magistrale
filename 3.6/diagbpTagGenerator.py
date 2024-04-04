@@ -1,6 +1,8 @@
 def diagbp(diagbpPath, bpmn_dict):
     import json
     from datetime import datetime
+    from collections import defaultdict
+
     
     #PROCESS INSTANCES
     exit_loop = False
@@ -85,13 +87,13 @@ def diagbp(diagbpPath, bpmn_dict):
     print("-------------------RESOURCES----------------------")
     resources=[]
     exit_loop = False
-    keys=["name","totalAmount". "costPerHour", "timetableName"]
+    keys=["name","totalAmount", "costPerHour", "timetableName"]
     i=0
     while True:
         i=i+1
         resource={}
-        keyDisplay=key
         for key in keys:
+            keyDisplay=key
             if key=="timetableName":
                 keyDisplay="timetable name (use the same name given before to the timetable you are referring to)"
             value=input(f"Insert the {keyDisplay} for the resource type n.{i} (insert empty value to skip to elements): ")
@@ -106,20 +108,29 @@ def diagbp(diagbpPath, bpmn_dict):
     
     #ELEMENTS
     print("-------------------BPMN TASKS SPECIFICATION (duration etc.)----------------------")
-    process_task_dict = {} #key is process name, value is list of task names
+    process_task_dict = {} #key is process name, value is list of task names and ids
+    support_big = {}
     elements=[]
     for participant_id, participant in bpmn_dict['collaboration']['participants'].items():
         process_details = bpmn_dict['process_elements'][participant['processRef']]
         process_name = participant['name']
 
         task_nodes = [(node_id, node['name']) for node_id, node in process_details['node_details'].items() if node['type'] == 'task']
+        all_nodes = [(node_id, node['name'], node['type']) for node_id, node in process_details['node_details'].items()]
         for node_id, node in process_details['node_details'].items():
             if node['type'] == 'subProcess':
                 task_nodes.extend([(sub_node_id, sub_node['name']) for sub_node_id, sub_node in node['subprocess_details'].items() if sub_node['type'] == 'task'])
+                all_nodes.extend([(sub_node_id, sub_node['name'], sub_node['type']) for sub_node_id, sub_node in node['subprocess_details'].items()])
 
         process_task_dict[process_name] = task_nodes
+        support_big[process_name]=all_nodes
     
-    for process_name, task_names in process_task_dict.items():
+    support={}
+    for process_name, all_nodes in support_big.items():
+        for node_id, task_name, node_type in all_nodes:
+            support[node_id] = (task_name, node_type)
+
+    for process_name, task_nodes in process_task_dict.items():
         for node_id, task_name in task_nodes:
             element={}
             element["elementId"]=node_id
@@ -145,11 +156,13 @@ def diagbp(diagbpPath, bpmn_dict):
             resourceIds=[]
 
             exit_loop = False
+            i=0
             while True:
+                i=i+1
                 resourceId={}
                 groupR=["resourceName", "amountNeeded", "groupId"]
                 for key in groupR:
-                    value=input(f"Insert the {key} for the task {task_name} of process {process_name}: ")
+                    value=input(f"Resource n.{i} | Insert the {key} for the task {task_name} of process {process_name}: ")
                     if not value:
                         exit_loop=True
                         break
@@ -157,11 +170,31 @@ def diagbp(diagbpPath, bpmn_dict):
                 if exit_loop:
                     break
                 resourceIds.append(resourceId)
+            element["resourceIds"]=resourceIds
             elements.append(element)
+            print("--------------------")
 
     #SEQUENCE FLOWS
+    sequence_flows=[]
     print("-------------------XOR PROBABILITIES----------------------")
-    #DA FARE A PARTIRE DA BPMNDICT
+    sourceRef_counts = defaultdict(int)
+    # Iterate over the sequence_flows and count the occurrences of each sourceRef
+    for flow in bpmn_dict['sequence_flows'].values():
+        sourceRef_counts[flow['sourceRef']] += 1
+    # Create a new dictionary to store the flows where the sourceRef appears 2 or more times
+    filtered_flows = {}
+    # Iterate over the sequence_flows again and add the flows where the sourceRef appears 2 or more times to the new dictionary
+    for id, flow in bpmn_dict['sequence_flows'].items():
+        if sourceRef_counts[flow['sourceRef']] >= 2:
+            filtered_flows[id] = flow
+    for id, flow in filtered_flows.items():
+        source=flow["sourceRef"]
+        target=flow["targetRef"]
+        sourceName, sourceType = support[source]
+        targetName, targetType = support[target]
+        if sourceType=="exclusiveGateway":
+            print(id+sourceName+targetName)
+
 
 
 
@@ -172,9 +205,8 @@ def diagbp(diagbpPath, bpmn_dict):
         "arrivalRateDistribution": arrivalRateDistribution,
         "timetables": timetables,
         "resources": resources,
-        "elements": get_array_input("elements", ["worklistId", "elementId", "fixedCost", "costThreshold", {"durationDistribution": ["type", "mean", "arg1", "arg2", "timeUnit"]},
-        "durationThreshold", "durationThresholdTimeUnit", ["resourceIds", {"resourceId": ["resourceName", "amountNeeded", "groupId"]}]]),
-        "sequenceFlows": get_array_input("sequenceFlows", ["elementId", "executionProbability", {"types": ["type"]}])
+        "elements": elements,
+        "sequenceFlows": sequence_flows
     }
 
     with open(diagbpPath, 'w') as f:
