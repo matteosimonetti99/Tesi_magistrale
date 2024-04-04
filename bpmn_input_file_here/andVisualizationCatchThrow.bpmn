@@ -339,5 +339,4 @@
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 
-<diagbp>{"processInstances": [], "startDateTime": "2024-04-03T19:39:50", "arrivalRateDistribution": {"type": "", "mean": "1", "arg1": "", "arg2": "", "timeUnit": ""}, "timetables": [], "resources": [], "elements": [{"worklistId": "1", "elementId": "1", "fixedCost": "1", "costThreshold": "1", "durationDistribution": {"type": "1", "mean": "1", "arg1": "1", "arg2": "1", "timeUnit": "1"}, "durationThreshold": "1", "durationThresholdTimeUnit": "1", "resourceIds": [{"resourceId": {"resourceName": "asd", "amountNeeded": "1", "groupId": "1"}}, {"resourceId": {"resourceName": "asdd", "amountNeeded": "2", "groupId": "2"}}]}, {"worklistId": "2", "elementId": "2", "fixedCost": "2", "costThreshold": "2", "durationDistribution": {"type": "fixed", "mean": "10", "arg1": "", "arg2": "", "timeUnit": "seconds"}, "durationThreshold": "0", "durationThresholdTimeUnit": "0", "resourceIds": [{"resourceId": {"resourceName": "asd", "amountNeeded": "1", "groupId": "1"}}]}], "sequenceFlows": []}</diagbp>
 </bpmn:definitions>

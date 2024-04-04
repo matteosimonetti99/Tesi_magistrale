@@ -170,76 +170,39 @@
             "node_details": {
                 "Activity_10x08n3": {
                     "name": "main_1",
-                    "type": "task",
-                    "previous": [],
-                    "next": [
-                        "Gateway_1ngxc9b"
-                    ]
+                    "type": "task"
                 },
                 "Activity_14rjj9v": {
                     "name": "par11",
-                    "type": "task",
-                    "previous": [],
-                    "next": [
-                        "Activity_0qykc8o"
-                    ]
+                    "type": "task"
                 },
                 "Activity_0qykc8o": {
                     "name": "par12",
-                    "type": "task",
-                    "previous": [],
-                    "next": [
-                        "Gateway_0xussxu"
-                    ]
+                    "type": "task"
                 },
                 "Activity_1ijxuyk": {
                     "name": "par22",
-                    "type": "task",
-                    "previous": [
-                        "Event_0iqs5ri"
-                    ],
-                    "next": [
-                        "Gateway_0xussxu"
-                    ]
+                    "type": "task"
                 },
                 "Gateway_0xussxu": {
                     "name": "close parallel",
-                    "type": "parallelGateway_close",
-                    "previous": [],
-                    "next": [
-                        "Gateway_0a5f12j"
-                    ]
+                    "type": "parallelGateway"
                 },
                 "StartEvent_09cyjfc": {
                     "name": "",
-                    "type": "startEvent",
-                    "previous": [],
-                    "next": [
-                        "Gateway_01s1pgm"
-                    ]
+                    "type": "startEvent"
                 },
                 "Gateway_01s1pgm": {
                     "name": "close loop",
-                    "type": "exclusiveGateway",
-                    "previous": [],
-                    "next": [
-                        "Activity_10x08n3"
-                    ]
+                    "type": "exclusiveGateway"
                 },
                 "Gateway_0a5f12j": {
                     "name": "open loop",
-                    "type": "exclusiveGateway",
-                    "previous": [],
-                    "next": [
-                        "Gateway_01s1pgm",
-                        "Event_1b9cqpn"
-                    ]
+                    "type": "exclusiveGateway"
                 },
                 "Event_1b9cqpn": {
                     "name": "",
-                    "type": "endEvent",
-                    "previous": [],
-                    "next": []
+                    "type": "endEvent"
                 },
                 "Activity_0uqn82h": {
                     "name": "par21 (subproc)",
@@ -247,42 +210,21 @@
                     "subprocess_details": {
                         "Event_1njp3xz": {
                             "name": "",
-                            "type": "startEvent",
-                            "previous": [],
-                            "next": [
-                                "Activity_12afiek"
-                            ]
+                            "type": "startEvent"
                         },
                         "Activity_12afiek": {
                             "name": "sub_1",
-                            "type": "task",
-                            "previous": [],
-                            "next": [
-                                "Event_1go337f"
-                            ]
+                            "type": "task"
                         },
                         "Event_1go337f": {
                             "name": "",
-                            "type": "endEvent",
-                            "previous": [],
-                            "next": []
+                            "type": "endEvent"
                         }
-                    },
-                    "previous": [
-                        "Event_016qlk7"
-                    ],
-                    "next": [
-                        "Activity_1ijxuyk"
-                    ]
+                    }
                 },
                 "Gateway_1ngxc9b": {
                     "name": "Parallel open",
-                    "type": "parallelGateway",
-                    "previous": [],
-                    "next": [
-                        "Activity_14rjj9v",
-                        "Activity_0uqn82h"
-                    ]
+                    "type": "parallelGateway"
                 }
             }
         },
@@ -301,45 +243,23 @@
             "node_details": {
                 "Event_0pg18xv": {
                     "name": "",
-                    "type": "startEvent",
-                    "previous": [
-                        "Activity_10x08n3"
-                    ],
-                    "next": [
-                        "Activity_182s0e0"
-                    ]
+                    "type": "startEvent"
                 },
                 "Activity_182s0e0": {
                     "name": "sec_1",
-                    "type": "task",
-                    "previous": [],
-                    "next": [
-                        "Event_016qlk7"
-                    ]
+                    "type": "task"
                 },
                 "Event_016qlk7": {
                     "name": "msgThrow",
-                    "type": "intermediateThrowEvent",
-                    "previous": [],
-                    "next": [
-                        "Event_1f85ia9"
-                    ]
+                    "type": "intermediateThrowEvent"
                 },
                 "Event_0iqs5ri": {
                     "name": "msg end 2_1",
-                    "type": "endEvent",
-                    "previous": [],
-                    "next": []
+                    "type": "endEvent"
                 },
                 "Event_1f85ia9": {
                     "name": "msgCatch",
-                    "type": "intermediateCatchEvent",
-                    "previous": [
-                        "Activity_0uqn82h"
-                    ],
-                    "next": [
-                        "Event_0iqs5ri"
-                    ]
+                    "type": "intermediateCatchEvent"
                 }
             }
         }

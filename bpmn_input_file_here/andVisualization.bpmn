@@ -373,13 +373,13 @@
           "name": "Res1",
           "totalAmount": "1",
           "costPerHour": "1",
-          "timetableId": "QBP_DEFAULT_TIMETABLE"
+          "timetableName": "QBP_DEFAULT_TIMETABLE"
         },
         {
           "name": "Res2",
           "totalAmount": "2",
           "costPerHour": "2",
-          "timetableId": "QBP_247_TIMETABLE"
+          "timetableName": "QBP_247_TIMETABLE"
         }
       ],
       "elements": [
