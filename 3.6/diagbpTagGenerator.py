@@ -188,13 +188,50 @@ def diagbp(diagbpPath, bpmn_dict):
         if sourceRef_counts[flow['sourceRef']] >= 2:
             filtered_flows[id] = flow
     for id, flow in filtered_flows.items():
-        source=flow["sourceRef"]
-        target=flow["targetRef"]
-        sourceName, sourceType = support[source]
-        targetName, targetType = support[target]
+        flowName=flow["name"]
+        sourceId=flow["sourceRef"]
+        targetId=flow["targetRef"]
+        sourceName, sourceType = support[sourceId]
+        targetName, targetType = support[targetId]
         if sourceType=="exclusiveGateway":
-            print(id+sourceName+targetName)
+            sequence_flow={}
+            sequence_flow["elementId"]=id
+            print(f"\nYou are now inserting data for the sequence flow named '{flowName}' that goes from '{sourceName}' to '{targetName}'")
+            sequence_flow["executionProbability"]=input(f"Insert a probability (0 to 1 i.e: 0.5):  ")
+            types=[]
+            i=0
+            while True:
+                i=i+1
+                singleType={}
+                singleType["type"] = input(f"Insert the instance type n.{i} that is forced to go into this sequence flow: ")
+                if not singleType["type"]:
+                    break
+                types.append(singleType)
+            sequence_flow["types"]=types
+            sequence_flows.append(sequence_flow)
+    #TODO: popolare array sequence_flows chiedendo dati per ogni sourceName|flowName|targetName, elementId è id.
 
+    """
+    "sequenceFlows": [
+        {
+          "elementId": "Flow_16n1wa9",
+          "executionProbability": "0.5",
+          "types": [
+            {
+              "type": "A"
+            },
+            {
+              "type": "B"
+            }
+          ],
+          "_COMMENTO":"types indica che se sono in un istanza di quel type, allora la scelta è forzata su questa direzione"
+        },
+        {
+          "elementId": "Flow_0d86tug",
+          "executionProbability": "0.5"
+        }
+      ]
+    """
 
 
 
