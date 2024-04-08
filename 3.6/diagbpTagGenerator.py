@@ -27,7 +27,7 @@ def diagbp(diagbpPath, bpmn_dict):
     
     #DATETIME
     print("-------------------DATETIME----------------------")
-    date_str = input("Enter process start date in dd/mm/yyyy format (leave empty this and next to use datetime of now): ")
+    date_str = input("Enter process start date in dd/mm/yyyy format (leave this and next field empty to use datetime of now): ")
     time_str = input("Enter process start time in hh:mm:ss format: ")
     datetime_str = f"{date_str} {time_str}"
     if not datetime_str.strip():
@@ -143,7 +143,7 @@ def diagbp(diagbpPath, bpmn_dict):
             for key in groupDur:
                 keyDisplay=key
                 if key=="type":
-                    keyDisplay="Inter arrival time type (Fixed, Normal, Exponential, Uniform, Triangular, Log-Normal, Gamma, Histogram)"
+                    keyDisplay="Execution time type (Fixed, Normal, Exponential, Uniform, Triangular, Log-Normal, Gamma, Histogram)"
                 if key=="timeUnit":
                     keyDisplay="time unit (seconds/minutes/hours/days)"
                 value=input(f"Insert the {keyDisplay} for the duration distribution of task '{task_name}' of process {process_name}: ")
