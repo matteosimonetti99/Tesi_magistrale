@@ -67,6 +67,7 @@ task_durations = {element['elementId']: element['durationDistribution'] for elem
 
 
 class Process:
+    executed_nodes = {}  # make executed_nodes a dictionary of sets
     def __init__(self, env, name, process_details, num, start_delay=0, instance_type="default"):
         self.env = env
         self.name = name
@@ -76,7 +77,9 @@ class Process:
         self.instance_type = instance_type
         self.num = num
         self.action = env.process(self.run())
-        self.executed_nodes = set()
+                # Ensure the dictionary has a set for this instance
+        if self.num not in Process.executed_nodes:
+            Process.executed_nodes[self.num] = set()  # Add a new set for this instance
 
     def printState(self, node, node_id):
         print(f"#{self.num}|{self.name}: {node_id} ({node['name']}), type: {node['type']}, instance_type:{self.instance_type}. time: {self.env.now}.")
@@ -89,9 +92,7 @@ class Process:
         yield from self.run_node(start_node_id)
 
 
-    def run_node(self, node_id, subprocess_node=None, executed_nodes=None):
-        if executed_nodes is None:
-            executed_nodes = self.executed_nodes
+    def run_node(self, node_id, subprocess_node=None):
         if subprocess_node is None:
             node = self.process_details['node_details'][node_id]
         else:
@@ -101,19 +102,19 @@ class Process:
             yield self.env.timeout(0)
             next_node_id = node['next'][0]
             self.printState(node,node_id)
-            yield from self.run_node(next_node_id, subprocess_node, executed_nodes)
+            yield from self.run_node(next_node_id, subprocess_node)
 
         elif node['type'] == 'task':
             if len(node['previous'])>0:
-                while not all(prev_node in self.executed_nodes for prev_node in node['previous']):
+                while not all(prev_node in Process.executed_nodes[self.num] for prev_node in node['previous']):
                     yield self.env.timeout(1)
             taskTime=timeCalculator.convert_to_seconds(task_durations[node_id]) # task duration is used here, it is passed before to a converter that transforms the type/mean/arg1/arg2 to a value in seconds, this value the task duration is always different in each instance
             yield self.env.timeout(taskTime) 
-            executed_nodes.add(node_id)
+            Process.executed_nodes[self.num].add(node_id)
             self.printState(node,node_id)
-            print(self.executed_nodes)
+            print(Process.executed_nodes[self.num])
             next_node_id = node['next'][0]
-            yield from self.run_node(next_node_id, subprocess_node, executed_nodes)
+            yield from self.run_node(next_node_id, subprocess_node)
 
         elif node['type'] == 'exclusiveGateway': #TODO integra instance_type
             # Get the flows from bpmn.json that start from the current XOR
@@ -131,16 +132,16 @@ class Process:
             else:
                 next_node_id = np.random.choice(list(node_probabilities.keys()), p=list(node_probabilities.values()))
             self.printState(node,node_id)
-            yield from self.run_node(next_node_id, subprocess_node, executed_nodes)
+            yield from self.run_node(next_node_id, subprocess_node)
 
         elif node['type'] == 'parallelGateway':
             # AND logic: run all paths concurrently and wait for all to finish, process is created for each path to ensure parallelism
-            events = [self.env.process(self.run_node(next_node_id, subprocess_node, executed_nodes)) for next_node_id in node['next']]
+            events = [self.env.process(self.run_node(next_node_id, subprocess_node)) for next_node_id in node['next']]
             self.printState(node,node_id)
             yield self.env.all_of(events)
             # When all_of is done, proceed with the node after the close
             next_node_after_parallel = self.stack.pop()
-            yield from self.run_node(next_node_after_parallel, subprocess_node, executed_nodes)
+            yield from self.run_node(next_node_after_parallel, subprocess_node)
 
         elif node['type'] == 'parallelGateway_close':
             self.stack.append(node['next'][0])
@@ -150,33 +151,33 @@ class Process:
         elif node['type'] == 'subProcess':
             start_node_id = next(sub_node_id for sub_node_id, sub_node in node['subprocess_details'].items() if sub_node['type'] == 'startEvent')
             self.printState(node,node_id)
-            yield from self.run_node(start_node_id, node_id, executed_nodes)
-            executed_nodes.add(node_id)
+            yield from self.run_node(start_node_id, node_id)
+            Process.executed_nodes[self.num].add(node_id)
             next_node_id = node['next'][0]
             # After the subprocess is executed, continue with the node next to the subprocess
-            yield from self.run_node(next_node_id, None, executed_nodes)
+            yield from self.run_node(next_node_id, None)
         elif node['type'] == 'intermediateThrowEvent':
             next_node_id = node['next'][0]
-            executed_nodes.add(node_id)
+            Process.executed_nodes[self.num].add(node_id)
             self.printState(node,node_id)
-            yield from self.run_node(next_node_id, subprocess_node, executed_nodes)
+            yield from self.run_node(next_node_id, subprocess_node)
             return
         elif node['type'] == 'intermediateCatchEvent':
             if node['subtype'] == 'messageEventDefinition':
                 next_node_id = node['next'][0]
                 if len(node['previous'])>0: #wait for msg
-                    while not all(prev_node in self.executed_nodes for prev_node in node['previous']):
+                    while not all(prev_node in Process.executed_nodes[self.num] for prev_node in node['previous']):
                         yield self.env.timeout(1)
-                executed_nodes.add(node_id)
+                Process.executed_nodes[self.num].add(node_id)
                 self.printState(node,node_id)
-                yield from self.run_node(next_node_id, subprocess_node, executed_nodes)
+                yield from self.run_node(next_node_id, subprocess_node)
                 return
             else:
                 next_node_id = node['next'][0]
-                executed_nodes.add(node_id)
+                Process.executed_nodes[self.num].add(node_id)
                 self.printState(node,node_id)
-                yield self.env.timeout(1) #TODO: CAMBIARE 1 IN DURATA DA PRENDERE DA PARAM
-                yield from self.run_node(next_node_id)
+                yield self.env.timeout(1) #TODO: CAMBIARE 1 IN DURATA DA PRENDERE DA PARAM DEL TIMER
+                yield from self.run_node(next_node_id, subprocess_node)
                 return
 
         elif node['type'] == 'endEvent':
