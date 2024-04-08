@@ -66,18 +66,34 @@ for process_id, process_element in bpmnGraph.process_elements.items():
     node_details = {}
     for node_id in process_element['node_ids']:
         node_info = bpmnGraph.diagram_graph.node[node_id]
+        node_type = node_info.get('type', 'Unknown')
+        node_subtype = None
+        if node_type == 'intermediateCatchEvent':
+            # Get the specific type of the intermediate catch event
+            event_definitions = node_info.get('event_definitions', [])
+            for event_definition in event_definitions:
+                node_subtype = event_definition.get('definition_type', 'Unknown')
         node_details[node_id] = {
             'name': node_info.get('node_name', 'Unnamed'),
-            'type': node_info.get('type', 'Unknown'),
+            'type': node_type,
+            'subtype': node_subtype,  # Add subtype to the dictionary
         }
         if node_info.get('type', 'Unknown') == 'subProcess':
             # Add subprocess details
             subprocess_details = {}
             for child_node_id in node_info.get('node_ids', []):
                 child_node_info = bpmnGraph.diagram_graph.node[child_node_id]
+                child_node_type = child_node_info.get('type', 'Unknown')
+                child_node_subtype = None
+                if child_node_type == 'intermediateCatchEvent':
+                    # Get the specific type of the intermediate catch event
+                    child_event_definitions = child_node_info.get('event_definitions', [])
+                    for child_event_definition in child_event_definitions:
+                        child_node_subtype = child_event_definition.get('definition_type', 'Unknown')
                 subprocess_details[child_node_id] = {
                     'name': child_node_info.get('node_name', 'Unnamed'),
-                    'type': child_node_info.get('type', 'Unknown'),
+                    'type': child_node_type,
+                    'subtype': child_node_subtype,  # Add subtype to the dictionary
                 }
             node_details[node_id]['subprocess_details'] = subprocess_details
 

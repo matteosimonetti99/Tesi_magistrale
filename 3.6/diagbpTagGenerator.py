@@ -27,7 +27,7 @@ def diagbp(diagbpPath, bpmn_dict):
     
     #DATETIME
     print("-------------------DATETIME----------------------")
-    date_str = input("Enter process start date in dd/mm/yyyy format: ")
+    date_str = input("Enter process start date in dd/mm/yyyy format (leave empty this and next to use datetime of now): ")
     time_str = input("Enter process start time in hh:mm:ss format: ")
     datetime_str = f"{date_str} {time_str}"
     if not datetime_str.strip():
@@ -136,7 +136,7 @@ def diagbp(diagbpPath, bpmn_dict):
             element["elementId"]=node_id
             group1=["worklistId", "fixedCost", "costThreshold"]
             for key in group1:
-                value=input(f"Insert the {key} for the task {task_name} of process {process_name}: ")
+                value=input(f"Insert the {key} for the task '{task_name}' of process {process_name}: ")
                 element[key] = value
             durationDistributionDict={}
             groupDur=["type", "mean", "arg1", "arg2", "timeUnit"]
@@ -146,12 +146,12 @@ def diagbp(diagbpPath, bpmn_dict):
                     keyDisplay="Inter arrival time type (Fixed, Normal, Exponential, Uniform, Triangular, Log-Normal, Gamma, Histogram)"
                 if key=="timeUnit":
                     keyDisplay="time unit (seconds/minutes/hours/days)"
-                value=input(f"Insert the {keyDisplay} for the duration distribution of task {task_name} of process {process_name}: ")
+                value=input(f"Insert the {keyDisplay} for the duration distribution of task '{task_name}' of process {process_name}: ")
                 durationDistributionDict[key] = value
             element["durationDistribution"]=durationDistributionDict
             group2=["durationThreshold", "durationThresholdTimeUnit"]
             for key in group2:
-                value=input(f"Insert the {key} for the task {task_name} of process {process_name}: ")
+                value=input(f"Insert the {key} for the task '{task_name}' of process {process_name}: ")
                 element[key] = value
             resourceIds=[]
 
@@ -162,7 +162,7 @@ def diagbp(diagbpPath, bpmn_dict):
                 resourceId={}
                 groupR=["resourceName", "amountNeeded", "groupId"]
                 for key in groupR:
-                    value=input(f"Resource n.{i} | Insert the {key} for the task {task_name} of process {process_name}: ")
+                    value=input(f"Resource n.{i} | Insert the {key} for the task '{task_name}' of process {process_name}: ")
                     if not value:
                         exit_loop=True
                         break
