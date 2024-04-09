@@ -147,7 +147,7 @@ class Process:
             # AND logic: run all paths concurrently and wait for all to finish, process is created for each path to ensure parallelism
             events = []
             for next_node_id in node['next']:
-                process = self.env.process(self.run_node(next_node_id, subprocess_node, ASDSA))
+                process = self.env.process(self.run_node(next_node_id, subprocess_node))
                 events.append(process)
             self.printState(node,node_id,printFlag)
             yield self.env.all_of(events)

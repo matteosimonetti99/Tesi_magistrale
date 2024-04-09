@@ -1,1 +1,132 @@
-{"processInstances": [{"type": "a", "count": "2"}], "startDateTime": "2024-04-08T22:17:51", "arrivalRateDistribution": {"type": "FIXED", "mean": "10", "arg1": "", "arg2": "", "timeUnit": "minutes"}, "timetables": [], "resources": [], "elements": [{"elementId": "Activity_10x08n3", "worklistId": "1", "fixedCost": "", "costThreshold": "", "durationDistribution": {"type": "fixed", "mean": "10", "arg1": "", "arg2": "", "timeUnit": "seconds"}, "durationThreshold": "", "durationThresholdTimeUnit": "", "resourceIds": []}, {"elementId": "Activity_14rjj9v", "worklistId": "", "fixedCost": "", "costThreshold": "", "durationDistribution": {"type": "fixed", "mean": "1", "arg1": "", "arg2": "", "timeUnit": "seconds"}, "durationThreshold": "", "durationThresholdTimeUnit": "", "resourceIds": []}, {"elementId": "Activity_0qykc8o", "worklistId": "", "fixedCost": "", "costThreshold": "", "durationDistribution": {"type": "fixed", "mean": "1", "arg1": "", "arg2": "", "timeUnit": "seconds"}, "durationThreshold": "", "durationThresholdTimeUnit": "", "resourceIds": []}, {"elementId": "Activity_1ijxuyk", "worklistId": "", "fixedCost": "", "costThreshold": "", "durationDistribution": {"type": "fixed", "mean": "2", "arg1": "", "arg2": "", "timeUnit": "seconds"}, "durationThreshold": "", "durationThresholdTimeUnit": "", "resourceIds": []}, {"elementId": "Activity_12afiek", "worklistId": "", "fixedCost": "", "costThreshold": "", "durationDistribution": {"type": "fixed", "mean": "2", "arg1": "", "arg2": "", "timeUnit": "seconds"}, "durationThreshold": "", "durationThresholdTimeUnit": "", "resourceIds": []}, {"elementId": "Activity_182s0e0", "worklistId": "", "fixedCost": "", "costThreshold": "", "durationDistribution": {"type": "fixed", "mean": "100", "arg1": "", "arg2": "", "timeUnit": "seconds"}, "durationThreshold": "", "durationThresholdTimeUnit": "", "resourceIds": []}], "sequenceFlows": [{"elementId": "Flow_0d86tug", "executionProbability": "0.1", "types": [{"type": "b"}]}, {"elementId": "Flow_16n1wa9", "executionProbability": "0.9", "types": []}]}
+{
+    "processInstances": [
+        {
+            "type": "a",
+            "count": "2"
+        }
+    ],
+    "startDateTime": "2024-04-08T22:17:51",
+    "arrivalRateDistribution": {
+        "type": "FIXED",
+        "mean": "10",
+        "arg1": "",
+        "arg2": "",
+        "timeUnit": "minutes"
+    },
+    "timetables": [],
+    "resources": [],
+    "elements": [
+        {
+            "elementId": "Activity_10x08n3",
+            "worklistId": "1",
+            "fixedCost": "",
+            "costThreshold": "",
+            "durationDistribution": {
+                "type": "fixed",
+                "mean": "10",
+                "arg1": "",
+                "arg2": "",
+                "timeUnit": "seconds"
+            },
+            "durationThreshold": "",
+            "durationThresholdTimeUnit": "",
+            "resourceIds": []
+        },
+        {
+            "elementId": "Activity_14rjj9v",
+            "worklistId": "",
+            "fixedCost": "",
+            "costThreshold": "",
+            "durationDistribution": {
+                "type": "fixed",
+                "mean": "1",
+                "arg1": "",
+                "arg2": "",
+                "timeUnit": "seconds"
+            },
+            "durationThreshold": "",
+            "durationThresholdTimeUnit": "",
+            "resourceIds": []
+        },
+        {
+            "elementId": "Activity_0qykc8o",
+            "worklistId": "",
+            "fixedCost": "",
+            "costThreshold": "",
+            "durationDistribution": {
+                "type": "fixed",
+                "mean": "1",
+                "arg1": "",
+                "arg2": "",
+                "timeUnit": "seconds"
+            },
+            "durationThreshold": "",
+            "durationThresholdTimeUnit": "",
+            "resourceIds": []
+        },
+        {
+            "elementId": "Activity_1ijxuyk",
+            "worklistId": "",
+            "fixedCost": "",
+            "costThreshold": "",
+            "durationDistribution": {
+                "type": "fixed",
+                "mean": "2",
+                "arg1": "",
+                "arg2": "",
+                "timeUnit": "seconds"
+            },
+            "durationThreshold": "",
+            "durationThresholdTimeUnit": "",
+            "resourceIds": []
+        },
+        {
+            "elementId": "Activity_12afiek",
+            "worklistId": "",
+            "fixedCost": "",
+            "costThreshold": "",
+            "durationDistribution": {
+                "type": "fixed",
+                "mean": "2",
+                "arg1": "",
+                "arg2": "",
+                "timeUnit": "seconds"
+            },
+            "durationThreshold": "",
+            "durationThresholdTimeUnit": "",
+            "resourceIds": []
+        },
+        {
+            "elementId": "Activity_182s0e0",
+            "worklistId": "",
+            "fixedCost": "",
+            "costThreshold": "",
+            "durationDistribution": {
+                "type": "fixed",
+                "mean": "100",
+                "arg1": "",
+                "arg2": "",
+                "timeUnit": "seconds"
+            },
+            "durationThreshold": "",
+            "durationThresholdTimeUnit": "",
+            "resourceIds": []
+        }
+    ],
+    "sequenceFlows": [
+        {
+            "elementId": "Flow_0d86tug",
+            "executionProbability": "0.1",
+            "types": [
+                {
+                    "type": "b"
+                }
+            ]
+        },
+        {
+            "elementId": "Flow_16n1wa9",
+            "executionProbability": "0.9",
+            "types": []
+        }
+    ]
+}
