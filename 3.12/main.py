@@ -68,6 +68,8 @@ task_durations = {element['elementId']: element['durationDistribution'] for elem
 
 class Process:
     executed_nodes = {}  # make executed_nodes a dictionary of sets
+    #parallelTimes = {}
+    #parallelCounter = 0
     def __init__(self, env, name, process_details, num, start_delay=0, instance_type="default"):
         self.env = env
         self.name = name
@@ -77,9 +79,8 @@ class Process:
         self.instance_type = instance_type
         self.num = num
         self.action = env.process(self.run())
-                # Ensure the dictionary has a set for this instance
-        if self.num not in Process.executed_nodes:
-            Process.executed_nodes[self.num] = set()  # Add a new set for this instance
+        #Process.parallelTimes[self.num]={}
+        Process.executed_nodes[self.num] = set()  # Add a new set for this instance
 
     def printState(self, node, node_id, inSubProcess):
         if node['type'] == 'subProcess':
@@ -106,7 +107,6 @@ class Process:
             printFlag=True
 
         if node['type'] == 'startEvent':
-            yield self.env.timeout(0)
             next_node_id = node['next'][0]
             if len(node['previous'])>0:
                 while not all(prev_node in Process.executed_nodes[self.num] for prev_node in node['previous']):
@@ -145,7 +145,10 @@ class Process:
 
         elif node['type'] == 'parallelGateway':
             # AND logic: run all paths concurrently and wait for all to finish, process is created for each path to ensure parallelism
-            events = [self.env.process(self.run_node(next_node_id, subprocess_node)) for next_node_id in node['next']]
+            events = []
+            for next_node_id in node['next']:
+                process = self.env.process(self.run_node(next_node_id, subprocess_node, ASDSA))
+                events.append(process)
             self.printState(node,node_id,printFlag)
             yield self.env.all_of(events)
             # When all_of is done, proceed with the node after the close
