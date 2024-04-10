@@ -52,6 +52,7 @@ num_instances = sum(int(instance['count']) for instance in diagbp['processInstan
 print("NUM_INSTANCES: "+ str(num_instances))
 instance_types = diagbp['processInstances']
 xor_probabilities = {flow['elementId']: float(flow['executionProbability']) for flow in diagbp['sequenceFlows']}
+resources = diagbp['resources']
 
 # Generate the delays
 delay_between_instances = diagbp['arrivalRateDistribution'] #array contains: type, mean, arg1, arg2
@@ -62,13 +63,27 @@ for _ in range(num_instances-1):
     total_delay += delay #each delay is therefore equal to itself + the previous delay
     delays.append(total_delay)
 
-task_durations = {element['elementId']: element['durationDistribution'] for element in diagbp['elements']} #array contains: type, mean, arg1, arg2
+task_durations = {element['elementId']: element['durationDistribution'] for element in diagbp['elements']} #dict contains: type, mean, arg1, arg2
+task_resources = {element['elementId']: element['resourceIds'] for element in diagbp['elements']} #array contains dicts with each: resourceName, amountNeeded, groupId
 
+class Shifts: # codice preso solo per idea, bisogna trasformare orari degli shift come orario shift - orario d'inizio e portarlo in secondi, 
+# così se non sono in quel range non posso accedere a quella risorsa, bisogna inoltre fare % (24*3600) che sono i secondi in 1 gg.
+    def __init__(self, env, start_time, end_time):
+        self.env = env
+        self.start_time = start_time
+        self.end_time = end_time
+        self.shift = self.env.process(self.shifts())
 
+    def shifts(self):
+        while True:
+            if self.start_time <= self.env.now < self.end_time:
+                yield self.env.timeout(self.end_time - self.env.now)
+            else:
+                yield self.env.timeout((self.start_time - self.env.now) % 24)
 
 class Process:
     executed_nodes = {}  # make executed_nodes a dictionary of sets
-    def __init__(self, env, name, process_details, num, start_delay=0, instance_type="default"):
+    def __init__(self, env, name, process_details, num, start_delay=0, resources, instance_type="default"):
         self.env = env
         self.name = name
         self.process_details = process_details
@@ -77,7 +92,9 @@ class Process:
         self.instance_type = instance_type
         self.num = num
         self.action = env.process(self.run())
-        Process.executed_nodes[self.num] = set()  # Add a new set for this instance
+        self.resources = resources #questo campo mantiene la struttura che sta in diagbp.json di resources, quello dopo lo adatta per simpy
+        self.simpyResources = {res['name']: simpy.Resource(env, capacity=int(res['totalAmount'])) for res in resources} if resources else {}
+        Process.executed_nodes[self.num] = set() 
 
     def printState(self, node, node_id, inSubProcess):
         if node['type'] == 'subProcess':
@@ -111,16 +128,35 @@ class Process:
             self.printState(node,node_id,printFlag)
             yield from self.run_node(next_node_id, subprocess_node)
 
+
         elif node['type'] == 'task':
             if len(node['previous'])>0:
                 while not all(prev_node in Process.executed_nodes[self.num] for prev_node in node['previous']):
                     yield self.env.timeout(1)
             taskTime=timeCalculator.convert_to_seconds(task_durations[node_id]) # task duration is used here, it is passed before to a converter that transforms the type/mean/arg1/arg2 to a value in seconds, this value the task duration is always different in each instance
+            taskNeededResources=task_resources[node_id]
+            #TODO: usa taskNeededResources (dict con: resourceName, amountNeeded, groupId) per richiesta risorse. Risorse totali in self.resources
+            grouped_resources = {}
+            for res in taskNeededResources:
+                if res['groupId'] not in grouped_resources:
+                    grouped_resources[res['groupId']] = []
+                grouped_resources[res['groupId']].append((res['resourceName'], int(res['amountNeeded'])))
+            for group in grouped_resources.values():
+                requests = [self.simpyResources[resource].request() for resource, amount in group for _ in range(amount)]
+                yield self.env.all_of(requests)
+            # end resources req
+
             yield self.env.timeout(taskTime) 
             Process.executed_nodes[self.num].add(node_id)
             self.printState(node,node_id,printFlag)
             next_node_id = node['next'][0]
+
+            # Release resources
+            for req in requests:
+                yield self.simpyResources[req.resource].release(req)
+
             yield from self.run_node(next_node_id, subprocess_node)
+
 
         elif node['type'] == 'exclusiveGateway': #TODO integra instance_type
             # Get the flows from bpmn.json that start from the current XOR
@@ -150,7 +186,7 @@ class Process:
             yield self.env.all_of(events)
             # When all_of is done, proceed with the node after the close
             next_node_after_parallel = self.stack.pop()
-            #print for parallel close
+            # print for parallel close
             if not printFlag:
                 print(f"#{self.num}|{self.name}: Parallel gateway closed. instance_type:{self.instance_type}. time: {self.env.now}.")
             else:
@@ -159,7 +195,6 @@ class Process:
 
         elif node['type'] == 'parallelGateway_close':
             self.stack.append(node['next'][0])
-            #self.printState(node,node_id,printFlag)
             return
             
         elif node['type'] == 'subProcess':
@@ -212,7 +247,8 @@ def simulate_bpmn(bpmn_dict):
 
         for participant_id, participant in bpmn_dict['collaboration']['participants'].items():
             process_details = bpmn_dict['process_elements'][participant['processRef']]
-            Process(env, participant['name'], process_details, num=i+1, start_delay=delays[i], instance_type=instance_type)
+            # for each instance a class Process is created:
+            Process(env, participant['name'], process_details, num=i+1, start_delay=delays[i], resources, instance_type=instance_type)
 
         instance_count += 1
         if instance_count >= int(instance_types[instance_index]['count']):
