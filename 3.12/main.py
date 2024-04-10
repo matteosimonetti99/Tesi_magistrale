@@ -68,8 +68,6 @@ task_durations = {element['elementId']: element['durationDistribution'] for elem
 
 class Process:
     executed_nodes = {}  # make executed_nodes a dictionary of sets
-    #parallelTimes = {}
-    #parallelCounter = 0
     def __init__(self, env, name, process_details, num, start_delay=0, instance_type="default"):
         self.env = env
         self.name = name
@@ -79,14 +77,13 @@ class Process:
         self.instance_type = instance_type
         self.num = num
         self.action = env.process(self.run())
-        #Process.parallelTimes[self.num]={}
         Process.executed_nodes[self.num] = set()  # Add a new set for this instance
 
     def printState(self, node, node_id, inSubProcess):
         if node['type'] == 'subProcess':
             print(f"#{self.num}|{self.name}: {node_id} (subprocess {node['name']} just started), instance_type:{self.instance_type}. time: {self.env.now}.")
         elif inSubProcess == True:
-            print(f"#{self.num}|{self.name} (inside subProcess): {node_id} ({node['name']}), type: {node['type']}, instance_type:{self.instance_type}. time: {self.env.now}.")
+            print(f"#{self.num}|{self.name} (inside subprocess): {node_id} ({node['name']}), type: {node['type']}, instance_type:{self.instance_type}. time: {self.env.now}.")
         else:
             print(f"#{self.num}|{self.name}: {node_id} ({node['name']}), type: {node['type']}, instance_type:{self.instance_type}. time: {self.env.now}.")
 
@@ -153,6 +150,11 @@ class Process:
             yield self.env.all_of(events)
             # When all_of is done, proceed with the node after the close
             next_node_after_parallel = self.stack.pop()
+            #print for parallel close
+            if not printFlag:
+                print(f"#{self.num}|{self.name}: Parallel gateway closed. instance_type:{self.instance_type}. time: {self.env.now}.")
+            else:
+                print(f"#{self.num}|{self.name}| (inside subprocess): Parallel gateway closed. instance_type:{self.instance_type}. time: {self.env.now}.")
             yield from self.run_node(next_node_after_parallel, subprocess_node)
 
         elif node['type'] == 'parallelGateway_close':
