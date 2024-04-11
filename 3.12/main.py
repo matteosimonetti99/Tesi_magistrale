@@ -161,11 +161,12 @@ class Process:
 
                 # Wait until one of the processes finishes (i.e., one group has all its resources available)
                 done_condition = yield self.env.any_of(processes)
-                done_process = list(done_condition.events)[0]  # Get the process that finished
-                done_requests = done_process.value  # Get the requests from the done process
-                for resource, amount, req in done_requests:
-                    req.resource.release(req)
-                    print (node_id + "|Resource locked: " + resource + ", Amount: " + str(amount))  # Print
+                print (done_condition)
+                for done_process in done_condition.values():
+                    #done_requests = done_process.value  # Get the requests from the done process
+                    for resource, amount, req in done_process:
+                        req.resource.release(req)
+                        print (node_id + "|Resource locked: " + resource + ", Total Amount: " + str(amount))  # Print
                 # Interrupt all other processes because a group of resources was taken
                 for process in processes:
                     if process is not done_process and process.is_alive:
@@ -177,9 +178,10 @@ class Process:
             self.printState(node,node_id,printFlag)
             next_node_id = node['next'][0]
             # Release resources
-            for resource, amount, req in done_requests:
-                req.resource.release(req)
-                print (node_id + "|Resource released: " + resource + ", Amount: " + str(amount))  # Print
+            for done_process in done_condition.values():
+                for resource, amount, req in done_process:
+                    req.resource.release(req)
+                    print (node_id + "|Resource released: " + resource + ", Total Amount: " + str(amount))  # Print
 
 
 
