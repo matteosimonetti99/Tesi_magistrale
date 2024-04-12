@@ -165,7 +165,7 @@ class Process:
                             resources_allocated = True
                             for req in requests:
                                 yield req
-                                print (node_id + "|Resource locked: " + str(req.resource) + ", Total Amount: " )  # Print + str(req.amount)
+                                print (node_id + "|Resource locked: " + str(req.resource) + ", Time: " + str(self.env.now) )  # Print + str(req.amount)
                             break  # Break the loop as resources are allocated
                     if not resources_allocated:
                         yield self.env.timeout(1)  # If no group can be allocated, wait for a timeout(1)
@@ -178,10 +178,9 @@ class Process:
             next_node_id = node['next'][0]
             
             # Release resources
-            for group_id, resources in grouped_resources.items():
-                for resource, amount in resources:
-                    self.resources[resource][0].release(req)
-                    print (node_id + "|Resource released: " + resource + ", Total Amount: " + str(amount))  # Print
+            for req in requests:
+                req.resource.release(req)
+                print(node_id + "|Resource released: " + str(req.resource)  + ", Time: " + str(self.env.now))
 
             yield from self.run_node(next_node_id, subprocess_node)
 
