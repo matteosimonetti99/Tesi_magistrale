@@ -104,16 +104,6 @@ class Process:
         else:
             print(f"#{self.num}|{self.name}: {node_id} ({node['name']}), type: {node['type']}, instance_type:{self.instance_type}. time: {self.env.now}.")
 
-    def request_resources(self, group):
-        try:
-            requests = [(resource, amount, self.resources[resource][0].request()) for resource, amount in group for _ in range(amount)]
-            yield self.env.all_of(req for _, _, req in requests)  # asks for all the resources in the group
-            return requests
-        except simpy.Interrupt: # This process was interrupted because another group of resources is available
-            for _, _, req in requests:
-                req.resource.release(req) 
-                req.cancel()
-
     def run(self):
         yield self.env.timeout(self.start_delay) #delay start because of arrival rate.
         start_node_id = next((node_id for node_id, node in self.process_details['node_details'].items() if node['type'] == 'startEvent'), None)
@@ -153,37 +143,45 @@ class Process:
                     if res['groupId'] not in grouped_resources:
                         grouped_resources[res['groupId']] = []
                     grouped_resources[res['groupId']].append((res['resourceName'], int(res['amountNeeded'])))
-                # Create a process for each group of resources
-                for group_id, resources in grouped_resources.items():
-                    resource_names = [resource[0] for resource in resources]
-                    print(node_id+"|Group ID: " + str(group_id) + ", Resources: " + ', '.join(resource_names)) 
-                processes = [self.env.process(self.request_resources(group)) for group in grouped_resources.values()]
-
-                # Wait until one of the processes finishes (i.e., one group has all its resources available)
-                done_condition = yield self.env.any_of(processes)
-                print (done_condition)
-                for done_process in done_condition.values():
-                    #done_requests = done_process.value  # Get the requests from the done process
-                    for resource, amount, req in done_process:
-                        req.resource.release(req)
-                        print (node_id + "|Resource locked: " + resource + ", Total Amount: " + str(amount))  # Print
-                # Interrupt all other processes because a group of resources was taken
-                for process in processes:
-                    if process is not done_process and process.is_alive:
-                        process.interrupt()
-                # end resources req
+                
+                # Check each group of resources
+                while True:
+                    resources_allocated = False
+                    for group_id, resources in grouped_resources.items():
+                        #resource_names = [resource[0] for resource in resources]
+                        #print(node_id+"|Group ID: " + str(group_id) + ", Resources: " + ', '.join(resource_names)) 
+                        
+                        # Check if there are enough resources to fulfill the request of a group
+                        requests = []
+                        for resource, amount in resources:
+                            if self.resources[resource][0].capacity-self.resources[resource][0].count < amount: #capacity indica capacità della risorsa, count quante ne ho allocate
+                                break  # If not enough resources, break and check the next group
+                            else:
+                                for _ in range(amount):
+                                    req = self.resources[resource][0].request()  # If enough resources, request resources
+                                    requests.append(req)
+                        total_resources_needed = sum(amount for _, amount in resources)
+                        if len(requests) == total_resources_needed:  # If all resources in the group can be allocated
+                            resources_allocated = True
+                            for req in requests:
+                                yield req
+                                print (node_id + "|Resource locked: " + str(req.resource) + ", Total Amount: " )  # Print + str(req.amount)
+                            break  # Break the loop as resources are allocated
+                    if not resources_allocated:
+                        yield self.env.timeout(1)  # If no group can be allocated, wait for a timeout(1)
+                    else:
+                        break  # Break the loop as resources are allocated
 
             yield self.env.timeout(taskTime) 
             Process.executed_nodes[self.num].add(node_id)
             self.printState(node,node_id,printFlag)
             next_node_id = node['next'][0]
+            
             # Release resources
-            for done_process in done_condition.values():
-                for resource, amount, req in done_process:
-                    req.resource.release(req)
+            for group_id, resources in grouped_resources.items():
+                for resource, amount in resources:
+                    self.resources[resource][0].release(req)
                     print (node_id + "|Resource released: " + resource + ", Total Amount: " + str(amount))  # Print
-
-
 
             yield from self.run_node(next_node_id, subprocess_node)
 
