@@ -83,7 +83,7 @@ class Shifts: # codice preso solo per idea, bisogna trasformare orari degli shif
 
 class Process:
     executed_nodes = {}  # make executed_nodes a dictionary of sets
-    def __init__(self, env, name, process_details, num, resources, start_delay=0, instance_type="default"):
+    def __init__(self, env, name, process_details, num, globalResources, start_delay=0, instance_type="default"):
         self.env = env
         self.name = name
         self.process_details = process_details
@@ -93,7 +93,7 @@ class Process:
         self.num = num
         self.action = env.process(self.run())
         #resources is a dict with name as key and a tuple made of simpy resource, cost and timetable.
-        self.resources = {res['name']: (simpy.Resource(env, capacity=int(res['totalAmount'])), res['costPerHour'], res['timetableName']) for res in resources} if resources else {}
+        self.resources = globalResources
         Process.executed_nodes[self.num] = set() 
         for resource_name, resource_info in self.resources.items():
             resource, cost_per_hour, timetable_name = resource_info
@@ -162,8 +162,8 @@ class Process:
                                 break  # If not enough resources, break and check the next group
                             else:
                                 for _ in range(amount):
-                                    print(node_id + "|"+resource+": "+str(self.resources[resource][0].count)+"/"+str(self.resources[resource][0].capacity)+" amount: "+str(amount))
                                     req = self.resources[resource][0].request()  # If enough resources, request resources
+                                    print(node_id + "|"+resource+": "+str(self.resources[resource][0].count)+"/"+str(self.resources[resource][0].capacity)+" amount: "+str(amount))
                                     requests.append(req)
                         total_resources_needed = sum(amount for _, amount in resources)
                         if len(requests) == total_resources_needed:  # If all resources in the group can be allocated
@@ -274,13 +274,14 @@ def simulate_bpmn(bpmn_dict):
     instance_count = 0
 
     env = simpy.Environment()
+    global_resources = {res['name']: (simpy.Resource(env, capacity=int(res['totalAmount'])), res['costPerHour'], res['timetableName']) for res in resources} if resources else {}
     for i in range(num_instances):
         instance_type = instance_types[instance_index]['type']
 
         for participant_id, participant in bpmn_dict['collaboration']['participants'].items():
             process_details = bpmn_dict['process_elements'][participant['processRef']]
             # for each instance a class Process is created:
-            Process(env, participant['name'], process_details,i+1, resources, delays[i], instance_type)
+            Process(env, participant['name'], process_details,i+1, global_resources, delays[i], instance_type)
 
         instance_count += 1
         if instance_count >= int(instance_types[instance_index]['count']):
