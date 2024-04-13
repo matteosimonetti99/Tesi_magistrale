@@ -95,6 +95,9 @@ class Process:
         #resources is a dict with name as key and a tuple made of simpy resource, cost and timetable.
         self.resources = {res['name']: (simpy.Resource(env, capacity=int(res['totalAmount'])), res['costPerHour'], res['timetableName']) for res in resources} if resources else {}
         Process.executed_nodes[self.num] = set() 
+        for resource_name, resource_info in self.resources.items():
+            resource, cost_per_hour, timetable_name = resource_info
+            print(f"Resource Name: {resource_name}, Capacity: {resource.capacity}")
 
     def printState(self, node, node_id, inSubProcess):
         if node['type'] == 'subProcess':
@@ -137,7 +140,7 @@ class Process:
             
             #resources zone
             taskNeededResources=task_resources[node_id]
-            if taskNeededResources:
+            if taskNeededResources: #if the task needs resources
                 grouped_resources = {}
                 for res in taskNeededResources:
                     if res['groupId'] not in grouped_resources:
@@ -147,17 +150,19 @@ class Process:
                 # Check each group of resources
                 while True:
                     resources_allocated = False
-                    for group_id, resources in grouped_resources.items():
-                        #resource_names = [resource[0] for resource in resources]
-                        #print(node_id+"|Group ID: " + str(group_id) + ", Resources: " + ', '.join(resource_names)) 
-                        
+                    for group_id, resources in grouped_resources.items():                    
                         # Check if there are enough resources to fulfill the request of a group
                         requests = []
                         for resource, amount in resources:
                             if self.resources[resource][0].capacity-self.resources[resource][0].count < amount: #capacity indica capacità della risorsa, count quante ne ho allocate
+                                print(node_id + "| BREAK | "+resource+": "+str(self.resources[resource][0].count)+"/"+str(self.resources[resource][0].capacity)+" amount: "+str(amount))
+                                for req in requests:
+                                    req.resource.release(req)
+                                    req.cancel() # cancel the requests that were accumulated till now since this group is ko
                                 break  # If not enough resources, break and check the next group
                             else:
                                 for _ in range(amount):
+                                    print(node_id + "|"+resource+": "+str(self.resources[resource][0].count)+"/"+str(self.resources[resource][0].capacity)+" amount: "+str(amount))
                                     req = self.resources[resource][0].request()  # If enough resources, request resources
                                     requests.append(req)
                         total_resources_needed = sum(amount for _, amount in resources)
@@ -170,7 +175,7 @@ class Process:
                     if not resources_allocated:
                         yield self.env.timeout(1)  # If no group can be allocated, wait for a timeout(1)
                     else:
-                        break  # Break the loop as resources are allocated
+                        break  # Break the while true as resources are allocated
 
             yield self.env.timeout(taskTime) 
             Process.executed_nodes[self.num].add(node_id)
