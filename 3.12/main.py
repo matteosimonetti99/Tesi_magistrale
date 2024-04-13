@@ -5,6 +5,8 @@ import sys
 import simpy
 import numpy as np
 from collections import deque
+from datetime import datetime, timedelta, time
+
 
 #to remove, credo
 import random
@@ -53,6 +55,7 @@ print("NUM_INSTANCES: "+ str(num_instances))
 instance_types = diagbp['processInstances']
 xor_probabilities = {flow['elementId']: float(flow['executionProbability']) for flow in diagbp['sequenceFlows']}
 resources = diagbp['resources']
+timetables = diagbp['timetables']
 
 # Generate the delays
 delay_between_instances = diagbp['arrivalRateDistribution'] #array contains: type, mean, arg1, arg2
@@ -66,23 +69,9 @@ for _ in range(num_instances-1):
 task_durations = {element['elementId']: element['durationDistribution'] for element in diagbp['elements']} #dict contains: type, mean, arg1, arg2
 task_resources = {element['elementId']: element['resourceIds'] for element in diagbp['elements']} #array contains dicts with each: resourceName, amountNeeded, groupId
 
-class Shifts: # codice preso solo per idea, bisogna trasformare orari degli shift come orario shift - orario d'inizio e portarlo in secondi, 
-# così se non sono in quel range non posso accedere a quella risorsa, bisogna inoltre fare % (24*3600) che sono i secondi in 1 gg.
-    def __init__(self, env, start_time, end_time):
-        self.env = env
-        self.start_time = start_time
-        self.end_time = end_time
-        self.shift = self.env.process(self.shifts())
-
-    def shifts(self):
-        while True:
-            if self.start_time <= self.env.now < self.end_time:
-                yield self.env.timeout(self.end_time - self.env.now)
-            else:
-                yield self.env.timeout((self.start_time - self.env.now) % 24)
-
 class Process:
     executed_nodes = {}  # make executed_nodes a dictionary of sets
+    startDateTime = diagbp['startDateTime']
     def __init__(self, env, name, process_details, num, globalResources, start_delay=0, instance_type="default"):
         self.env = env
         self.name = name
@@ -98,6 +87,37 @@ class Process:
         for resource_name, resource_info in self.resources.items():
             resource, cost_per_hour, timetable_name = resource_info
             print(f"Resource Name: {resource_name}, Capacity: {resource.capacity}")
+    
+    def is_in_timetable(timetable_name):
+        start_time = Process.startDateTime
+        # Convert start_time to datetime object
+        start_time = datetime.strptime(start_time, "%Y-%m-%dT%H:%M:%S")
+
+        # Adjust current time based on env.now
+        current_time = start_time + timedelta(seconds=self.env.now)
+
+        # Get the timetable from the global timetables variable
+        timetable = next(t for t in timetables if t['name'] == timetable_name)
+
+        # Extract the current time's hour and minute
+        current_hour_minute = time(current_time.hour, current_time.minute)
+
+        # Check if the current time falls within any of the rules in the timetable
+        for rule in timetable['rules']:
+            from_hour, from_minute = map(int, rule['fromTime'].split(':')[:2])
+            to_hour, to_minute = map(int, rule['toTime'].split(':')[:2])
+
+            # Check if current time is within the rule's time range
+            if time(from_hour, from_minute) <= current_hour_minute <= time(to_hour, to_minute):
+                # Check if current day is within the rule's day range
+                from_day = rule['fromWeekDay'].upper()
+                to_day = rule['toWeekDay'].upper()
+                days = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY']
+                valid_days = days[days.index(from_day):days.index(to_day)+1]
+                if current_time.strftime('%A').upper() in valid_days:
+                    return True
+
+        return False
 
     def printState(self, node, node_id, inSubProcess):
         if node['type'] == 'subProcess':
@@ -154,7 +174,8 @@ class Process:
                         # Check if there are enough resources to fulfill the request of a group
                         requests = []
                         for resource, amount in resources:
-                            if self.resources[resource][0].capacity-self.resources[resource][0].count < amount: #capacity indica capacità della risorsa, count quante ne ho allocate
+                            #capacity indica capacità della risorsa, count quante ne ho allocate. Inoltre controlla se la risorsa è in timetable
+                            if not self.is_in_timetable(self.resources[resource][2]) or self.resources[resource][0].capacity-self.resources[resource][0].count < amount:
                                 print(node_id + "| BREAK | "+resource+": "+str(self.resources[resource][0].count)+"/"+str(self.resources[resource][0].capacity)+" amount: "+str(amount))
                                 for req in requests:
                                     req.resource.release(req)

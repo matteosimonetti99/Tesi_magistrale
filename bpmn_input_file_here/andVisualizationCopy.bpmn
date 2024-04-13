@@ -346,19 +346,42 @@
       "arg2": "",
       "timeUnit": "minutes"
   },
-  "timetables": [],
+  "timetables": [
+  {
+    "name": "Default",
+    "rules": {
+      "rule": {
+        "fromTime": "09:00:00.000+00:00",
+        "toTime": "17:00:00.000+00:00",
+        "fromWeekDay": "MONDAY",
+        "toWeekDay": "FRIDAY"
+      }
+    }
+  },
+  {
+    "name": "24/7",
+    "rules": {
+      "rule": {
+        "fromTime": "00:00:00.000+00:00",
+        "toTime": "23:59:59.999+00:00",
+        "fromWeekDay": "MONDAY",
+        "toWeekDay": "SUNDAY"
+      }
+    }
+  }
+],
   "resources": [
       {
         "name": "Res1",
         "totalAmount": "1",
         "costPerHour": "1",
-        "timetableName": "QBP_DEFAULT_TIMETABLE"
+        "timetableName": "Default"
       },
       {
         "name": "Res2",
         "totalAmount": "3",
         "costPerHour": "2",
-        "timetableName": "QBP_247_TIMETABLE"
+        "timetableName": "24/7"
       }
     ],
   "elements": [

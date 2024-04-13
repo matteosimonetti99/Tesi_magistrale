@@ -23,8 +23,8 @@
           "name": "Default",
           "rules": {
             "rule": {
-              "fromTime": "09:00:00.000+00:00",
-              "toTime": "17:00:00.000+00:00",
+              "fromTime": "09:00:00",
+              "toTime": "17:00:00",
               "fromWeekDay": "MONDAY",
               "toWeekDay": "FRIDAY"
             }
@@ -34,8 +34,8 @@
           "name": "24/7",
           "rules": {
             "rule": {
-              "fromTime": "00:00:00.000+00:00",
-              "toTime": "23:59:59.999+00:00",
+              "fromTime": "00:00:00",
+              "toTime": "23:59:59",
               "fromWeekDay": "MONDAY",
               "toWeekDay": "SUNDAY"
             }
