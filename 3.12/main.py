@@ -5,7 +5,8 @@ import sys
 import simpy
 import numpy as np
 from collections import deque
-from datetime import datetime, timedelta, time
+from datetime import datetime, timedelta
+from datetime import time as dt_time
 
 
 #to remove, credo
@@ -88,34 +89,50 @@ class Process:
             resource, cost_per_hour, timetable_name = resource_info
             print(f"Resource Name: {resource_name}, Capacity: {resource.capacity}")
     
-    def is_in_timetable(timetable_name):
+    def is_in_timetable(self, timetable_name):
         start_time = Process.startDateTime
-        # Convert start_time to datetime object
         start_time = datetime.strptime(start_time, "%Y-%m-%dT%H:%M:%S")
-
-        # Adjust current time based on env.now
         current_time = start_time + timedelta(seconds=self.env.now)
-
         # Get the timetable from the global timetables variable
         timetable = next(t for t in timetables if t['name'] == timetable_name)
 
         # Extract the current time's hour and minute
-        current_hour_minute = time(current_time.hour, current_time.minute)
-
+        current_hour_minute_second = dt_time(current_time.hour, current_time.minute, current_time.second)
+        
+        #print("start:"+str(Process.startDateTime))
+        #print("converted:"+str(start_time))
+        #print("now:"+str(current_time))
         # Check if the current time falls within any of the rules in the timetable
         for rule in timetable['rules']:
-            from_hour, from_minute = map(int, rule['fromTime'].split(':')[:2])
-            to_hour, to_minute = map(int, rule['toTime'].split(':')[:2])
+            from_hour, from_minute, from_second = map(int, rule['fromTime'].split(':'))
+            to_hour, to_minute, to_second = map(int, rule['toTime'].split(':'))
 
-            # Check if current time is within the rule's time range
-            if time(from_hour, from_minute) <= current_hour_minute <= time(to_hour, to_minute):
-                # Check if current day is within the rule's day range
-                from_day = rule['fromWeekDay'].upper()
-                to_day = rule['toWeekDay'].upper()
-                days = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY']
-                valid_days = days[days.index(from_day):days.index(to_day)+1]
-                if current_time.strftime('%A').upper() in valid_days:
-                    return True
+            from_time = dt_time(from_hour, from_minute, from_second)
+            to_time = dt_time(to_hour, to_minute, to_second)
+            from_day = rule['fromWeekDay'].upper()
+            to_day = rule['toWeekDay'].upper()
+            print(str(from_time)+"|"+str(current_hour_minute_second)+"|"+str(to_time)+"|days:|"+str(from_day)+"|"+str(current_time.strftime('%A').upper())+"|"+str(to_day))
+
+            # Checks for both ways, from time bigger or lower than to time
+            if to_time < from_time:
+                if not (to_time <= current_hour_minute_second <= from_time):
+                    continue  # Skip this rule, as current time is outside the range
+            elif not from_time <= current_hour_minute_second <= to_time:
+                continue  # Skip this rule, as current time is outside the range
+
+            # Check if current day is within the rule's day range
+
+            days = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY']
+
+
+            # Checks for both ways as before for time
+            if days.index(to_day) < days.index(from_day):
+                if not (days.index(to_day) <= days.index(current_time.strftime('%A').upper()) <= days.index(from_day)):
+                    continue  # Skip this rule, as current day is outside the range
+            elif not (days.index(from_day) <= days.index(current_time.strftime('%A').upper()) <= days.index(to_day)):
+                continue  # Skip this rule, as current day is outside the range
+
+            return True
 
         return False
 
@@ -176,7 +193,10 @@ class Process:
                         for resource, amount in resources:
                             #capacity indica capacità della risorsa, count quante ne ho allocate. Inoltre controlla se la risorsa è in timetable
                             if not self.is_in_timetable(self.resources[resource][2]) or self.resources[resource][0].capacity-self.resources[resource][0].count < amount:
-                                print(node_id + "| BREAK | "+resource+": "+str(self.resources[resource][0].count)+"/"+str(self.resources[resource][0].capacity)+" amount: "+str(amount))
+                                if not self.is_in_timetable(self.resources[resource][2]):
+                                    print(node_id + "| TIMETABLE-BREAK | "+resource+": "+str(self.resources[resource][0].count)+"/"+str(self.resources[resource][0].capacity)+" amount: "+str(amount))
+                                else:
+                                    print(node_id + "| BREAK | "+resource+": "+str(self.resources[resource][0].count)+"/"+str(self.resources[resource][0].capacity)+" amount: "+str(amount))
                                 for req in requests:
                                     req.resource.release(req)
                                     req.cancel() # cancel the requests that were accumulated till now since this group is ko
