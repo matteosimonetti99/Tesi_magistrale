@@ -104,6 +104,7 @@ class Process:
         #print("now:"+str(current_time))
         # Check if the current time falls within any of the rules in the timetable
         for rule in timetable['rules']:
+            timeFlag=False
             from_hour, from_minute, from_second = map(int, rule['fromTime'].split(':'))
             to_hour, to_minute, to_second = map(int, rule['toTime'].split(':'))
 
@@ -114,9 +115,12 @@ class Process:
             print(str(from_time)+"|"+str(current_hour_minute_second)+"|"+str(to_time)+"|days:|"+str(from_day)+"|"+str(current_time.strftime('%A').upper())+"|"+str(to_day))
 
             # Checks for both ways, from time bigger or lower than to time
-            if to_time < from_time:
-                if not (to_time <= current_hour_minute_second <= from_time):
+            if from_time > to_time: #ie: 22:00:00 to 04:00:00
+                if not (to_time >= current_hour_minute_second or current_hour_minute_second >= from_time):
                     continue  # Skip this rule, as current time is outside the range
+                # This variable is true only if current hour minute is less than midnight
+                # This is to avoid a case where shift is 22 to 04 and friday to sunday (morning) and sunday 23:00 would be considered ok (which is not), while sunday 01:00 is ok
+                timeFlag=True  
             elif not from_time <= current_hour_minute_second <= to_time:
                 continue  # Skip this rule, as current time is outside the range
 
@@ -124,13 +128,18 @@ class Process:
 
             days = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY', 'SUNDAY']
 
-
             # Checks for both ways as before for time
-            if days.index(to_day) < days.index(from_day):
-                if not (days.index(to_day) <= days.index(current_time.strftime('%A').upper()) <= days.index(from_day)):
+            if (days.index(to_day) < days.index(from_day)) and timeFlag:
+                if not (days.index(to_day) > days.index(current_time.strftime('%A').upper()) or days.index(current_time.strftime('%A').upper()) >= days.index(from_day)):
+                    continue # Skip this rule, as current day is outside the range
+            elif days.index(to_day) < days.index(from_day) and not timeFlag:
+                if not (days.index(to_day) >= days.index(current_time.strftime('%A').upper()) or days.index(current_time.strftime('%A').upper()) >= days.index(from_day)):
                     continue  # Skip this rule, as current day is outside the range
-            elif not (days.index(from_day) <= days.index(current_time.strftime('%A').upper()) <= days.index(to_day)):
+            elif (not (days.index(from_day) <= days.index(current_time.strftime('%A').upper()) < days.index(to_day))) and timeFlag:
                 continue  # Skip this rule, as current day is outside the range
+            elif (not (days.index(from_day) <= days.index(current_time.strftime('%A').upper()) <= days.index(to_day))) and not timeFlag:
+                continue  # Skip this rule, as current day is outside the range
+
 
             return True
 
