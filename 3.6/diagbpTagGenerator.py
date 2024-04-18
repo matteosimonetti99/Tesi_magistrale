@@ -20,7 +20,10 @@ def diagbp(diagbpPath, bpmn_dict):
                 exit_loop = True 
                 break
 
-            tempDict[key] = value
+            if key=="type":
+                tempDict[key] = value.upper()
+            else:
+                tempDict[key] = value
         if exit_loop: 
             break
         processInstances.append(tempDict)
@@ -204,6 +207,7 @@ def diagbp(diagbpPath, bpmn_dict):
                 i=i+1
                 singleType={}
                 singleType["type"] = input(f"Insert the instance type n.{i} that is forced to go into this sequence flow (leave blank to skip): ")
+                singleType["type"] = singleType["type"].upper()
                 if not singleType["type"]:
                     break
                 types.append(singleType)

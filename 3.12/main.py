@@ -242,23 +242,35 @@ class Process:
             yield from self.run_node(next_node_id, subprocess_node)
 
 
-        elif node['type'] == 'exclusiveGateway': #TODO integra instance_type
+        elif node['type'] == 'exclusiveGateway':
             # Get the flows from bpmn.json that start from the current XOR
             flows_from_xor = [(flow_id, flow) for flow_id, flow in bpmn['sequence_flows'].items() if flow['sourceRef'] == node_id]
             # Create a dictionary mapping target nodes to their probabilities
             node_probabilities = {}
+            forced_flow_target = None
             for flow_id, flow in flows_from_xor:
                 # Find the corresponding flow in diagbp.json
                 diagbp_flow = next((item for item in diagbp['sequenceFlows'] if item['elementId'] == flow_id), None)
                 if diagbp_flow is not None:
                     node_probabilities[flow['targetRef']] = float(diagbp_flow['executionProbability'])
+                    # Check if 'types' field exists and if it matches with self.instance_type (to force the current instance into his xor based on the instance type)
+                    if 'types' in diagbp_flow:
+                        for type_dict in diagbp_flow['types']:
+                            if type_dict['type'] == self.instance_type:
+                                forced_flow_target = flow['targetRef']
+                                break
+                if forced_flow_target is not None:
+                    break
             # Check if node_probabilities is empty, if yes then the xor has only one next elem.
             if not node_probabilities:
                 next_node_id = node['next'][0]
+            elif forced_flow_target is not None:
+                next_node_id = forced_flow_target
             else:
                 next_node_id = np.random.choice(list(node_probabilities.keys()), p=list(node_probabilities.values()))
             self.printState(node,node_id,printFlag)
             yield from self.run_node(next_node_id, subprocess_node)
+
 
         elif node['type'] == 'parallelGateway':
             # AND logic: run all paths concurrently and wait for all to finish, process is created for each path to ensure parallelism

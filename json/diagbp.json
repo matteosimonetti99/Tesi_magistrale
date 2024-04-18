@@ -3,7 +3,11 @@
   "processInstances": [
       {
           "type": "a",
-          "count": "2"
+          "count": "1"
+      },
+      {
+        "type": "b",
+        "count": "1"
       }
   ],
   "startDateTime": "2024-04-15T18:00:00",
@@ -31,16 +35,10 @@
         "toWeekDay": "FRIDAY"
       },
       {
-        "fromTime": "23:00:00",
-        "toTime": "01:00:00",
-        "fromWeekDay": "MONDAY",
+        "fromTime": "10:00:00",
+        "toTime": "19:00:00",
+        "fromWeekDay": "SATURDAY",
         "toWeekDay": "SATURDAY"
-      },
-      {
-        "fromTime": "22:00:00",
-        "toTime": "04:00:00",
-        "fromWeekDay": "FRIDAY",
-        "toWeekDay": "MONDAY"
       }
     ]
   },
@@ -65,7 +63,7 @@
       },
       {
         "name": "Res2",
-        "totalAmount": "2",
+        "totalAmount": "3",
         "costPerHour": "2",
         "timetableName": "24/7"
       }

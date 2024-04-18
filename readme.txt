@@ -1,4 +1,4 @@
-To install (first time only, windows instructions):
+To install (first time only, windows instructions, run by cmd inside this folder):
 
 python3.12 -m venv myenv312
 myenv312/bin/activate
