@@ -196,16 +196,18 @@ class Process:
                 # Check each group of resources
                 while True:
                     resources_allocated = False
-                    for group_id, resources in grouped_resources.items():                    
+                    i=0
+                    for group_id, resources in grouped_resources.items():              
+                        i+=1      
                         # Check if there are enough resources to fulfill the request of a group
                         requests = []
                         for resource, amount in resources:
                             #capacity indica capacità della risorsa, count quante ne ho allocate. Inoltre controlla se la risorsa è in timetable
                             if not self.is_in_timetable(self.resources[resource][2]) or self.resources[resource][0].capacity-self.resources[resource][0].count < amount:
                                 if not self.is_in_timetable(self.resources[resource][2]):
-                                    print(node_id + "| TIMETABLE-BREAK | "+resource+": "+str(self.resources[resource][0].count)+"/"+str(self.resources[resource][0].capacity)+" amount: "+str(amount))
+                                    print(node_id + "|group n."+str(i)+"| TIMETABLE-BREAK | "+resource+": "+str(self.resources[resource][0].count)+"/"+str(self.resources[resource][0].capacity)+" amount: "+str(amount))
                                 else:
-                                    print(node_id + "| BREAK | "+resource+": "+str(self.resources[resource][0].count)+"/"+str(self.resources[resource][0].capacity)+" amount: "+str(amount))
+                                    print(node_id + "|group n."+str(i)+"| BREAK | "+resource+": "+str(self.resources[resource][0].count)+"/"+str(self.resources[resource][0].capacity)+" amount: "+str(amount))
                                 for req in requests:
                                     req.resource.release(req)
                                     req.cancel() # cancel the requests that were accumulated till now since this group is ko
@@ -213,7 +215,7 @@ class Process:
                             else:
                                 for _ in range(amount):
                                     req = self.resources[resource][0].request()  # If enough resources, request resources
-                                    print(node_id + "|"+resource+": "+str(self.resources[resource][0].count)+"/"+str(self.resources[resource][0].capacity)+" amount: "+str(amount))
+                                    print(node_id + "|group n."+str(i)+"|"+resource+": "+str(self.resources[resource][0].count)+"/"+str(self.resources[resource][0].capacity)+" total amount needed: "+str(amount))
                                     requests.append(req)
                         total_resources_needed = sum(amount for _, amount in resources)
                         if len(requests) == total_resources_needed:  # If all resources in the group can be allocated

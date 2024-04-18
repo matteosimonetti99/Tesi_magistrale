@@ -14,7 +14,7 @@ ET.register_namespace('dc', 'http://www.omg.org/spec/DD/20100524/DC')
 ET.register_namespace('di', 'http://www.omg.org/spec/DD/20100524/DI')
 
 
-baseName="andVisualization"
+baseName="andVisualizationCopy"
 tagName="diagbp"
 diagbpPath="../json/diagbp.json"
 bpmnPath="../json/bpmn.json"
