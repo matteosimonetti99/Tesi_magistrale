@@ -235,14 +235,18 @@
           "executionProbability": "0.1",
           "types": [
               {
-                  "type": "b"
+                  "type": "c"
               }
           ]
       },
       {
           "elementId": "Flow_16n1wa9",
           "executionProbability": "0.9",
-          "types": []
+          "types": [
+          {
+              "type": "b"
+          }
+      ]
       }
   ]
 }
