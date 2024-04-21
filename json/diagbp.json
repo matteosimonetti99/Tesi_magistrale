@@ -57,7 +57,7 @@
   "resources": [
       {
         "name": "Res1",
-        "totalAmount": "2",
+        "totalAmount": "1",
         "costPerHour": "1",
         "timetableName": "Default"
       },
@@ -178,7 +178,7 @@
       {
           "elementId": "Activity_12afiek",
           "worklistId": "",
-          "fixedCost": "",
+          "fixedCost": "1",
           "costThreshold": "",
           "durationDistribution": {
               "type": "fixed",
@@ -199,7 +199,7 @@
       {
           "elementId": "Activity_182s0e0",
           "worklistId": "",
-          "fixedCost": "",
+          "fixedCost": "2",
           "costThreshold": "",
           "durationDistribution": {
               "type": "fixed",

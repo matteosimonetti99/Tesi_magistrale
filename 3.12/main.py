@@ -69,6 +69,8 @@ for _ in range(num_instances-1):
 
 task_durations = {element['elementId']: element['durationDistribution'] for element in diagbp['elements']} #dict contains: type, mean, arg1, arg2
 task_resources = {element['elementId']: element['resourceIds'] for element in diagbp['elements']} #array contains dicts with each: resourceName, amountNeeded, groupId
+task_costs = {element['elementId']: element['fixedCost'] for element in diagbp['elements']} #array contains dicts with each: resourceName, amountNeeded, groupId
+totalCost={}
 
 class Process:
     executed_nodes = {}  # make executed_nodes a dictionary of sets
@@ -82,6 +84,7 @@ class Process:
         self.instance_type = instance_type
         self.num = num
         self.action = env.process(self.run())
+        totalCost[self.num]=0.0
         #resources is a dict with name as key and a tuple made of simpy resource, cost and timetable.
         self.resources = globalResources
         Process.executed_nodes[self.num] = set() 
@@ -183,7 +186,6 @@ class Process:
                 while not all(prev_node in Process.executed_nodes[self.num] for prev_node in node['previous']):
                     yield self.env.timeout(1)
             taskTime=timeCalculator.convert_to_seconds(task_durations[node_id]) # task duration is used here, it is passed before to a converter that transforms the type/mean/arg1/arg2 to a value in seconds, this value the task duration is always different in each instance
-            
             #resources zone
             taskNeededResources=task_resources[node_id]
             if taskNeededResources: #if the task needs resources
@@ -192,18 +194,22 @@ class Process:
                     if res['groupId'] not in grouped_resources:
                         grouped_resources[res['groupId']] = []
                     grouped_resources[res['groupId']].append((res['resourceName'], int(res['amountNeeded'])))
+                    print(grouped_resources)
                 
                 # Check each group of resources
                 while True:
                     resources_allocated = False
                     i=0
-                    for group_id, resources in grouped_resources.items():              
+                    numberOfGroupsWithNotEnoughResources=0          
+                    for group_id, resources in grouped_resources.items():    
                         i+=1      
                         # Check if there are enough resources to fulfill the request of a group
                         requests = []
                         for resource, amount in resources:
                             #capacity indica capacità della risorsa, count quante ne ho allocate. Inoltre controlla se la risorsa è in timetable
                             if not self.is_in_timetable(self.resources[resource][2]) or self.resources[resource][0].capacity-self.resources[resource][0].count < amount:
+                                if self.resources[resource][0].capacity < amount:
+                                    numberOfGroupsWithNotEnoughResources+=1 #if there are not enough resources then this group will never be able to be allocated
                                 if not self.is_in_timetable(self.resources[resource][2]):
                                     print(node_id + "|group n."+str(i)+"| TIMETABLE-BREAK | "+resource+": "+str(self.resources[resource][0].count)+"/"+str(self.resources[resource][0].capacity)+" amount: "+str(amount))
                                 else:
@@ -224,6 +230,8 @@ class Process:
                                 yield req
                                 print (node_id + "|Resource locked: " + str(req.resource) + ", Time: " + str(self.env.now) )  # Print + str(req.amount)
                             break  # Break the loop as resources are allocated
+                    if numberOfGroupsWithNotEnoughResources==len(grouped_resources): #if the number of groups that can't be allocated is equal to the number of groups, no group can be allocated
+                        raise Exception("Amount of resource needed for task '"+node_id+"' is more than the resource capacity")
                     if not resources_allocated:
                         yield self.env.timeout(1)  # If no group can be allocated, wait for a timeout(1)
                     else:
@@ -233,6 +241,9 @@ class Process:
             Process.executed_nodes[self.num].add(node_id)
             self.printState(node,node_id,printFlag)
             next_node_id = node['next'][0]
+            taskCost=task_costs[node_id]
+            if taskCost != '':
+                totalCost[self.num] += float(taskCost)
             
             # Release resources
             for req in requests:
@@ -355,4 +366,6 @@ def simulate_bpmn(bpmn_dict):
 
 
 simulate_bpmn(bpmn)
+for key, value in totalCost.items():
+    print("Cost of instance n. "+str(key)+": "+str(value))
 
