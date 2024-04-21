@@ -14,3 +14,8 @@ This software in facts works using 2 different versions of python due to library
 
 
 To run: use STARTER.BAT
+
+
+
+-----------------WARNING----------------
+the repo has been moved to: https://github.com/bpm-diag/bp-simulation
