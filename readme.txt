@@ -17,5 +17,4 @@ To run: use STARTER.BAT
 
 
 
------------------WARNING----------------
-the repo has been moved to: https://github.com/bpm-diag/bp-simulation
+A clone of the repo is also: https://github.com/bpm-diag/bp-simulation
