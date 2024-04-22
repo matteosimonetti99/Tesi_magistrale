@@ -57,6 +57,7 @@ instance_types = diagbp['processInstances']
 xor_probabilities = {flow['elementId']: float(flow['executionProbability']) for flow in diagbp['sequenceFlows']}
 resources = diagbp['resources']
 timetables = diagbp['timetables']
+catchEvents = diagbp['catchEvents']
 
 # Generate the delays
 delay_between_instances = diagbp['arrivalRateDistribution'] #array contains: type, mean, arg1, arg2
@@ -246,9 +247,10 @@ class Process:
                 totalCost[self.num] += float(taskCost)
             
             # Release resources
-            for req in requests:
-                req.resource.release(req)
-                print(node_id + "|Resource released: " + str(req.resource)  + ", Time: " + str(self.env.now))
+            if taskNeededResources:
+                for req in requests:
+                    req.resource.release(req)
+                    print(node_id + "|Resource released: " + str(req.resource)  + ", Time: " + str(self.env.now))
 
             yield from self.run_node(next_node_id, subprocess_node)
 
@@ -322,7 +324,7 @@ class Process:
             yield from self.run_node(next_node_id, subprocess_node)
             return
         elif node['type'] == 'intermediateCatchEvent':
-            if node['subtype'] == 'messageEventDefinition':
+            if node['subtype'] == 'messageEventDefinition': #if it is an intermediate msg catch wait for the msg
                 next_node_id = node['next'][0]
                 if len(node['previous'])>0: #wait for msg
                     while not all(prev_node in Process.executed_nodes[self.num] for prev_node in node['previous']):
@@ -331,11 +333,13 @@ class Process:
                 self.printState(node,node_id,printFlag)
                 yield from self.run_node(next_node_id, subprocess_node)
                 return
-            else:
+            else: #otherwise treats it as a timer event, whatever it is
                 next_node_id = node['next'][0]
                 Process.executed_nodes[self.num].add(node_id)
+                waitTime = catchEvents[node_id]
+                waitTimeSeconds=timeCalculator.convert_to_seconds(waitTime)
+                yield self.env.timeout(waitTimeSeconds)
                 self.printState(node,node_id,printFlag)
-                yield self.env.timeout(1) #TODO: CAMBIARE 1 IN DURATA DA PRENDERE DA PARAM DEL TIMER
                 yield from self.run_node(next_node_id, subprocess_node)
                 return
 

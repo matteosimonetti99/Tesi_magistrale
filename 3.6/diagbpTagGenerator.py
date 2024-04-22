@@ -119,19 +119,21 @@ def diagbp(diagbpPath, bpmn_dict):
         process_name = participant['name']
 
         task_nodes = [(node_id, node['name']) for node_id, node in process_details['node_details'].items() if node['type'] == 'task']
-        all_nodes = [(node_id, node['name'], node['type']) for node_id, node in process_details['node_details'].items()]
+        all_nodes = [(node_id, node['name'], node['type'], node['subtype']) for node_id, node in process_details['node_details'].items()]
         for node_id, node in process_details['node_details'].items():
             if node['type'] == 'subProcess':
                 task_nodes.extend([(sub_node_id, sub_node['name']) for sub_node_id, sub_node in node['subprocess_details'].items() if sub_node['type'] == 'task'])
-                all_nodes.extend([(sub_node_id, sub_node['name'], sub_node['type']) for sub_node_id, sub_node in node['subprocess_details'].items()])
+                all_nodes.extend([(sub_node_id, sub_node['name'], sub_node['type'], node['subtype']) for sub_node_id, sub_node in node['subprocess_details'].items()])
 
         process_task_dict[process_name] = task_nodes
         support_big[process_name]=all_nodes
     
     support={}
     for process_name, all_nodes in support_big.items():
-        for node_id, task_name, node_type in all_nodes:
-            support[node_id] = (task_name, node_type)
+        for node_id, task_name, node_type, node_subtype in all_nodes:
+            support[node_id] = (task_name, node_type, node_subtype)
+
+    #print(support)
 
     for process_name, task_nodes in process_task_dict.items():
         for node_id, task_name in task_nodes:
@@ -194,8 +196,8 @@ def diagbp(diagbpPath, bpmn_dict):
         flowName=flow["name"]
         sourceId=flow["sourceRef"]
         targetId=flow["targetRef"]
-        sourceName, sourceType = support[sourceId]
-        targetName, targetType = support[targetId]
+        sourceName, sourceType, sourceSubType = support[sourceId]
+        targetName, targetType, targetSubType = support[targetId]
         if sourceType=="exclusiveGateway":
             sequence_flow={}
             sequence_flow["elementId"]=id
@@ -213,30 +215,25 @@ def diagbp(diagbpPath, bpmn_dict):
                 types.append(singleType)
             sequence_flow["types"]=types
             sequence_flows.append(sequence_flow)
-    #TODO: popolare array sequence_flows chiedendo dati per ogni sourceName|flowName|targetName, elementId è id.
 
-    """
-    "sequenceFlows": [
-        {
-          "elementId": "Flow_16n1wa9",
-          "executionProbability": "0.5",
-          "types": [
-            {
-              "type": "A"
-            },
-            {
-              "type": "B"
-            }
-          ],
-          "_COMMENTO":"types indica che se sono in un istanza di quel type, allora la scelta è forzata su questa direzione"
-        },
-        {
-          "elementId": "Flow_0d86tug",
-          "executionProbability": "0.5"
-        }
-      ]
-    """
 
+    print("-------------------CATCH EVENTS DURATIONS (excluded messages catch events)----------------------")
+    catch_events={}
+    for node_id, (name, typee, subtype) in support.items():
+        if typee == 'intermediateCatchEvent' and subtype != 'messageEventDefinition':
+            if subtype=="timerEventDefinition":
+                subtype="timer"
+            temp={}
+            groupDur=["type", "mean", "arg1", "arg2", "timeUnit"]
+            for key in groupDur:
+                keyDisplay=key
+                if key=="type":
+                    keyDisplay="Execution time type (Fixed, Normal, Exponential, Uniform, Triangular, Log-Normal, Gamma, Histogram)"
+                if key=="timeUnit":
+                    keyDisplay="time unit (seconds/minutes/hours/days)"
+                value=input(f"Insert the {keyDisplay} for the duration distribution of {subtype} catch event '{name}': ")
+                temp[key] = value
+            catch_events[node_id]=temp
 
 
     #DATA FINAL
@@ -247,7 +244,8 @@ def diagbp(diagbpPath, bpmn_dict):
         "timetables": timetables,
         "resources": resources,
         "elements": elements,
-        "sequenceFlows": sequence_flows
+        "sequenceFlows": sequence_flows,
+        "catchEvents": catch_events
     }
 
     with open(diagbpPath, 'w') as f:
