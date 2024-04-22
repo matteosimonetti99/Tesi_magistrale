@@ -195,8 +195,7 @@ class Process:
                     if res['groupId'] not in grouped_resources:
                         grouped_resources[res['groupId']] = []
                     grouped_resources[res['groupId']].append((res['resourceName'], int(res['amountNeeded'])))
-                    print(grouped_resources)
-                
+                    print(grouped_resources)              
                 # Check each group of resources
                 while True:
                     resources_allocated = False
@@ -237,7 +236,6 @@ class Process:
                         yield self.env.timeout(1)  # If no group can be allocated, wait for a timeout(1)
                     else:
                         break  # Break the while true as resources are allocated
-
             yield self.env.timeout(taskTime) 
             Process.executed_nodes[self.num].add(node_id)
             self.printState(node,node_id,printFlag)
@@ -251,7 +249,6 @@ class Process:
                 for req in requests:
                     req.resource.release(req)
                     print(node_id + "|Resource released: " + str(req.resource)  + ", Time: " + str(self.env.now))
-
             yield from self.run_node(next_node_id, subprocess_node)
 
 
@@ -317,12 +314,14 @@ class Process:
             next_node_id = node['next'][0]
             # After the subprocess is executed, continue with the node next to the subprocess
             yield from self.run_node(next_node_id, None)
+
         elif node['type'] == 'intermediateThrowEvent':
             next_node_id = node['next'][0]
             Process.executed_nodes[self.num].add(node_id)
             self.printState(node,node_id,printFlag)
             yield from self.run_node(next_node_id, subprocess_node)
             return
+
         elif node['type'] == 'intermediateCatchEvent':
             if node['subtype'] == 'messageEventDefinition': #if it is an intermediate msg catch wait for the msg
                 next_node_id = node['next'][0]
@@ -342,6 +341,46 @@ class Process:
                 self.printState(node,node_id,printFlag)
                 yield from self.run_node(next_node_id, subprocess_node)
                 return
+        
+        elif node['type'] == 'eventBasedGateway':
+            smallestTimer=None
+            ready=False
+            waitedTimeInEventBasedGateway=0
+            Process.executed_nodes[self.num].add(node_id)
+            self.printState(node,node_id,printFlag)    
+
+            for next_node_id in node['next']:
+                if subprocess_node is None:
+                    nextNode = self.process_details['node_details'][next_node_id]
+                    printFlag=False
+                else:
+                    nextNode = self.process_details['node_details'][subprocess_node]['subprocess_details'][next_node_id]
+                    printFlag=True
+                if not nextNode['subtype'] == 'messageEventDefinition': #after event based gateway there is for sure intermediate catch events, if not message i save smallest timer
+                    timer=timeCalculator.convert_to_seconds(catchEvents[next_node_id])
+                    if smallestTimer is None or timer < smallestTimer:
+                        smallestTimer = timer
+                        nextNodeToVisit=nextNode['next'][0]
+            while (not ready) and waitedTimeInEventBasedGateway < smallestTimer: #while no msg has been received and the smallest timer is not over yet
+                for next_node_id in node['next']:
+                    if subprocess_node is None:
+                        nextNode = self.process_details['node_details'][next_node_id]
+                        printFlag=False
+                    else:
+                        nextNode = self.process_details['node_details'][subprocess_node]['subprocess_details'][next_node_id]
+                        printFlag=True
+                    if nextNode['subtype'] == 'messageEventDefinition' and ready==False:
+                        ready=all(prev_node in Process.executed_nodes[self.num] for prev_node in nextNode['previous'])
+                        if ready==True:
+                            nextNodeToVisit=nextNode['next'][0]
+                            break
+                yield self.env.timeout(1)
+                waitedTimeInEventBasedGateway+=1
+
+            self.printState(nextNode,next_node_id,printFlag) # print the state of the intermediate catch event (timer or msg, whatever)
+            yield from self.run_node(nextNodeToVisit, subprocess_node) # now it visits the node 2 times forward because the catches have already been handled
+            return
+
 
         elif node['type'] == 'endEvent':
             self.printState(node,node_id,printFlag)

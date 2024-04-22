@@ -13,34 +13,34 @@
             "sourceRef": "StartEvent_1vpywwb",
             "targetRef": "Activity_02ea4rd"
         },
-        "Flow_1fay657": {
+        "Flow_11q1thw": {
             "name": "",
             "sourceRef": "Activity_02ea4rd",
-            "targetRef": "Event_0zmw1zi"
-        },
-        "Flow_02cmybd": {
-            "name": "",
-            "sourceRef": "Event_0zmw1zi",
-            "targetRef": "Activity_081x5jo"
-        },
-        "Flow_0e07sqv": {
-            "name": "",
-            "sourceRef": "Activity_081x5jo",
             "targetRef": "Event_1bzdqsi"
         },
         "Flow_0udgpbu": {
             "name": "",
             "sourceRef": "Event_1eggq47",
-            "targetRef": "Activity_0duzsby"
-        },
-        "Flow_03iu9co": {
-            "name": "",
-            "sourceRef": "Activity_0duzsby",
-            "targetRef": "Event_1tfy8t2"
+            "targetRef": "Gateway_0xxges3"
         },
         "Flow_0v0tu8s": {
             "name": "",
             "sourceRef": "Event_1tfy8t2",
+            "targetRef": "Event_1kp01ls"
+        },
+        "Flow_1ym4v8i": {
+            "name": "",
+            "sourceRef": "Gateway_0xxges3",
+            "targetRef": "Event_1tfy8t2"
+        },
+        "Flow_04s64ij": {
+            "name": "",
+            "sourceRef": "Gateway_0xxges3",
+            "targetRef": "Event_0jurfhg"
+        },
+        "Flow_0mh9r8t": {
+            "name": "",
+            "sourceRef": "Event_0jurfhg",
             "targetRef": "Event_1kp01ls"
         }
     },
@@ -51,7 +51,7 @@
                 "name": "main",
                 "processRef": "Process_1p64wy8",
                 "isHorizontal": "true",
-                "width": "702",
+                "width": "434",
                 "height": "250",
                 "x": "156",
                 "y": "80"
@@ -60,23 +60,17 @@
                 "name": "second",
                 "processRef": "Process_0j26jcc",
                 "isHorizontal": "true",
-                "width": "600",
-                "height": "250",
+                "width": "1330",
+                "height": "318",
                 "x": "170",
                 "y": "410"
             }
         },
         "messageFlows": {
-            "Flow_0ygay4h": {
-                "id": "Flow_0ygay4h",
+            "Flow_1g1p4rk": {
+                "id": "Flow_1g1p4rk",
                 "name": "",
-                "sourceRef": "Activity_0duzsby",
-                "targetRef": "Activity_02ea4rd"
-            },
-            "Flow_07jzjlc": {
-                "id": "Flow_07jzjlc",
-                "name": "",
-                "sourceRef": "Activity_081x5jo",
+                "sourceRef": "Activity_02ea4rd",
                 "targetRef": "Event_1tfy8t2"
             }
         }
@@ -90,8 +84,6 @@
             "node_ids": [
                 "StartEvent_1vpywwb",
                 "Activity_02ea4rd",
-                "Event_0zmw1zi",
-                "Activity_081x5jo",
                 "Event_1bzdqsi"
             ],
             "node_details": {
@@ -106,26 +98,6 @@
                 },
                 "Activity_02ea4rd": {
                     "name": "task_main",
-                    "type": "task",
-                    "subtype": null,
-                    "previous": [
-                        "Activity_0duzsby"
-                    ],
-                    "next": [
-                        "Event_0zmw1zi"
-                    ]
-                },
-                "Event_0zmw1zi": {
-                    "name": "1h",
-                    "type": "intermediateCatchEvent",
-                    "subtype": "timerEventDefinition",
-                    "previous": [],
-                    "next": [
-                        "Activity_081x5jo"
-                    ]
-                },
-                "Activity_081x5jo": {
-                    "name": "Task_main_2",
                     "type": "task",
                     "subtype": null,
                     "previous": [],
@@ -149,9 +121,10 @@
             "processType": "None",
             "node_ids": [
                 "Event_1eggq47",
-                "Activity_0duzsby",
+                "Gateway_0xxges3",
+                "Event_1tfy8t2",
                 "Event_1kp01ls",
-                "Event_1tfy8t2"
+                "Event_0jurfhg"
             ],
             "node_details": {
                 "Event_1eggq47": {
@@ -160,16 +133,28 @@
                     "subtype": null,
                     "previous": [],
                     "next": [
-                        "Activity_0duzsby"
+                        "Gateway_0xxges3"
                     ]
                 },
-                "Activity_0duzsby": {
-                    "name": "task_second",
-                    "type": "task",
+                "Gateway_0xxges3": {
+                    "name": "",
+                    "type": "eventBasedGateway",
                     "subtype": null,
                     "previous": [],
                     "next": [
-                        "Event_1tfy8t2"
+                        "Event_1tfy8t2",
+                        "Event_0jurfhg"
+                    ]
+                },
+                "Event_1tfy8t2": {
+                    "name": "",
+                    "type": "intermediateCatchEvent",
+                    "subtype": "messageEventDefinition",
+                    "previous": [
+                        "Activity_02ea4rd"
+                    ],
+                    "next": [
+                        "Event_1kp01ls"
                     ]
                 },
                 "Event_1kp01ls": {
@@ -179,13 +164,11 @@
                     "previous": [],
                     "next": []
                 },
-                "Event_1tfy8t2": {
-                    "name": "",
+                "Event_0jurfhg": {
+                    "name": "1h",
                     "type": "intermediateCatchEvent",
-                    "subtype": "messageEventDefinition",
-                    "previous": [
-                        "Activity_081x5jo"
-                    ],
+                    "subtype": "timerEventDefinition",
+                    "previous": [],
                     "next": [
                         "Event_1kp01ls"
                     ]
