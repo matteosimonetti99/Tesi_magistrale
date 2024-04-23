@@ -319,7 +319,6 @@ class Process:
                 yield from self.run_node(next_node_id, None)
             else:
                 error_node = next((idd for idd, node in self.process_details['node_details'].items() if node['type'] == 'boundaryEvent' and node['attached_to'] == node_id), None)
-                print(Process.subprocessErrorExit[node_id])
                 yield from self.run_node(error_node, None)
 
         elif node['type'] == 'intermediateThrowEvent':
