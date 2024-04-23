@@ -75,6 +75,7 @@ totalCost={}
 
 class Process:
     executed_nodes = {}  # make executed_nodes a dictionary of sets
+    subprocessErrorExit = {} #used in error end event
     startDateTime = diagbp['startDateTime']
     def __init__(self, env, name, process_details, num, globalResources, start_delay=0, instance_type="default"):
         self.env = env
@@ -304,6 +305,7 @@ class Process:
             return
             
         elif node['type'] == 'subProcess':
+            Process.subprocessErrorExit[node_id]=0
             if len(node['previous'])>0:
                 while not all(prev_node in Process.executed_nodes[self.num] for prev_node in node['previous']):
                     yield self.env.timeout(1)
@@ -312,8 +314,13 @@ class Process:
             yield from self.run_node(start_node_id, node_id)
             Process.executed_nodes[self.num].add(node_id)
             next_node_id = node['next'][0]
-            # After the subprocess is executed, continue with the node next to the subprocess
-            yield from self.run_node(next_node_id, None)
+            # After the subprocess is executed, continue with the node next to the subprocess if no error end event
+            if Process.subprocessErrorExit[node_id]==0:
+                yield from self.run_node(next_node_id, None)
+            else:
+                error_node = next((idd for idd, node in self.process_details['node_details'].items() if node['type'] == 'boundaryEvent' and node['attached_to'] == node_id), None)
+                print(Process.subprocessErrorExit[node_id])
+                yield from self.run_node(error_node, None)
 
         elif node['type'] == 'intermediateThrowEvent':
             next_node_id = node['next'][0]
@@ -381,10 +388,28 @@ class Process:
             yield from self.run_node(nextNodeToVisit, subprocess_node) # now it visits the node 2 times forward because the catches have already been handled
             return
 
-
-        elif node['type'] == 'endEvent':
+        elif node['type'] == 'boundaryEvent': 
             self.printState(node,node_id,printFlag)
+            Process.executed_nodes[self.num].add(node_id)
+            next_node_id = node['next'][0]
+            yield from self.run_node(next_node_id, subprocess_node)
             return
+
+        elif node['type'] == 'endEvent': 
+            Process.executed_nodes[self.num].add(node_id)           
+            # Terminate end event
+            if node['subtype'] == 'terminateEventDefinition':
+                self.printState(node,node_id,printFlag)
+                #abort somehow the process, only useful in parallel scenarios
+            # Error end event (lightning symbol)
+            elif node['subtype'] == 'errorEventDefinition' and subprocess_node is not None:
+                self.printState(node,node_id,printFlag)
+                Process.subprocessErrorExit[subprocess_node]=1
+                return
+            # standard end event
+            else:
+                self.printState(node,node_id,printFlag)
+                return
 
 
 def simulate_bpmn(bpmn_dict):
