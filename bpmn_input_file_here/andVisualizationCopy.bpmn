@@ -580,7 +580,8 @@
           }
       ]
       }
-  ]
+  ],
+  "catchEvents":[]
 }
 </diagbp>
 </bpmn:definitions>

@@ -54,6 +54,14 @@ def diagbp(diagbpPath, bpmn_dict):
         if key=="type":
             value=value.upper()
         arrivalRateDistribution[key] = value
+    if not arrivalRateDistribution:
+        arrivalRateDistribution={
+            "type": "FIXED",
+            "mean": "0",
+            "arg1": "",
+            "arg2": "",
+            "timeUnit": "seconds"
+        }
 
     #TIMETABLES
     print("-------------------TIMETABLES----------------------")
@@ -114,9 +122,13 @@ def diagbp(diagbpPath, bpmn_dict):
     process_task_dict = {} #key is process name, value is list of task names and ids
     support_big = {}
     elements=[]
+    counter=1
     for participant_id, participant in bpmn_dict['collaboration']['participants'].items():
         process_details = bpmn_dict['process_elements'][participant['processRef']]
         process_name = participant['name']
+        if process_name=="":
+            process_name=str(counter)
+        counter+=1
 
         task_nodes = [(node_id, node['name']) for node_id, node in process_details['node_details'].items() if node['type'] == 'task']
         all_nodes = [(node_id, node['name'], node['type'], node['subtype']) for node_id, node in process_details['node_details'].items()]
@@ -133,7 +145,7 @@ def diagbp(diagbpPath, bpmn_dict):
         for node_id, task_name, node_type, node_subtype in all_nodes:
             support[node_id] = (task_name, node_type, node_subtype)
 
-    #print(support)
+    #print(support_big)
 
     for process_name, task_nodes in process_task_dict.items():
         for node_id, task_name in task_nodes:

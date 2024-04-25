@@ -75,8 +75,9 @@ totalCost={}
 
 class Process:
     executed_nodes = {}  # make executed_nodes a dictionary of sets
-    subprocessErrorExit = {} #used in error end event
     startDateTime = diagbp['startDateTime']
+    terminateEndEvent={} # dictionary of true or false, to tell if that process has been terminated or not
+    subprocessTerminate={} #this is used for subprocesses for terminate end events
     def __init__(self, env, name, process_details, num, globalResources, start_delay=0, instance_type="default"):
         self.env = env
         self.name = name
@@ -86,6 +87,10 @@ class Process:
         self.instance_type = instance_type
         self.num = num
         self.action = env.process(self.run())
+        self.subprocessInternalError = {} #used in error end event
+        self.subprocessExternalException = {}
+        Process.terminateEndEvent[self.num] = False
+        Process.subprocessTerminate[self.num] = {}
         totalCost[self.num]=0.0
         #resources is a dict with name as key and a tuple made of simpy resource, cost and timetable.
         self.resources = globalResources
@@ -180,12 +185,39 @@ class Process:
                 while not all(prev_node in Process.executed_nodes[self.num] for prev_node in node['previous']):
                     yield self.env.timeout(1)
             self.printState(node,node_id,printFlag)
+            Process.executed_nodes[self.num].add(node_id)
             yield from self.run_node(next_node_id, subprocess_node)
 
 
         elif node['type'] == 'task':
+            #print(Process.terminateEndEvent[self.num])
+            #check if external exceptions happened (if in a subprocess), if yes handle it or just return
+            if subprocess_node is not None:
+                idd,error_node = next(((idd,node) for idd, node in self.process_details['node_details'].items() if node['type'] == 'boundaryEvent' and node['subtype'] == 'messageEventDefinition' and node['attached_to'] == subprocess_node), (None, None))
+                if idd is not None: #if there is a boundary event of type msg
+                    print("handling excp1")
+                    if any(prev_node in Process.executed_nodes[self.num] for prev_node in error_node['previous']): #if some msg arrived to it
+                        print("handling excp2")
+                        self.subprocessExternalException[subprocess_node]=True
+                    has_exception_been_handled = idd in Process.executed_nodes[self.num]
+                    if self.subprocessExternalException[subprocess_node]==True and not has_exception_been_handled:
+                        print("handling excp3")
+                        yield from self.run_node(idd, None)
+                        return
+                    elif self.subprocessExternalException[subprocess_node]==True and has_exception_been_handled:
+                        return
+                if Process.subprocessTerminate[self.num][subprocess_node]==True: 
+                    return 
+
+            #check if terminate end events happened
+            if Process.terminateEndEvent[self.num]==True:
+                return
+
+            #wait for previous messages to be delivered
             if len(node['previous'])>0:
                 while not all(prev_node in Process.executed_nodes[self.num] for prev_node in node['previous']):
+                    if Process.terminateEndEvent[self.num]==True:
+                        return
                     yield self.env.timeout(1)
             taskTime=timeCalculator.convert_to_seconds(task_durations[node_id]) # task duration is used here, it is passed before to a converter that transforms the type/mean/arg1/arg2 to a value in seconds, this value the task duration is always different in each instance
             #resources zone
@@ -292,20 +324,25 @@ class Process:
             self.printState(node,node_id,printFlag)
             yield self.env.all_of(events)
             # When all_of is done, proceed with the node after the close
-            next_node_after_parallel = self.stack.pop()
             # print for parallel close
             if not printFlag:
                 print(f"#{self.num}|{self.name}: Parallel gateway closed. instance_type:{self.instance_type}. time: {self.env.now}.")
             else:
                 print(f"#{self.num}|{self.name}| (inside subprocess): Parallel gateway closed. instance_type:{self.instance_type}. time: {self.env.now}.")
-            yield from self.run_node(next_node_after_parallel, subprocess_node)
+            
+
+            if self.stack:  # checks if the list is not empty
+                next_node_after_parallel = self.stack.pop()
+                yield from self.run_node(next_node_after_parallel, subprocess_node)
 
         elif node['type'] == 'parallelGateway_close':
             self.stack.append(node['next'][0])
             return
             
         elif node['type'] == 'subProcess':
-            Process.subprocessErrorExit[node_id]=0
+            self.subprocessExternalException[node_id]=False
+            Process.subprocessTerminate[self.num][node_id]=False
+            self.subprocessInternalError[node_id]=False
             if len(node['previous'])>0:
                 while not all(prev_node in Process.executed_nodes[self.num] for prev_node in node['previous']):
                     yield self.env.timeout(1)
@@ -315,11 +352,12 @@ class Process:
             Process.executed_nodes[self.num].add(node_id)
             next_node_id = node['next'][0]
             # After the subprocess is executed, continue with the node next to the subprocess if no error end event
-            if Process.subprocessErrorExit[node_id]==0:
+            if self.subprocessInternalError[node_id]==False and self.subprocessExternalException[node_id]==False:
                 yield from self.run_node(next_node_id, None)
-            else:
+            elif self.subprocessInternalError[node_id]==True: #if internal error happened, deal with it
                 error_node = next((idd for idd, node in self.process_details['node_details'].items() if node['type'] == 'boundaryEvent' and node['attached_to'] == node_id), None)
                 yield from self.run_node(error_node, None)
+            #implicit else: if external exception do nothing since it is handled inside elif node[type]==task
 
         elif node['type'] == 'intermediateThrowEvent':
             next_node_id = node['next'][0]
@@ -376,7 +414,7 @@ class Process:
                         nextNode = self.process_details['node_details'][subprocess_node]['subprocess_details'][next_node_id]
                         printFlag=True
                     if nextNode['subtype'] == 'messageEventDefinition' and ready==False:
-                        ready=all(prev_node in Process.executed_nodes[self.num] for prev_node in nextNode['previous'])
+                        ready=any(prev_node in Process.executed_nodes[self.num] for prev_node in nextNode['previous'])
                         if ready==True:
                             nextNodeToVisit=nextNode['next'][0]
                             break
@@ -397,13 +435,17 @@ class Process:
         elif node['type'] == 'endEvent': 
             Process.executed_nodes[self.num].add(node_id)           
             # Terminate end event
-            if node['subtype'] == 'terminateEventDefinition':
+            if node['subtype'] == 'terminateEventDefinition' and subprocess_node is None:
                 self.printState(node,node_id,printFlag)
-                #abort somehow the process, only useful in parallel scenarios
+                Process.terminateEndEvent[self.num]=True
+            elif node['subtype'] == 'terminateEventDefinition':
+                self.printState(node,node_id,printFlag)
+                Process.subprocessTerminate[self.num][subprocess_node]=True #it stops the subprocess
+
             # Error end event (lightning symbol)
             elif node['subtype'] == 'errorEventDefinition' and subprocess_node is not None:
                 self.printState(node,node_id,printFlag)
-                Process.subprocessErrorExit[subprocess_node]=1
+                self.subprocessInternalError[subprocess_node]=True
                 return
             # standard end event
             else:
@@ -435,4 +477,5 @@ def simulate_bpmn(bpmn_dict):
 simulate_bpmn(bpmn)
 for key, value in totalCost.items():
     print("Cost of instance n. "+str(key)+": "+str(value))
+    #print(Process.executed_nodes)
 
