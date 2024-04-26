@@ -404,8 +404,8 @@
       {
           "elementId": "Activity_10x08n3",
           "worklistId": "1",
-          "fixedCost": "",
-          "costThreshold": "",
+          "fixedCost": "3",
+          "costThreshold": "5",
           "durationDistribution": {
               "type": "fixed",
               "mean": "10",
@@ -413,8 +413,8 @@
               "arg2": "",
               "timeUnit": "seconds"
           },
-          "durationThreshold": "",
-          "durationThresholdTimeUnit": "",
+          "durationThreshold": "1",
+          "durationThresholdTimeUnit": "minutes",
           "resourceIds": [
               {
                 "resourceName": "Res2",

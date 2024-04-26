@@ -74,6 +74,8 @@ for _ in range(num_instances-1):
 task_durations = {element['elementId']: element['durationDistribution'] for element in diagbp['elements']} #dict contains: type, mean, arg1, arg2
 task_resources = {element['elementId']: element['resourceIds'] for element in diagbp['elements']} #array contains dicts with each: resourceName, amountNeeded, groupId
 task_costs = {element['elementId']: element['fixedCost'] for element in diagbp['elements']} #array contains dicts with each: resourceName, amountNeeded, groupId
+
+
 totalCost={}
 totalCostPerHourResources={}
 
@@ -91,6 +93,19 @@ class Process:
         self.instance_type = instance_type
         self.num = num
         self.action = env.process(self.run())
+        self.costThresholds = {element['elementId']: int(element['costThreshold']) if element['costThreshold'] != '' else None for element in diagbp['elements']} 
+        self.durationThresholds={element['elementId']: element['durationThreshold'] if element['durationThreshold'] != '' else None for element in diagbp['elements']}
+        self.durationThresholdTimeUnits={element['elementId']: element['durationThresholdTimeUnit'] for element in diagbp['elements']}
+
+        for element_id, time_unit in self.durationThresholdTimeUnits.items(): #edit duratioThresholds multiplying by self.durationThresholdTimeUnits
+                    threshold = self.durationThresholds.get(element_id)
+                    if threshold is not None:
+                        if time_unit == 'minutes':
+                            self.durationThresholds[element_id] = float(self.durationThresholds[element_id])*60
+                        elif time_unit == 'hours':
+                            self.durationThresholds[element_id] = float(self.durationThresholds[element_id])*3600
+                        elif time_unit == 'days':
+                            self.durationThresholds[element_id] = float(self.durationThresholds[element_id])*86400
         self.subprocessInternalError = {} #used in error end event
         self.subprocessExternalException = {}
         totalCostPerHourResources[self.num]=0.0 #used to track the cost of resources
@@ -174,6 +189,16 @@ class Process:
         if start_node_id is None:
             return
         yield from self.run_node(start_node_id)
+        #This zone is executed after all process instance is over:
+        for element_id, duration_threshold in self.durationThresholds.items():
+            if self.durationThresholds[element_id] is not None and self.durationThresholds[element_id] < 0.0:
+                abss=abs(self.durationThresholds[element_id])
+                print(f"-------------------\n{element_id} has exceded his duration threshold by {abss}\n-------------------")
+        for element_id, cost_threshold in self.costThresholds.items():
+            if self.costThresholds[element_id] is not None and self.costThresholds[element_id] < 0.0:
+                abss=abs(self.costThresholds[element_id])
+                print(f"-------------------\n{element_id} has exceded his cost threshold by {abss}\n-------------------")
+
 
 
     def run_node(self, node_id, subprocess_node=None):
@@ -228,6 +253,9 @@ class Process:
                         return
                     yield self.env.timeout(1)
             taskTime=timeCalculator.convert_to_seconds(task_durations[node_id]) # task duration is used here, it is passed before to a converter that transforms the type/mean/arg1/arg2 to a value in seconds, this value the task duration is always different in each instance
+            if self.durationThresholds[node_id] is not None:
+                self.durationThresholds[node_id] -= taskTime
+                print(self.durationThresholds)
             #resources zone
             taskNeededResources=task_resources[node_id]
             if taskNeededResources: #if the task needs resources
@@ -288,6 +316,8 @@ class Process:
             taskCost=task_costs[node_id]
             if taskCost != '':
                 totalCost[self.num] += float(taskCost)
+                if self.costThresholds[node_id] is not None:
+                    self.costThresholds[node_id]-=float(taskCost)
             
             # Release resources
             if taskNeededResources:
