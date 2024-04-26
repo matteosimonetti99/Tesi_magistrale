@@ -49,8 +49,10 @@ except Exception as e:
     sys.exit()
 
 
-
-
+#Put those 2 to true to have the log in console of resources locked and unlocked and timetable management
+resourceLog=False
+logTimetable=False
+#other glob var
 num_instances = sum(int(instance['count']) for instance in diagbp['processInstances'])
 print("NUM_INSTANCES: "+ str(num_instances))
 instance_types = diagbp['processInstances']
@@ -97,7 +99,7 @@ class Process:
         Process.executed_nodes[self.num] = set() 
         for resource_name, resource_info in self.resources.items():
             resource, cost_per_hour, timetable_name = resource_info
-            print(f"Resource Name: {resource_name}, Capacity: {resource.capacity}")
+            #print(f"Resource Name: {resource_name}, Capacity: {resource.capacity}")
     
     def is_in_timetable(self, timetable_name):
         start_time = Process.startDateTime
@@ -109,9 +111,6 @@ class Process:
         # Extract the current time's hour and minute
         current_hour_minute_second = dt_time(current_time.hour, current_time.minute, current_time.second)
         
-        #print("start:"+str(Process.startDateTime))
-        #print("converted:"+str(start_time))
-        #print("now:"+str(current_time))
         # Check if the current time falls within any of the rules in the timetable
         for rule in timetable['rules']:
             timeFlag=False
@@ -122,7 +121,8 @@ class Process:
             to_time = dt_time(to_hour, to_minute, to_second)
             from_day = rule['fromWeekDay'].upper()
             to_day = rule['toWeekDay'].upper()
-            print(str(from_time)+"|"+str(current_hour_minute_second)+"|"+str(to_time)+"|days:|"+str(from_day)+"|"+str(current_time.strftime('%A').upper())+"|"+str(to_day))
+            if logTimetable:
+                print(str(from_time)+"|"+str(current_hour_minute_second)+"|"+str(to_time)+"|days:|"+str(from_day)+"|"+str(current_time.strftime('%A').upper())+"|"+str(to_day))
 
             # Checks for both ways, from time bigger or lower than to time
             if from_time > to_time: #ie: 22:00:00 to 04:00:00
@@ -156,6 +156,8 @@ class Process:
         return False
 
     def printState(self, node, node_id, inSubProcess):
+        if node['subtype'] is not None:
+            node['type']=node['type']+"/"+node['subtype']
         if node['type'] == 'subProcess':
             print(f"#{self.num}|{self.name}: {node_id} (subprocess {node['name']} just started), instance_type:{self.instance_type}. time: {self.env.now}.")
         elif inSubProcess == True:
@@ -179,6 +181,10 @@ class Process:
             node = self.process_details['node_details'][subprocess_node]['subprocess_details'][node_id]
             printFlag=True
 
+        #if this process met a terminate end event anywhere, stop execution
+        if Process.terminateEndEvent[self.num]==True:
+            return
+
         if node['type'] == 'startEvent':
             next_node_id = node['next'][0]
             if len(node['previous'])>0:
@@ -195,13 +201,13 @@ class Process:
             if subprocess_node is not None:
                 idd,error_node = next(((idd,node) for idd, node in self.process_details['node_details'].items() if node['type'] == 'boundaryEvent' and node['subtype'] == 'messageEventDefinition' and node['attached_to'] == subprocess_node), (None, None))
                 if idd is not None: #if there is a boundary event of type msg
-                    print("handling excp1")
+                    #print("handling excp1")
                     if any(prev_node in Process.executed_nodes[self.num] for prev_node in error_node['previous']): #if some msg arrived to it
-                        print("handling excp2")
+                        #print("handling excp2")
                         self.subprocessExternalException[subprocess_node]=True
                     has_exception_been_handled = idd in Process.executed_nodes[self.num]
                     if self.subprocessExternalException[subprocess_node]==True and not has_exception_been_handled:
-                        print("handling excp3")
+                        #print("handling excp3")
                         yield from self.run_node(idd, None)
                         return
                     elif self.subprocessExternalException[subprocess_node]==True and has_exception_been_handled:
@@ -212,7 +218,6 @@ class Process:
             #check if terminate end events happened
             if Process.terminateEndEvent[self.num]==True:
                 return
-
             #wait for previous messages to be delivered
             if len(node['previous'])>0:
                 while not all(prev_node in Process.executed_nodes[self.num] for prev_node in node['previous']):
@@ -228,7 +233,7 @@ class Process:
                     if res['groupId'] not in grouped_resources:
                         grouped_resources[res['groupId']] = []
                     grouped_resources[res['groupId']].append((res['resourceName'], int(res['amountNeeded'])))
-                    print(grouped_resources)              
+                    #print(grouped_resources)              
                 # Check each group of resources
                 while True:
                     resources_allocated = False
@@ -243,9 +248,9 @@ class Process:
                             if not self.is_in_timetable(self.resources[resource][2]) or self.resources[resource][0].capacity-self.resources[resource][0].count < amount:
                                 if self.resources[resource][0].capacity < amount:
                                     numberOfGroupsWithNotEnoughResources+=1 #if there are not enough resources then this group will never be able to be allocated
-                                if not self.is_in_timetable(self.resources[resource][2]):
+                                if not self.is_in_timetable(self.resources[resource][2]) and resourceLog:
                                     print(node_id + "|group n."+str(i)+"| TIMETABLE-BREAK | "+resource+": "+str(self.resources[resource][0].count)+"/"+str(self.resources[resource][0].capacity)+" amount: "+str(amount))
-                                else:
+                                elif resourceLog:
                                     print(node_id + "|group n."+str(i)+"| BREAK | "+resource+": "+str(self.resources[resource][0].count)+"/"+str(self.resources[resource][0].capacity)+" amount: "+str(amount))
                                 for req in requests:
                                     req.resource.release(req)
@@ -254,14 +259,16 @@ class Process:
                             else:
                                 for _ in range(amount):
                                     req = self.resources[resource][0].request()  # If enough resources, request resources
-                                    print(node_id + "|group n."+str(i)+"|"+resource+": "+str(self.resources[resource][0].count)+"/"+str(self.resources[resource][0].capacity)+" total amount needed: "+str(amount))
+                                    if resourceLog:
+                                        print(node_id + "|group n."+str(i)+"|"+resource+": "+str(self.resources[resource][0].count)+"/"+str(self.resources[resource][0].capacity)+" total amount needed: "+str(amount))
                                     requests.append(req)
                         total_resources_needed = sum(amount for _, amount in resources)
                         if len(requests) == total_resources_needed:  # If all resources in the group can be allocated
                             resources_allocated = True
                             for req in requests:
                                 yield req
-                                print (node_id + "|Resource locked: " + str(req.resource) + ", Time: " + str(self.env.now) )  # Print + str(req.amount)
+                                if resourceLog:
+                                    print (node_id + "|Resource locked: " + str(req.resource) + ", Time: " + str(self.env.now) )  # Print + str(req.amount)
                             break  # Break the loop as resources are allocated
                     if numberOfGroupsWithNotEnoughResources==len(grouped_resources): #if the number of groups that can't be allocated is equal to the number of groups, no group can be allocated
                         raise Exception("Amount of resource needed for task '"+node_id+"' is more than the resource capacity")
@@ -281,7 +288,8 @@ class Process:
             if taskNeededResources:
                 for req in requests:
                     req.resource.release(req)
-                    print(node_id + "|Resource released: " + str(req.resource)  + ", Time: " + str(self.env.now))
+                    if resourceLog:
+                        print(node_id + "|Resource released: " + str(req.resource)  + ", Time: " + str(self.env.now))
             yield from self.run_node(next_node_id, subprocess_node)
 
 
@@ -352,7 +360,7 @@ class Process:
             Process.executed_nodes[self.num].add(node_id)
             next_node_id = node['next'][0]
             # After the subprocess is executed, continue with the node next to the subprocess if no error end event
-            if self.subprocessInternalError[node_id]==False and self.subprocessExternalException[node_id]==False:
+            if self.subprocessInternalError[node_id]==False and self.subprocessExternalException[node_id]==False and Process.terminateEndEvent[self.num]==False:
                 yield from self.run_node(next_node_id, None)
             elif self.subprocessInternalError[node_id]==True: #if internal error happened, deal with it
                 error_node = next((idd for idd, node in self.process_details['node_details'].items() if node['type'] == 'boundaryEvent' and node['attached_to'] == node_id), None)
