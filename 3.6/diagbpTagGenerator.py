@@ -76,9 +76,11 @@ def diagbp(diagbpPath, bpmn_dict):
             break
         timetable["name"] = value
         rules=[]
+        j=0
         while True:
+            j+=1
             rule={}
-            fromTime=input(f"Insert the start time (hh:mm:ss) for timetable {value} (insert empty value to end rules for this timetable and go to next timetable): ")
+            fromTime=input(f"Insert the start time of turn {j} (hh:mm:ss) for timetable {value} (insert empty value to end rules for this timetable and go to next timetable): ")
             if not fromTime:
                 break
             toTime=input(f"Insert the end time (hh:mm:ss) for timetable {value}: ")

@@ -58,6 +58,7 @@ print("NUM_INSTANCES: "+ str(num_instances))
 instance_types = diagbp['processInstances']
 xor_probabilities = {flow['elementId']: float(flow['executionProbability']) for flow in diagbp['sequenceFlows']}
 resources = diagbp['resources']
+#global_resource global var is in simulate_bpmn function at the end of the code, it is passed to process as globalResources
 timetables = diagbp['timetables']
 catchEvents = diagbp['catchEvents']
 
@@ -74,6 +75,7 @@ task_durations = {element['elementId']: element['durationDistribution'] for elem
 task_resources = {element['elementId']: element['resourceIds'] for element in diagbp['elements']} #array contains dicts with each: resourceName, amountNeeded, groupId
 task_costs = {element['elementId']: element['fixedCost'] for element in diagbp['elements']} #array contains dicts with each: resourceName, amountNeeded, groupId
 totalCost={}
+totalCostPerHourResources={}
 
 class Process:
     executed_nodes = {}  # make executed_nodes a dictionary of sets
@@ -91,6 +93,7 @@ class Process:
         self.action = env.process(self.run())
         self.subprocessInternalError = {} #used in error end event
         self.subprocessExternalException = {}
+        totalCostPerHourResources[self.num]=0.0 #used to track the cost of resources
         Process.terminateEndEvent[self.num] = False
         Process.subprocessTerminate[self.num] = {}
         totalCost[self.num]=0.0
@@ -243,6 +246,7 @@ class Process:
                         i+=1      
                         # Check if there are enough resources to fulfill the request of a group
                         requests = []
+                        costsPerHour = []
                         for resource, amount in resources:
                             #capacity indica capacità della risorsa, count quante ne ho allocate. Inoltre controlla se la risorsa è in timetable
                             if not self.is_in_timetable(self.resources[resource][2]) or self.resources[resource][0].capacity-self.resources[resource][0].count < amount:
@@ -252,23 +256,24 @@ class Process:
                                     print(node_id + "|group n."+str(i)+"| TIMETABLE-BREAK | "+resource+": "+str(self.resources[resource][0].count)+"/"+str(self.resources[resource][0].capacity)+" amount: "+str(amount))
                                 elif resourceLog:
                                     print(node_id + "|group n."+str(i)+"| BREAK | "+resource+": "+str(self.resources[resource][0].count)+"/"+str(self.resources[resource][0].capacity)+" amount: "+str(amount))
-                                for req in requests:
+                                for name, req, costPerHour in requests:
                                     req.resource.release(req)
                                     req.cancel() # cancel the requests that were accumulated till now since this group is ko
                                 break  # If not enough resources, break and check the next group
                             else:
                                 for _ in range(amount):
                                     req = self.resources[resource][0].request()  # If enough resources, request resources
+                                    costPerHour = self.resources[resource][1]
                                     if resourceLog:
                                         print(node_id + "|group n."+str(i)+"|"+resource+": "+str(self.resources[resource][0].count)+"/"+str(self.resources[resource][0].capacity)+" total amount needed: "+str(amount))
-                                    requests.append(req)
+                                    requests.append((resource, req, costPerHour))
                         total_resources_needed = sum(amount for _, amount in resources)
                         if len(requests) == total_resources_needed:  # If all resources in the group can be allocated
                             resources_allocated = True
-                            for req in requests:
+                            for name, req, costPerHour in requests:
                                 yield req
                                 if resourceLog:
-                                    print (node_id + "|Resource locked: " + str(req.resource) + ", Time: " + str(self.env.now) )  # Print + str(req.amount)
+                                    print (node_id + "|Resource locked: " + name + ", Time: " + str(self.env.now) )  # Print + str(req.amount)
                             break  # Break the loop as resources are allocated
                     if numberOfGroupsWithNotEnoughResources==len(grouped_resources): #if the number of groups that can't be allocated is equal to the number of groups, no group can be allocated
                         raise Exception("Amount of resource needed for task '"+node_id+"' is more than the resource capacity")
@@ -286,10 +291,11 @@ class Process:
             
             # Release resources
             if taskNeededResources:
-                for req in requests:
+                for name, req, costPerHour in requests:
+                    totalCostPerHourResources[self.num]+=float(costPerHour)*float(taskTime)/3600
                     req.resource.release(req)
                     if resourceLog:
-                        print(node_id + "|Resource released: " + str(req.resource)  + ", Time: " + str(self.env.now))
+                        print(node_id + "|Resource released: " + name  + ", Time: " + str(self.env.now))
             yield from self.run_node(next_node_id, subprocess_node)
 
 
@@ -484,6 +490,7 @@ def simulate_bpmn(bpmn_dict):
 
 simulate_bpmn(bpmn)
 for key, value in totalCost.items():
-    print("Cost of instance n. "+str(key)+": "+str(value))
-    #print(Process.executed_nodes)
+    print("Cost (tasks) of instance n. "+str(key)+": "+str(value))
 
+for key, value in totalCostPerHourResources.items():
+    print("Cost (resources)  of instance n. "+str(key)+": "+str(value))
