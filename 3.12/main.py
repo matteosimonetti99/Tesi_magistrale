@@ -7,6 +7,8 @@ import numpy as np
 from collections import deque
 from datetime import datetime, timedelta
 from datetime import time as dt_time
+import pm4py
+import pandas as pd
 
 
 #to remove, credo
@@ -52,6 +54,8 @@ except Exception as e:
 #Put those 2 to true to have the log in console of resources locked and unlocked and timetable management
 resourceLog=False
 logTimetable=False
+logCosts=True
+
 #other glob var
 num_instances = sum(int(instance['count']) for instance in diagbp['processInstances'])
 print("NUM_INSTANCES: "+ str(num_instances))
@@ -76,8 +80,8 @@ task_resources = {element['elementId']: element['resourceIds'] for element in di
 task_costs = {element['elementId']: element['fixedCost'] for element in diagbp['elements']} #array contains dicts with each: resourceName, amountNeeded, groupId
 
 
-totalCost={}
-totalCostPerHourResources={}
+totalCost={} #task_costs are summed here
+timeUsedPerResource={} #resources time being used are summed here
 
 class Process:
     executed_nodes = {}  # make executed_nodes a dictionary of sets
@@ -108,7 +112,6 @@ class Process:
                             self.durationThresholds[element_id] = float(self.durationThresholds[element_id])*86400
         self.subprocessInternalError = {} #used in error end event
         self.subprocessExternalException = {}
-        totalCostPerHourResources[self.num]=0.0 #used to track the cost of resources
         Process.terminateEndEvent[self.num] = False
         Process.subprocessTerminate[self.num] = {}
         totalCost[self.num]=0.0
@@ -117,6 +120,7 @@ class Process:
         Process.executed_nodes[self.num] = set() 
         for resource_name, resource_info in self.resources.items():
             resource, cost_per_hour, timetable_name = resource_info
+            timeUsedPerResource[resource_name]=0.0
             #print(f"Resource Name: {resource_name}, Capacity: {resource.capacity}")
     
     def is_in_timetable(self, timetable_name):
@@ -255,7 +259,7 @@ class Process:
             taskTime=timeCalculator.convert_to_seconds(task_durations[node_id]) # task duration is used here, it is passed before to a converter that transforms the type/mean/arg1/arg2 to a value in seconds, this value the task duration is always different in each instance
             if self.durationThresholds[node_id] is not None:
                 self.durationThresholds[node_id] -= taskTime
-                print(self.durationThresholds)
+                #print(self.durationThresholds)
             #resources zone
             taskNeededResources=task_resources[node_id]
             if taskNeededResources: #if the task needs resources
@@ -322,7 +326,7 @@ class Process:
             # Release resources
             if taskNeededResources:
                 for name, req, costPerHour in requests:
-                    totalCostPerHourResources[self.num]+=float(costPerHour)*float(taskTime)/3600
+                    timeUsedPerResource[name]+=float(taskTime)
                     req.resource.release(req)
                     if resourceLog:
                         print(node_id + "|Resource released: " + name  + ", Time: " + str(self.env.now))
@@ -496,12 +500,11 @@ class Process:
                 self.printState(node,node_id,printFlag)
                 return
 
-
+env = simpy.Environment()
 def simulate_bpmn(bpmn_dict):
     instance_index = 0
     instance_count = 0
 
-    env = simpy.Environment()
     global_resources = {res['name']: (simpy.Resource(env, capacity=int(res['totalAmount'])), res['costPerHour'], res['timetableName']) for res in resources} if resources else {}
     for i in range(num_instances):
         instance_type = instance_types[instance_index]['type']
@@ -519,8 +522,51 @@ def simulate_bpmn(bpmn_dict):
 
 
 simulate_bpmn(bpmn)
-for key, value in totalCost.items():
-    print("Cost (tasks) of instance n. "+str(key)+": "+str(value))
 
-for key, value in totalCostPerHourResources.items():
-    print("Cost (resources)  of instance n. "+str(key)+": "+str(value))
+end_parameters={}
+event_data = []
+taskCosts={}
+resourcesPercentageUsage={}
+resourceCosts={}
+
+for key, value in totalCost.items():
+    if logCosts:
+        print("Cost of all the tasks in instance n. "+str(key)+": "+str(value))
+    taskCosts[key]=value
+end_parameters["tasksCosts"]=taskCosts
+
+for name, time in timeUsedPerResource.items():
+    if logCosts:
+        print(f"Percentage of usage of resource '{name}': {time*100/env.now:.1f}%")
+    resourcesPercentageUsage[name]=time
+end_parameters["resourcesPercentageUsage"]=resourcesPercentageUsage
+
+for resource in resources:
+    total_amount = float(resource["totalAmount"])
+    cost_per_hour = float(resource["costPerHour"])
+    time_in_hours = env.now / 3600  # Convert time to hours
+    resource_cost = total_amount * cost_per_hour * time_in_hours
+    name=resource['name']
+    if logCosts:
+        print(f"Cost for resource '{name}': {resource_cost:.1f}")
+    resourceCosts[name]=f"{resource_cost:.1f}"
+end_parameters["resourceCosts"]=resourceCosts
+
+start_time = Process.startDateTime
+start_time = datetime.strptime(start_time, "%Y-%m-%dT%H:%M:%S")
+current_time = start_time + timedelta(seconds=env.now)
+data = {
+    'elementId': [1, 2, 3],
+    'status': ['Active', 'Inactive', 'Pending'],
+    'timestamp': [datetime(2024, 4, 27, 16, 30), datetime(2024, 4, 27, 17, 15), datetime(2024, 4, 27, 18, 0)]
+}
+
+# Create a DataFrame from the dictionary
+df = pd.DataFrame(data)
+df = pm4py.format_dataframe(df, case_id='elementId', activity_key='status', timestamp_key='timestamp')
+event_log = pm4py.convert_to_event_log(df)
+pm4py.write_xes(event_log, 'exported.xes')
+
+
+# Save the XES log to a file
+pm4py.write_xes(event_log, "../simulation_log.xes")
