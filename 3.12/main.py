@@ -18,7 +18,7 @@ import time
 
 #sys.setrecursionlimit(100000)
 
-
+extraLog={}
 
 diagbpPath="../json/diagbp.json"
 bpmnPath="../json/bpmn.json"
@@ -211,11 +211,12 @@ class Process:
             if self.durationThresholds[element_id] is not None and self.durationThresholds[element_id] < 0.0:
                 abss=abs(self.durationThresholds[element_id])
                 print(f"-------------------\n{element_id} has exceded his duration threshold by {abss}\n-------------------")
+                extraLog[f"{element_id} has exceded his DURATION threshold in instance {self.num} by:"]= abss
         for element_id, cost_threshold in self.costThresholds.items():
             if self.costThresholds[element_id] is not None and self.costThresholds[element_id] < 0.0:
                 abss=abs(self.costThresholds[element_id])
                 print(f"-------------------\n{element_id} has exceded his cost threshold by {abss}\n-------------------")
-
+                extraLog[f"{element_id} has exceded his COST threshold in instance {self.num} by:"]= abss
 
 
     def run_node(self, node_id, subprocess_node=None):
@@ -408,7 +409,7 @@ class Process:
         elif node['type'] == 'parallelGateway_close':
             if (node_id, node['next'][0]) not in self.stack:
                 self.stack.append((node_id, node['next'][0]))
-            print(self.stack)
+            #print(self.stack)
             return
             
         elif node['type'] == 'subProcess':
@@ -553,7 +554,6 @@ def simulate_bpmn(bpmn_dict):
 
 simulate_bpmn(bpmn)
 
-end_parameters={}
 event_data = []
 taskCosts={}
 resourcesPercentageUsage={}
@@ -563,13 +563,11 @@ for key, value in totalCost.items():
     if logCosts:
         print("Cost of all the tasks in instance n. "+str(key)+": "+str(value))
     taskCosts[key]=value
-end_parameters["tasksCosts"]=taskCosts
 
 for name, time in timeUsedPerResource.items():
     if logCosts:
         print(f"Percentage of usage of resource '{name}': {time*100/env.now:.1f}%")
-    resourcesPercentageUsage[name]=time
-end_parameters["resourcesPercentageUsage"]=resourcesPercentageUsage
+    resourcesPercentageUsage[name]=f"{time*100/env.now:.1f}"
 
 for resource in resources:
     total_amount = float(resource["totalAmount"])
@@ -580,7 +578,6 @@ for resource in resources:
     if logCosts:
         print(f"Cost for resource '{name}': {resource_cost:.1f}")
     resourceCosts[name]=f"{resource_cost:.1f}"
-end_parameters["resourceCosts"]=resourceCosts
 
 
 with open(csv_file, 'w') as f:
@@ -591,5 +588,27 @@ with open(csv_file, 'w') as f:
 dataframe = pd.read_csv(csv_file, sep=',')
 dataframe = dataframe.rename(columns={'status': 'lifecycle:transition'})
 dataframe = pm4py.format_dataframe(dataframe, case_id='traceId', activity_key='activity', timestamp_key='timestamp')
-event_log = pm4py.convert_to_event_log(dataframe)    
+event_log = pm4py.convert_to_event_log(dataframe)
+
+csv_file_extra = "../logs/logExtra.csv"
+combined_dict = {}
+for k, v in taskCosts.items():
+    combined_dict[f'cost of the tasks of instance ({k})'] = v
+for k, v in resourceCosts.items():
+    combined_dict[f'Total costs of resource ({k})'] = v
+for k, v in resourcesPercentageUsage.items():
+    combined_dict[f'total usage of resource ({k}) in percentage'] = v
+
+if bool(extraLog):
+    combined_dict.update(extraLog)
+
+all_keys = set(combined_dict.keys())
+
+# Write the combined dictionary to the CSV file
+with open('../logs/logExtra.csv', 'w', newline='') as f:
+    writer = csv.DictWriter(f, fieldnames=all_keys)
+    writer.writeheader()
+    writer.writerow(combined_dict)
+
+
 pm4py.write_xes(event_log, '../logs/log.xes')
