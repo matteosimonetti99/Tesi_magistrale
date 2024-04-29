@@ -1,0 +1,806 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<log xes.version="1849-2016" xes.features="nested-attributes" xmlns="http://www.xes-standard.org/">
+	<extension name="Concept" prefix="concept" uri="http://www.xes-standard.org/concept.xesext" />
+	<extension name="Lifecycle" prefix="lifecycle" uri="http://www.xes-standard.org/lifecycle.xesext" />
+	<extension name="Time" prefix="time" uri="http://www.xes-standard.org/time.xesext" />
+	<string key="origin" value="csv" />
+	<trace>
+		<string key="concept:name" value="1" />
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="StartEvent_09cyjfc" />
+			<date key="timestamp" value="2024-04-15T18:00:00+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="startEvent" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="a" />
+			<string key="concept:name" value="StartEvent_09cyjfc" />
+			<date key="time:timestamp" value="2024-04-15T18:00:00+00:00" />
+			<int key="@@index" value="0" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="Gateway_01s1pgm" />
+			<date key="timestamp" value="2024-04-15T18:00:00+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="exclusiveGateway" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="a" />
+			<string key="concept:name" value="Gateway_01s1pgm" />
+			<date key="time:timestamp" value="2024-04-15T18:00:00+00:00" />
+			<int key="@@index" value="1" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="Activity_10x08n3" />
+			<date key="timestamp" value="2024-04-15T18:00:00+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="a" />
+			<string key="concept:name" value="Activity_10x08n3" />
+			<date key="time:timestamp" value="2024-04-15T18:00:00+00:00" />
+			<int key="@@index" value="2" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="Activity_10x08n3" />
+			<date key="timestamp" value="2024-04-15T18:00:00+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="a" />
+			<string key="concept:name" value="Activity_10x08n3" />
+			<date key="time:timestamp" value="2024-04-15T18:00:00+00:00" />
+			<int key="@@index" value="3" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="Activity_10x08n3" />
+			<date key="timestamp" value="2024-04-15T18:00:10+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="a" />
+			<string key="concept:name" value="Activity_10x08n3" />
+			<date key="time:timestamp" value="2024-04-15T18:00:10+00:00" />
+			<int key="@@index" value="4" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="Gateway_1ngxc9b" />
+			<date key="timestamp" value="2024-04-15T18:00:10+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="parallelGateway" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="a" />
+			<string key="concept:name" value="Gateway_1ngxc9b" />
+			<date key="time:timestamp" value="2024-04-15T18:00:10+00:00" />
+			<int key="@@index" value="5" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="Activity_14rjj9v" />
+			<date key="timestamp" value="2024-04-15T18:00:10+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="a" />
+			<string key="concept:name" value="Activity_14rjj9v" />
+			<date key="time:timestamp" value="2024-04-15T18:00:10+00:00" />
+			<int key="@@index" value="6" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="Activity_0uqn82h" />
+			<date key="timestamp" value="2024-04-15T18:00:10+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="subProcess" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="a" />
+			<string key="concept:name" value="Activity_0uqn82h" />
+			<date key="time:timestamp" value="2024-04-15T18:00:10+00:00" />
+			<int key="@@index" value="7" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="Event_1njp3xz" />
+			<date key="timestamp" value="2024-04-15T18:00:10+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="startEvent" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="a" />
+			<string key="concept:name" value="Event_1njp3xz" />
+			<date key="time:timestamp" value="2024-04-15T18:00:10+00:00" />
+			<int key="@@index" value="8" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="Activity_12afiek" />
+			<date key="timestamp" value="2024-04-15T18:00:10+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="a" />
+			<string key="concept:name" value="Activity_12afiek" />
+			<date key="time:timestamp" value="2024-04-15T18:00:10+00:00" />
+			<int key="@@index" value="9" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="Event_0pg18xv" />
+			<date key="timestamp" value="2024-04-15T18:00:10+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="startEvent" />
+			<string key="poolName" value="second" />
+			<string key="instanceType" value="a" />
+			<string key="concept:name" value="Event_0pg18xv" />
+			<date key="time:timestamp" value="2024-04-15T18:00:10+00:00" />
+			<int key="@@index" value="10" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="Activity_182s0e0" />
+			<date key="timestamp" value="2024-04-15T18:00:10+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="second" />
+			<string key="instanceType" value="a" />
+			<string key="concept:name" value="Activity_182s0e0" />
+			<date key="time:timestamp" value="2024-04-15T18:00:10+00:00" />
+			<int key="@@index" value="11" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="Activity_14rjj9v" />
+			<date key="timestamp" value="2024-04-15T18:00:10+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="a" />
+			<string key="concept:name" value="Activity_14rjj9v" />
+			<date key="time:timestamp" value="2024-04-15T18:00:10+00:00" />
+			<int key="@@index" value="12" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="Activity_14rjj9v" />
+			<date key="timestamp" value="2024-04-15T18:00:11+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="a" />
+			<string key="concept:name" value="Activity_14rjj9v" />
+			<date key="time:timestamp" value="2024-04-15T18:00:11+00:00" />
+			<int key="@@index" value="13" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="Activity_12afiek" />
+			<date key="timestamp" value="2024-04-15T18:00:12+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="a" />
+			<string key="concept:name" value="Activity_12afiek" />
+			<date key="time:timestamp" value="2024-04-15T18:00:12+00:00" />
+			<int key="@@index" value="14" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="Activity_12afiek" />
+			<date key="timestamp" value="2024-04-15T18:00:14+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="a" />
+			<string key="concept:name" value="Activity_12afiek" />
+			<date key="time:timestamp" value="2024-04-15T18:00:14+00:00" />
+			<int key="@@index" value="15" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="Event_1go337f" />
+			<date key="timestamp" value="2024-04-15T18:00:14+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="endEvent" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="a" />
+			<string key="concept:name" value="Event_1go337f" />
+			<date key="time:timestamp" value="2024-04-15T18:00:14+00:00" />
+			<int key="@@index" value="16" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="Activity_0uqn82h" />
+			<date key="timestamp" value="2024-04-15T18:00:14+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="subProcess" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="a" />
+			<string key="concept:name" value="Activity_0uqn82h" />
+			<date key="time:timestamp" value="2024-04-15T18:00:14+00:00" />
+			<int key="@@index" value="17" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="Activity_1ijxuyk" />
+			<date key="timestamp" value="2024-04-15T18:00:14+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="a" />
+			<string key="concept:name" value="Activity_1ijxuyk" />
+			<date key="time:timestamp" value="2024-04-15T18:00:14+00:00" />
+			<int key="@@index" value="18" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="Activity_1ijxuyk" />
+			<date key="timestamp" value="2024-04-15T18:00:14+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="a" />
+			<string key="concept:name" value="Activity_1ijxuyk" />
+			<date key="time:timestamp" value="2024-04-15T18:00:14+00:00" />
+			<int key="@@index" value="19" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="Activity_1ijxuyk" />
+			<date key="timestamp" value="2024-04-15T18:00:16+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="a" />
+			<string key="concept:name" value="Activity_1ijxuyk" />
+			<date key="time:timestamp" value="2024-04-15T18:00:16+00:00" />
+			<int key="@@index" value="20" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="Activity_182s0e0" />
+			<date key="timestamp" value="2024-04-15T18:00:16+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="second" />
+			<string key="instanceType" value="a" />
+			<string key="concept:name" value="Activity_182s0e0" />
+			<date key="time:timestamp" value="2024-04-15T18:00:16+00:00" />
+			<int key="@@index" value="21" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="Activity_182s0e0" />
+			<date key="timestamp" value="2024-04-15T18:01:56+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="second" />
+			<string key="instanceType" value="a" />
+			<string key="concept:name" value="Activity_182s0e0" />
+			<date key="time:timestamp" value="2024-04-15T18:01:56+00:00" />
+			<int key="@@index" value="22" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="Event_016qlk7" />
+			<date key="timestamp" value="2024-04-15T18:01:56+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="intermediateThrowEvent" />
+			<string key="poolName" value="second" />
+			<string key="instanceType" value="a" />
+			<string key="concept:name" value="Event_016qlk7" />
+			<date key="time:timestamp" value="2024-04-15T18:01:56+00:00" />
+			<int key="@@index" value="23" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="Event_0iqs5ri" />
+			<date key="timestamp" value="2024-04-15T18:01:56+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="endEvent/messageEventDefinition" />
+			<string key="poolName" value="second" />
+			<string key="instanceType" value="a" />
+			<string key="concept:name" value="Event_0iqs5ri" />
+			<date key="time:timestamp" value="2024-04-15T18:01:56+00:00" />
+			<int key="@@index" value="24" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="Activity_0qykc8o" />
+			<date key="timestamp" value="2024-04-15T18:01:56+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="a" />
+			<string key="concept:name" value="Activity_0qykc8o" />
+			<date key="time:timestamp" value="2024-04-15T18:01:56+00:00" />
+			<int key="@@index" value="25" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="Activity_0qykc8o" />
+			<date key="timestamp" value="2024-04-15T18:01:56+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="a" />
+			<string key="concept:name" value="Activity_0qykc8o" />
+			<date key="time:timestamp" value="2024-04-15T18:01:56+00:00" />
+			<int key="@@index" value="26" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="Activity_0qykc8o" />
+			<date key="timestamp" value="2024-04-15T18:01:57+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="a" />
+			<string key="concept:name" value="Activity_0qykc8o" />
+			<date key="time:timestamp" value="2024-04-15T18:01:57+00:00" />
+			<int key="@@index" value="27" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="Gateway_0xussxu" />
+			<date key="timestamp" value="2024-04-15T18:01:57+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="parallelGateway" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="a" />
+			<string key="concept:name" value="Gateway_0xussxu" />
+			<date key="time:timestamp" value="2024-04-15T18:01:57+00:00" />
+			<int key="@@index" value="28" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="Gateway_0a5f12j" />
+			<date key="timestamp" value="2024-04-15T18:01:57+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="exclusiveGateway" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="a" />
+			<string key="concept:name" value="Gateway_0a5f12j" />
+			<date key="time:timestamp" value="2024-04-15T18:01:57+00:00" />
+			<int key="@@index" value="29" />
+			<int key="@@case_index" value="0" />
+		</event>
+		<event>
+			<int key="traceId" value="1" />
+			<string key="activity" value="Event_1b9cqpn" />
+			<date key="timestamp" value="2024-04-15T18:01:57+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="endEvent" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="a" />
+			<string key="concept:name" value="Event_1b9cqpn" />
+			<date key="time:timestamp" value="2024-04-15T18:01:57+00:00" />
+			<int key="@@index" value="30" />
+			<int key="@@case_index" value="0" />
+		</event>
+	</trace>
+	<trace>
+		<string key="concept:name" value="2" />
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="StartEvent_09cyjfc" />
+			<date key="timestamp" value="2024-04-15T18:10:00+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="startEvent" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="b" />
+			<string key="concept:name" value="StartEvent_09cyjfc" />
+			<date key="time:timestamp" value="2024-04-15T18:10:00+00:00" />
+			<int key="@@index" value="31" />
+			<int key="@@case_index" value="1" />
+		</event>
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="Gateway_01s1pgm" />
+			<date key="timestamp" value="2024-04-15T18:10:00+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="exclusiveGateway" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="b" />
+			<string key="concept:name" value="Gateway_01s1pgm" />
+			<date key="time:timestamp" value="2024-04-15T18:10:00+00:00" />
+			<int key="@@index" value="32" />
+			<int key="@@case_index" value="1" />
+		</event>
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="Activity_10x08n3" />
+			<date key="timestamp" value="2024-04-15T18:10:00+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="b" />
+			<string key="concept:name" value="Activity_10x08n3" />
+			<date key="time:timestamp" value="2024-04-15T18:10:00+00:00" />
+			<int key="@@index" value="33" />
+			<int key="@@case_index" value="1" />
+		</event>
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="Activity_10x08n3" />
+			<date key="timestamp" value="2024-04-15T18:10:00+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="b" />
+			<string key="concept:name" value="Activity_10x08n3" />
+			<date key="time:timestamp" value="2024-04-15T18:10:00+00:00" />
+			<int key="@@index" value="34" />
+			<int key="@@case_index" value="1" />
+		</event>
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="Activity_10x08n3" />
+			<date key="timestamp" value="2024-04-15T18:10:10+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="b" />
+			<string key="concept:name" value="Activity_10x08n3" />
+			<date key="time:timestamp" value="2024-04-15T18:10:10+00:00" />
+			<int key="@@index" value="35" />
+			<int key="@@case_index" value="1" />
+		</event>
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="Gateway_1ngxc9b" />
+			<date key="timestamp" value="2024-04-15T18:10:10+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="parallelGateway" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="b" />
+			<string key="concept:name" value="Gateway_1ngxc9b" />
+			<date key="time:timestamp" value="2024-04-15T18:10:10+00:00" />
+			<int key="@@index" value="36" />
+			<int key="@@case_index" value="1" />
+		</event>
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="Activity_14rjj9v" />
+			<date key="timestamp" value="2024-04-15T18:10:10+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="b" />
+			<string key="concept:name" value="Activity_14rjj9v" />
+			<date key="time:timestamp" value="2024-04-15T18:10:10+00:00" />
+			<int key="@@index" value="37" />
+			<int key="@@case_index" value="1" />
+		</event>
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="Activity_0uqn82h" />
+			<date key="timestamp" value="2024-04-15T18:10:10+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="subProcess" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="b" />
+			<string key="concept:name" value="Activity_0uqn82h" />
+			<date key="time:timestamp" value="2024-04-15T18:10:10+00:00" />
+			<int key="@@index" value="38" />
+			<int key="@@case_index" value="1" />
+		</event>
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="Event_1njp3xz" />
+			<date key="timestamp" value="2024-04-15T18:10:10+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="startEvent" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="b" />
+			<string key="concept:name" value="Event_1njp3xz" />
+			<date key="time:timestamp" value="2024-04-15T18:10:10+00:00" />
+			<int key="@@index" value="39" />
+			<int key="@@case_index" value="1" />
+		</event>
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="Activity_12afiek" />
+			<date key="timestamp" value="2024-04-15T18:10:10+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="b" />
+			<string key="concept:name" value="Activity_12afiek" />
+			<date key="time:timestamp" value="2024-04-15T18:10:10+00:00" />
+			<int key="@@index" value="40" />
+			<int key="@@case_index" value="1" />
+		</event>
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="Event_0pg18xv" />
+			<date key="timestamp" value="2024-04-15T18:10:10+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="startEvent" />
+			<string key="poolName" value="second" />
+			<string key="instanceType" value="b" />
+			<string key="concept:name" value="Event_0pg18xv" />
+			<date key="time:timestamp" value="2024-04-15T18:10:10+00:00" />
+			<int key="@@index" value="41" />
+			<int key="@@case_index" value="1" />
+		</event>
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="Activity_182s0e0" />
+			<date key="timestamp" value="2024-04-15T18:10:10+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="second" />
+			<string key="instanceType" value="b" />
+			<string key="concept:name" value="Activity_182s0e0" />
+			<date key="time:timestamp" value="2024-04-15T18:10:10+00:00" />
+			<int key="@@index" value="42" />
+			<int key="@@case_index" value="1" />
+		</event>
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="Activity_14rjj9v" />
+			<date key="timestamp" value="2024-04-15T18:10:10+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="b" />
+			<string key="concept:name" value="Activity_14rjj9v" />
+			<date key="time:timestamp" value="2024-04-15T18:10:10+00:00" />
+			<int key="@@index" value="43" />
+			<int key="@@case_index" value="1" />
+		</event>
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="Activity_14rjj9v" />
+			<date key="timestamp" value="2024-04-15T18:10:11+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="b" />
+			<string key="concept:name" value="Activity_14rjj9v" />
+			<date key="time:timestamp" value="2024-04-15T18:10:11+00:00" />
+			<int key="@@index" value="44" />
+			<int key="@@case_index" value="1" />
+		</event>
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="Activity_12afiek" />
+			<date key="timestamp" value="2024-04-15T18:10:12+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="b" />
+			<string key="concept:name" value="Activity_12afiek" />
+			<date key="time:timestamp" value="2024-04-15T18:10:12+00:00" />
+			<int key="@@index" value="45" />
+			<int key="@@case_index" value="1" />
+		</event>
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="Activity_12afiek" />
+			<date key="timestamp" value="2024-04-15T18:10:14+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="b" />
+			<string key="concept:name" value="Activity_12afiek" />
+			<date key="time:timestamp" value="2024-04-15T18:10:14+00:00" />
+			<int key="@@index" value="46" />
+			<int key="@@case_index" value="1" />
+		</event>
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="Event_1go337f" />
+			<date key="timestamp" value="2024-04-15T18:10:14+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="endEvent" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="b" />
+			<string key="concept:name" value="Event_1go337f" />
+			<date key="time:timestamp" value="2024-04-15T18:10:14+00:00" />
+			<int key="@@index" value="47" />
+			<int key="@@case_index" value="1" />
+		</event>
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="Activity_0uqn82h" />
+			<date key="timestamp" value="2024-04-15T18:10:14+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="subProcess" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="b" />
+			<string key="concept:name" value="Activity_0uqn82h" />
+			<date key="time:timestamp" value="2024-04-15T18:10:14+00:00" />
+			<int key="@@index" value="48" />
+			<int key="@@case_index" value="1" />
+		</event>
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="Activity_1ijxuyk" />
+			<date key="timestamp" value="2024-04-15T18:10:14+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="b" />
+			<string key="concept:name" value="Activity_1ijxuyk" />
+			<date key="time:timestamp" value="2024-04-15T18:10:14+00:00" />
+			<int key="@@index" value="49" />
+			<int key="@@case_index" value="1" />
+		</event>
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="Activity_1ijxuyk" />
+			<date key="timestamp" value="2024-04-15T18:10:14+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="b" />
+			<string key="concept:name" value="Activity_1ijxuyk" />
+			<date key="time:timestamp" value="2024-04-15T18:10:14+00:00" />
+			<int key="@@index" value="50" />
+			<int key="@@case_index" value="1" />
+		</event>
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="Activity_1ijxuyk" />
+			<date key="timestamp" value="2024-04-15T18:10:16+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="b" />
+			<string key="concept:name" value="Activity_1ijxuyk" />
+			<date key="time:timestamp" value="2024-04-15T18:10:16+00:00" />
+			<int key="@@index" value="51" />
+			<int key="@@case_index" value="1" />
+		</event>
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="Activity_182s0e0" />
+			<date key="timestamp" value="2024-04-15T18:10:16+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="second" />
+			<string key="instanceType" value="b" />
+			<string key="concept:name" value="Activity_182s0e0" />
+			<date key="time:timestamp" value="2024-04-15T18:10:16+00:00" />
+			<int key="@@index" value="52" />
+			<int key="@@case_index" value="1" />
+		</event>
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="Activity_182s0e0" />
+			<date key="timestamp" value="2024-04-15T18:11:56+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="second" />
+			<string key="instanceType" value="b" />
+			<string key="concept:name" value="Activity_182s0e0" />
+			<date key="time:timestamp" value="2024-04-15T18:11:56+00:00" />
+			<int key="@@index" value="53" />
+			<int key="@@case_index" value="1" />
+		</event>
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="Event_016qlk7" />
+			<date key="timestamp" value="2024-04-15T18:11:56+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="intermediateThrowEvent" />
+			<string key="poolName" value="second" />
+			<string key="instanceType" value="b" />
+			<string key="concept:name" value="Event_016qlk7" />
+			<date key="time:timestamp" value="2024-04-15T18:11:56+00:00" />
+			<int key="@@index" value="54" />
+			<int key="@@case_index" value="1" />
+		</event>
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="Activity_0qykc8o" />
+			<date key="timestamp" value="2024-04-15T18:11:56+00:00" />
+			<string key="lifecycle:transition" value="start" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="b" />
+			<string key="concept:name" value="Activity_0qykc8o" />
+			<date key="time:timestamp" value="2024-04-15T18:11:56+00:00" />
+			<int key="@@index" value="55" />
+			<int key="@@case_index" value="1" />
+		</event>
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="Activity_0qykc8o" />
+			<date key="timestamp" value="2024-04-15T18:11:56+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="b" />
+			<string key="concept:name" value="Activity_0qykc8o" />
+			<date key="time:timestamp" value="2024-04-15T18:11:56+00:00" />
+			<int key="@@index" value="56" />
+			<int key="@@case_index" value="1" />
+		</event>
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="Activity_0qykc8o" />
+			<date key="timestamp" value="2024-04-15T18:11:57+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="b" />
+			<string key="concept:name" value="Activity_0qykc8o" />
+			<date key="time:timestamp" value="2024-04-15T18:11:57+00:00" />
+			<int key="@@index" value="57" />
+			<int key="@@case_index" value="1" />
+		</event>
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="Gateway_0xussxu" />
+			<date key="timestamp" value="2024-04-15T18:11:57+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="parallelGateway" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="b" />
+			<string key="concept:name" value="Gateway_0xussxu" />
+			<date key="time:timestamp" value="2024-04-15T18:11:57+00:00" />
+			<int key="@@index" value="58" />
+			<int key="@@case_index" value="1" />
+		</event>
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="Gateway_0a5f12j" />
+			<date key="timestamp" value="2024-04-15T18:11:57+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="exclusiveGateway" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="b" />
+			<string key="concept:name" value="Gateway_0a5f12j" />
+			<date key="time:timestamp" value="2024-04-15T18:11:57+00:00" />
+			<int key="@@index" value="59" />
+			<int key="@@case_index" value="1" />
+		</event>
+		<event>
+			<int key="traceId" value="2" />
+			<string key="activity" value="Event_1b9cqpn" />
+			<date key="timestamp" value="2024-04-15T18:11:57+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="endEvent" />
+			<string key="poolName" value="main" />
+			<string key="instanceType" value="b" />
+			<string key="concept:name" value="Event_1b9cqpn" />
+			<date key="time:timestamp" value="2024-04-15T18:11:57+00:00" />
+			<int key="@@index" value="60" />
+			<int key="@@case_index" value="1" />
+		</event>
+	</trace>
+</log>

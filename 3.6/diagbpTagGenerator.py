@@ -249,6 +249,11 @@ def diagbp(diagbpPath, bpmn_dict):
                 temp[key] = value
             catch_events[node_id]=temp
 
+    print("-------------------LOGGIN OPTIONS)----------------------")
+    logging_opt=1
+    value=input("The logs contains the completion of each element of the bpmn. Do you also want to include in the log start and resource_assigned for each element? (Y/N)")
+    if value.lower()=="n":
+        logging_opt=0
 
     #DATA FINAL
     data = {
@@ -259,7 +264,8 @@ def diagbp(diagbpPath, bpmn_dict):
         "resources": resources,
         "elements": elements,
         "sequenceFlows": sequence_flows,
-        "catchEvents": catch_events
+        "catchEvents": catch_events,
+        "logging_opt":logging_opt
     }
 
     with open(diagbpPath, 'w') as f:

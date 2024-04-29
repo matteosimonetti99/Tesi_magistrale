@@ -9,6 +9,7 @@ from datetime import datetime, timedelta
 from datetime import time as dt_time
 import pm4py
 import pandas as pd
+import csv
 
 
 #to remove, credo
@@ -50,6 +51,14 @@ except Exception as e:
     print(f"An error occurred: {e}")
     sys.exit()
 
+#csv log
+csv_file = "../log.csv"
+fields = ['traceId', 'activity', 'timestamp', 'status', 'nodeType', 'poolName','instanceType']
+rows=[]
+logging_opt=diagbp['logging_opt']
+logging_opt = (logging_opt == 1)
+
+
 
 #Put those 2 to true to have the log in console of resources locked and unlocked and timetable management
 resourceLog=False
@@ -82,7 +91,6 @@ task_costs = {element['elementId']: element['fixedCost'] for element in diagbp['
 
 totalCost={} #task_costs are summed here
 timeUsedPerResource={} #resources time being used are summed here
-
 class Process:
     executed_nodes = {}  # make executed_nodes a dictionary of sets
     startDateTime = diagbp['startDateTime']
@@ -177,6 +185,11 @@ class Process:
 
         return False
 
+    def xeslog(self, node_id, status, nodeType):
+        start_time = datetime.strptime(Process.startDateTime, "%Y-%m-%dT%H:%M:%S")
+        current_time = start_time + timedelta(seconds=self.env.now)
+        rows.append([self.num, node_id, current_time, status, nodeType,self.name,self.instance_type],)
+
     def printState(self, node, node_id, inSubProcess):
         if node['subtype'] is not None:
             node['type']=node['type']+"/"+node['subtype']
@@ -216,12 +229,13 @@ class Process:
         #if this process met a terminate end event anywhere, stop execution
         if Process.terminateEndEvent[self.num]==True:
             return
-
+    
         if node['type'] == 'startEvent':
             next_node_id = node['next'][0]
             if len(node['previous'])>0:
                 while not all(prev_node in Process.executed_nodes[self.num] for prev_node in node['previous']):
                     yield self.env.timeout(1)
+            self.xeslog(node_id,"complete",node['type'])
             self.printState(node,node_id,printFlag)
             Process.executed_nodes[self.num].add(node_id)
             yield from self.run_node(next_node_id, subprocess_node)
@@ -250,16 +264,19 @@ class Process:
             #check if terminate end events happened
             if Process.terminateEndEvent[self.num]==True:
                 return
+
             #wait for previous messages to be delivered
             if len(node['previous'])>0:
                 while not all(prev_node in Process.executed_nodes[self.num] for prev_node in node['previous']):
                     if Process.terminateEndEvent[self.num]==True:
                         return
                     yield self.env.timeout(1)
+            self.xeslog(node_id,"start",node['type'])
             taskTime=timeCalculator.convert_to_seconds(task_durations[node_id]) # task duration is used here, it is passed before to a converter that transforms the type/mean/arg1/arg2 to a value in seconds, this value the task duration is always different in each instance
             if self.durationThresholds[node_id] is not None:
                 self.durationThresholds[node_id] -= taskTime
                 #print(self.durationThresholds)
+
             #resources zone
             taskNeededResources=task_resources[node_id]
             if taskNeededResources: #if the task needs resources
@@ -313,7 +330,9 @@ class Process:
                         yield self.env.timeout(1)  # If no group can be allocated, wait for a timeout(1)
                     else:
                         break  # Break the while true as resources are allocated
-            yield self.env.timeout(taskTime) 
+            self.xeslog(node_id,"assign",node['type'])
+            yield self.env.timeout(taskTime)
+            self.xeslog(node_id,"complete",node['type'])
             Process.executed_nodes[self.num].add(node_id)
             self.printState(node,node_id,printFlag)
             next_node_id = node['next'][0]
@@ -359,6 +378,7 @@ class Process:
                 next_node_id = forced_flow_target
             else:
                 next_node_id = np.random.choice(list(node_probabilities.keys()), p=list(node_probabilities.values()))
+            self.xeslog(node_id,"complete",node['type'])
             self.printState(node,node_id,printFlag)
             yield from self.run_node(next_node_id, subprocess_node)
 
@@ -369,6 +389,7 @@ class Process:
             for next_node_id in node['next']:
                 process = self.env.process(self.run_node(next_node_id, subprocess_node))
                 events.append(process)
+            self.xeslog(node_id,"complete",node['type'])
             self.printState(node,node_id,printFlag)
             yield self.env.all_of(events)
             # When all_of is done, proceed with the node after the close
@@ -380,11 +401,14 @@ class Process:
             
 
             if self.stack:  # checks if the list is not empty
-                next_node_after_parallel = self.stack.pop()
+                parallel_close_id,next_node_after_parallel = self.stack.pop()
+                self.xeslog(parallel_close_id,"complete",node['type'])
                 yield from self.run_node(next_node_after_parallel, subprocess_node)
 
         elif node['type'] == 'parallelGateway_close':
-            self.stack.append(node['next'][0])
+            if (node_id, node['next'][0]) not in self.stack:
+                self.stack.append((node_id, node['next'][0]))
+            print(self.stack)
             return
             
         elif node['type'] == 'subProcess':
@@ -394,12 +418,14 @@ class Process:
             if len(node['previous'])>0:
                 while not all(prev_node in Process.executed_nodes[self.num] for prev_node in node['previous']):
                     yield self.env.timeout(1)
+            self.xeslog(node_id,"start",node['type'])
             start_node_id = next(sub_node_id for sub_node_id, sub_node in node['subprocess_details'].items() if sub_node['type'] == 'startEvent')
             self.printState(node,node_id,printFlag)
             yield from self.run_node(start_node_id, node_id)
             Process.executed_nodes[self.num].add(node_id)
             next_node_id = node['next'][0]
             # After the subprocess is executed, continue with the node next to the subprocess if no error end event
+            self.xeslog(node_id,"complete",node['type'])
             if self.subprocessInternalError[node_id]==False and self.subprocessExternalException[node_id]==False and Process.terminateEndEvent[self.num]==False:
                 yield from self.run_node(next_node_id, None)
             elif self.subprocessInternalError[node_id]==True: #if internal error happened, deal with it
@@ -410,17 +436,20 @@ class Process:
         elif node['type'] == 'intermediateThrowEvent':
             next_node_id = node['next'][0]
             Process.executed_nodes[self.num].add(node_id)
+            self.xeslog(node_id,"complete",node['type'])
             self.printState(node,node_id,printFlag)
             yield from self.run_node(next_node_id, subprocess_node)
             return
 
         elif node['type'] == 'intermediateCatchEvent':
+            fullType = node['type'] + '/' + node['subtype'] if node['subtype'] is not None else node['type']
             if node['subtype'] == 'messageEventDefinition': #if it is an intermediate msg catch wait for the msg
                 next_node_id = node['next'][0]
                 if len(node['previous'])>0: #wait for msg
                     while not all(prev_node in Process.executed_nodes[self.num] for prev_node in node['previous']):
                         yield self.env.timeout(1)
                 Process.executed_nodes[self.num].add(node_id)
+                self.xeslog(node_id,"complete",fullType)
                 self.printState(node,node_id,printFlag)
                 yield from self.run_node(next_node_id, subprocess_node)
                 return
@@ -429,7 +458,9 @@ class Process:
                 Process.executed_nodes[self.num].add(node_id)
                 waitTime = catchEvents[node_id]
                 waitTimeSeconds=timeCalculator.convert_to_seconds(waitTime)
+                self.xeslog(node_id,"start",fullType)
                 yield self.env.timeout(waitTimeSeconds)
+                self.xeslog(node_id,"complete",fullType)
                 self.printState(node,node_id,printFlag)
                 yield from self.run_node(next_node_id, subprocess_node)
                 return
@@ -439,6 +470,7 @@ class Process:
             ready=False
             waitedTimeInEventBasedGateway=0
             Process.executed_nodes[self.num].add(node_id)
+            self.xeslog(node_id,"complete",node['type'])
             self.printState(node,node_id,printFlag)    
 
             for next_node_id in node['next']:
@@ -481,23 +513,21 @@ class Process:
             return
 
         elif node['type'] == 'endEvent': 
-            Process.executed_nodes[self.num].add(node_id)           
+            fullType = node['type'] + '/' + node['subtype'] if node['subtype'] is not None else node['type']
+            Process.executed_nodes[self.num].add(node_id)
+            self.xeslog(node_id,"complete",fullType)           
+            self.printState(node,node_id,printFlag)
             # Terminate end event
             if node['subtype'] == 'terminateEventDefinition' and subprocess_node is None:
-                self.printState(node,node_id,printFlag)
                 Process.terminateEndEvent[self.num]=True
             elif node['subtype'] == 'terminateEventDefinition':
-                self.printState(node,node_id,printFlag)
                 Process.subprocessTerminate[self.num][subprocess_node]=True #it stops the subprocess
-
             # Error end event (lightning symbol)
             elif node['subtype'] == 'errorEventDefinition' and subprocess_node is not None:
-                self.printState(node,node_id,printFlag)
                 self.subprocessInternalError[subprocess_node]=True
                 return
             # standard end event
             else:
-                self.printState(node,node_id,printFlag)
                 return
 
 env = simpy.Environment()
@@ -552,21 +582,14 @@ for resource in resources:
     resourceCosts[name]=f"{resource_cost:.1f}"
 end_parameters["resourceCosts"]=resourceCosts
 
-start_time = Process.startDateTime
-start_time = datetime.strptime(start_time, "%Y-%m-%dT%H:%M:%S")
-current_time = start_time + timedelta(seconds=env.now)
-data = {
-    'elementId': [1, 2, 3],
-    'status': ['Active', 'Inactive', 'Pending'],
-    'timestamp': [datetime(2024, 4, 27, 16, 30), datetime(2024, 4, 27, 17, 15), datetime(2024, 4, 27, 18, 0)]
-}
 
-# Create a DataFrame from the dictionary
-df = pd.DataFrame(data)
-df = pm4py.format_dataframe(df, case_id='elementId', activity_key='status', timestamp_key='timestamp')
-event_log = pm4py.convert_to_event_log(df)
-pm4py.write_xes(event_log, 'exported.xes')
+with open(csv_file, 'w') as f:
+    writer = csv.writer(f)
+    writer.writerow(fields)
+    writer.writerows(rows)
 
-
-# Save the XES log to a file
-pm4py.write_xes(event_log, "../simulation_log.xes")
+dataframe = pd.read_csv(csv_file, sep=',')
+dataframe = dataframe.rename(columns={'status': 'lifecycle:transition'})
+dataframe = pm4py.format_dataframe(dataframe, case_id='traceId', activity_key='activity', timestamp_key='timestamp')
+event_log = pm4py.convert_to_event_log(dataframe)    
+pm4py.write_xes(event_log, '../log.xes')

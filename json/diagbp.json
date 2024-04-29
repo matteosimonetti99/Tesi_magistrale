@@ -249,6 +249,7 @@
       ]
       }
   ],
-  "catchEvents":[]
+  "catchEvents":[],
+  "logging_opt":1
 }
 

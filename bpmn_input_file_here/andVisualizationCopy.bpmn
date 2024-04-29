@@ -581,7 +581,8 @@
       ]
       }
   ],
-  "catchEvents":[]
+  "catchEvents":[],
+  "logging_opt":1
 }
 </diagbp>
 </bpmn:definitions>
