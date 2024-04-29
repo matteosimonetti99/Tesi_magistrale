@@ -52,7 +52,7 @@ except Exception as e:
     sys.exit()
 
 #csv log
-csv_file = "../log.csv"
+csv_file = "../logs/log.csv"
 fields = ['traceId', 'activity', 'timestamp', 'status', 'nodeType', 'poolName','instanceType']
 rows=[]
 logging_opt=diagbp['logging_opt']
@@ -592,4 +592,4 @@ dataframe = pd.read_csv(csv_file, sep=',')
 dataframe = dataframe.rename(columns={'status': 'lifecycle:transition'})
 dataframe = pm4py.format_dataframe(dataframe, case_id='traceId', activity_key='activity', timestamp_key='timestamp')
 event_log = pm4py.convert_to_event_log(dataframe)    
-pm4py.write_xes(event_log, '../log.xes')
+pm4py.write_xes(event_log, '../logs/log.xes')
