@@ -25,8 +25,9 @@ if os.path.isfile(diagbpPath):
 if os.path.isfile(bpmnPath):
     os.remove(bpmnPath)
 
-if len(sys.argv) > 1 and sys.argv[1].strip():
-    baseName=sys.argv[1]
+baseNameInput=input("Enter bpmn name (without .bpmn): ")
+if baseNameInput != "":
+    baseName=baseNameInput
 
 # diagbp TAG
 name="../bpmn_input_file_here/"+baseName+".bpmn"

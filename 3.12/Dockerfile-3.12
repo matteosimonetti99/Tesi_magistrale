@@ -1,0 +1,17 @@
+# Use an official Python 3.12 image as the base
+FROM python:3.12
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the entire 3.12 folder into the container
+COPY ./ ./
+
+# Install required Python packages (if any)
+RUN pip install --no-cache-dir -r requirements_3.12.txt
+
+# Create a volume for shared data
+VOLUME /app/shared_data
+
+# Run the Python script
+CMD ["python", "main.py"]

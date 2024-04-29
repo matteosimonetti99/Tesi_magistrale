@@ -1,0 +1,16 @@
+# Use an official Python 3.6 image as the base
+FROM python:3.6
+
+# Set the working directory
+WORKDIR /app
+
+COPY ./ ./
+
+# Install required Python packages (if any)
+RUN pip install --no-cache-dir -r requirements_3.6.txt
+
+# Create a volume for shared data
+VOLUME /app/shared_data
+
+# Run the Python script with user input
+CMD ["python", "bpmnParsing.py"]

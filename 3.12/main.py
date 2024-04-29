@@ -61,9 +61,9 @@ logging_opt = (logging_opt == 1)
 
 
 #Put those 2 to true to have the log in console of resources locked and unlocked and timetable management
-resourceLog=False
-logTimetable=False
-logCosts=True
+resourcesOutputConsole=False
+timetableOutputConsole=False
+costsOutputConsole=True
 
 #other glob var
 num_instances = sum(int(instance['count']) for instance in diagbp['processInstances'])
@@ -151,7 +151,7 @@ class Process:
             to_time = dt_time(to_hour, to_minute, to_second)
             from_day = rule['fromWeekDay'].upper()
             to_day = rule['toWeekDay'].upper()
-            if logTimetable:
+            if timetableOutputConsole:
                 print(str(from_time)+"|"+str(current_hour_minute_second)+"|"+str(to_time)+"|days:|"+str(from_day)+"|"+str(current_time.strftime('%A').upper())+"|"+str(to_day))
 
             # Checks for both ways, from time bigger or lower than to time
@@ -186,6 +186,8 @@ class Process:
         return False
 
     def xeslog(self, node_id, status, nodeType):
+        if nodeType="parallelGateway":
+            nodeType="parallelGatewayOpen"
         start_time = datetime.strptime(Process.startDateTime, "%Y-%m-%dT%H:%M:%S")
         current_time = start_time + timedelta(seconds=self.env.now)
         if logging_opt or status=="complete":
@@ -303,9 +305,9 @@ class Process:
                             if not self.is_in_timetable(self.resources[resource][2]) or self.resources[resource][0].capacity-self.resources[resource][0].count < amount:
                                 if self.resources[resource][0].capacity < amount:
                                     numberOfGroupsWithNotEnoughResources+=1 #if there are not enough resources then this group will never be able to be allocated
-                                if not self.is_in_timetable(self.resources[resource][2]) and resourceLog:
+                                if not self.is_in_timetable(self.resources[resource][2]) and resourcesOutputConsole:
                                     print(node_id + "|group n."+str(i)+"| TIMETABLE-BREAK | "+resource+": "+str(self.resources[resource][0].count)+"/"+str(self.resources[resource][0].capacity)+" amount: "+str(amount))
-                                elif resourceLog:
+                                elif resourcesOutputConsole:
                                     print(node_id + "|group n."+str(i)+"| BREAK | "+resource+": "+str(self.resources[resource][0].count)+"/"+str(self.resources[resource][0].capacity)+" amount: "+str(amount))
                                 for name, req, costPerHour in requests:
                                     req.resource.release(req)
@@ -315,7 +317,7 @@ class Process:
                                 for _ in range(amount):
                                     req = self.resources[resource][0].request()  # If enough resources, request resources
                                     costPerHour = self.resources[resource][1]
-                                    if resourceLog:
+                                    if resourcesOutputConsole:
                                         print(node_id + "|group n."+str(i)+"|"+resource+": "+str(self.resources[resource][0].count)+"/"+str(self.resources[resource][0].capacity)+" total amount needed: "+str(amount))
                                     requests.append((resource, req, costPerHour))
                         total_resources_needed = sum(amount for _, amount in resources)
@@ -323,7 +325,7 @@ class Process:
                             resources_allocated = True
                             for name, req, costPerHour in requests:
                                 yield req
-                                if resourceLog:
+                                if resourcesOutputConsole:
                                     print (node_id + "|Resource locked: " + name + ", Time: " + str(self.env.now) )  # Print + str(req.amount)
                             break  # Break the loop as resources are allocated
                     if numberOfGroupsWithNotEnoughResources==len(grouped_resources): #if the number of groups that can't be allocated is equal to the number of groups, no group can be allocated
@@ -349,7 +351,7 @@ class Process:
                 for name, req, costPerHour in requests:
                     timeUsedPerResource[name]+=float(taskTime)
                     req.resource.release(req)
-                    if resourceLog:
+                    if resourcesOutputConsole:
                         print(node_id + "|Resource released: " + name  + ", Time: " + str(self.env.now))
             yield from self.run_node(next_node_id, subprocess_node)
 
@@ -569,7 +571,7 @@ resourcesPercentageUsage={}
 resourceCosts={}
 
 for key, value in totalCost.items():
-    if logCosts:
+    if costsOutputConsole:
         print("Cost of all the tasks in instance n. "+str(key)+": "+str(value))
     taskCosts[key]=value
 
@@ -578,7 +580,7 @@ for name, time in timeUsedPerResource.items():
     if name in global_resources:
         target_resource, cost_per_hour, timetable_name = global_resources[name]
         total_amount = target_resource.capacity
-    if logCosts:
+    if costsOutputConsole:
         print(f"Percentage of usage of resource '{name}': {((time*100)/env.now)/total_amount:.1f}%")
 
     resourcesPercentageUsage[name]=f"{((time*100)/env.now)/total_amount:.1f}"
@@ -590,7 +592,7 @@ for resource in resources:
     time_in_hours = env.now / 3600  # Convert time to hours
     resource_cost = total_amount * cost_per_hour * time_in_hours
     name=resource['name']
-    if logCosts:
+    if costsOutputConsole:
         print(f"Cost for resource '{name}': {resource_cost:.1f}")
     resourceCosts[name]=f"{resource_cost:.1f}"
 
