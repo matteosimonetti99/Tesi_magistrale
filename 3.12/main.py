@@ -188,7 +188,8 @@ class Process:
     def xeslog(self, node_id, status, nodeType):
         start_time = datetime.strptime(Process.startDateTime, "%Y-%m-%dT%H:%M:%S")
         current_time = start_time + timedelta(seconds=self.env.now)
-        rows.append([self.num, node_id, current_time, status, nodeType,self.name,self.instance_type],)
+        if logging_opt or status=="complete":
+            rows.append([self.num, node_id, current_time, status, nodeType,self.name,self.instance_type],)
 
     def printState(self, node, node_id, inSubProcess):
         if node['subtype'] is not None:
@@ -532,11 +533,15 @@ class Process:
                 return
 
 env = simpy.Environment()
+global_resources = {res['name']: (simpy.Resource(env, capacity=int(res['totalAmount'])), res['costPerHour'], res['timetableName']) for res in resources} if resources else {}
+
+
+
+
 def simulate_bpmn(bpmn_dict):
     instance_index = 0
     instance_count = 0
 
-    global_resources = {res['name']: (simpy.Resource(env, capacity=int(res['totalAmount'])), res['costPerHour'], res['timetableName']) for res in resources} if resources else {}
     for i in range(num_instances):
         instance_type = instance_types[instance_index]['type']
 
@@ -552,6 +557,10 @@ def simulate_bpmn(bpmn_dict):
     env.run()
 
 
+
+
+
+
 simulate_bpmn(bpmn)
 
 event_data = []
@@ -565,9 +574,15 @@ for key, value in totalCost.items():
     taskCosts[key]=value
 
 for name, time in timeUsedPerResource.items():
+    total_amount=1
+    if name in global_resources:
+        target_resource, cost_per_hour, timetable_name = global_resources[name]
+        total_amount = target_resource.capacity
     if logCosts:
-        print(f"Percentage of usage of resource '{name}': {time*100/env.now:.1f}%")
-    resourcesPercentageUsage[name]=f"{time*100/env.now:.1f}"
+        print(f"Percentage of usage of resource '{name}': {((time*100)/env.now)/total_amount:.1f}%")
+
+    resourcesPercentageUsage[name]=f"{((time*100)/env.now)/total_amount:.1f}"
+
 
 for resource in resources:
     total_amount = float(resource["totalAmount"])

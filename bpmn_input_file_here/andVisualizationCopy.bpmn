@@ -564,7 +564,7 @@
   "sequenceFlows": [
       {
           "elementId": "Flow_0d86tug",
-          "executionProbability": "0.5",
+          "executionProbability": "0.9",
           "types": [
               {
                   "type": "c"
@@ -573,7 +573,7 @@
       },
       {
           "elementId": "Flow_16n1wa9",
-          "executionProbability": "0.5",
+          "executionProbability": "0.1",
           "types": [
           {
               "type": "b"
