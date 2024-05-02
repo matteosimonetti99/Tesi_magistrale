@@ -1,6 +1,9 @@
 # Use a base image with build tools installed
 FROM buildpack-deps:buster
 
+# Copy the entire project folder into the container
+COPY ./ /app
+
 # Set environment variables for Python builds
 ENV PYTHON_36_VERSION 3.6.0
 ENV PYTHON_311_VERSION 3.11.0
@@ -43,12 +46,11 @@ RUN set -ex \
   && make install \
   && curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py \
   && /usr/local/python3.11/bin/python3.11 get-pip.py
+RUN /usr/local/python3.11/bin/pip install --upgrade pip setuptools wheel
 RUN /usr/local/python3.11/bin/pip install -r /app/requirements_3.12.txt
 
-# Copy the entire project folder into the container
-COPY ./ /app
+RUN cd /
 
-# Install required Python packages (if any)
 
-# Run the Python 3.6 script
+# Run the Python scripts
 CMD /bin/bash -c "/usr/local/python3.6/bin/python3.6 /app/3.6/bpmnParsing.py && sleep 0.5 && /usr/local/python3.11/bin/python3.11 /app/3.11/main.py"
