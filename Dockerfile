@@ -25,6 +25,12 @@ RUN set -ex \
   && make install \
   && curl https://bootstrap.pypa.io/pip/3.6/get-pip.py -o get-pip.py \
   && /usr/local/python3.6/bin/python3.6 get-pip.py
+RUN /usr/local/python3.6/bin/pip install -r /app/requirements_3.6.txt
+
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/python3.11/lib
+
+
+
 # Install Python 3.11
 RUN set -ex \
   && wget -O python.tar.xz "https://www.python.org/ftp/python/${PYTHON_311_VERSION%%[a-z]*}/Python-$PYTHON_311_VERSION.tar.xz" \
@@ -37,13 +43,12 @@ RUN set -ex \
   && make install \
   && curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py \
   && /usr/local/python3.11/bin/python3.11 get-pip.py
+RUN /usr/local/python3.11/bin/pip install -r /app/requirements_3.12.txt
 
 # Copy the entire project folder into the container
 COPY ./ /app
 
 # Install required Python packages (if any)
-RUN /usr/local/python3.6/bin/pip install -r /app/requirements_3.6.txt  # Use the correct pip path
-RUN /usr/local/python3.11/bin/pip install -r /app/requirements_3.11.txt
 
 # Run the Python 3.6 script
 CMD /bin/bash -c "/usr/local/python3.6/bin/python3.6 /app/3.6/bpmnParsing.py && sleep 0.5 && /usr/local/python3.11/bin/python3.11 /app/3.11/main.py"
