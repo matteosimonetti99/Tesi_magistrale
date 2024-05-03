@@ -8,6 +8,7 @@ COPY ./ /app
 ENV PYTHON_36_VERSION 3.6.0
 ENV PYTHON_311_VERSION 3.11.0
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/python3.6/lib
+ENV PYTHONPATH /app/bpmn_python:$PYTHONPATH
 
 
 RUN apt-get update && apt-get install -y \

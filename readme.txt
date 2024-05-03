@@ -1,11 +1,11 @@
-To install (first time only, windows instructions, run by cmd inside this folder):
+To install (first time only, windows instructions but also works similar on linux, run by cmd inside this folder):
 
 python3.12 -m venv myenv312
-myenv312/bin/activate
+myenv312/bin/Activate (if error is given try myenv312/bin/activate otherwise open powershell and execute: Set-ExecutionPolicy Unrestricted -Force)
 pip install -r requirements_3.12.txt
 
 python3.6 -m venv myenv
-myenv/bin/activate
+myenv/bin/Activate (same as before)
 pip install -r requirements_3.6.txt
 
 Instead of "python3.12" and "python3.6" commands, use any command that lets you run python on versions 3.12 and then 3.6.
@@ -14,7 +14,3 @@ This software in facts works using 2 different versions of python due to library
 
 
 To run: use STARTER.BAT
-
-
-
-A clone of the repo is also: https://github.com/bpm-diag/bp-simulation
