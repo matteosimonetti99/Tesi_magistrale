@@ -361,7 +361,7 @@
         "toWeekDay": "FRIDAY"
       },
       {
-        "fromTime": "15:00:00",
+        "fromTime": "18:30:00",
         "toTime": "19:00:00",
         "fromWeekDay": "MONDAY",
         "toWeekDay": "FRIDAY"
@@ -397,7 +397,7 @@
         "name": "Res2",
         "totalAmount": "3",
         "costPerHour": "2",
-        "timetableName": "24/7"
+        "timetableName": "Default"
       }
     ],
   "elements": [
