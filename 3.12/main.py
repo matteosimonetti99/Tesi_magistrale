@@ -21,7 +21,7 @@ import time
 
 
 #Put those 2 to true to have the log in console of resources locked and unlocked and timetable management
-resourcesOutputConsole=False
+resourcesOutputConsole=True
 timetableOutputConsole=False
 costsOutputConsole=True
 
@@ -308,13 +308,24 @@ class Process:
                                         req.cancel() # cancel the requests that were accumulated till now since this group is ko
                                 break  # Move to the next group if not enough resources
                             else:
-                                for _ in range(amount_needed):
-                                    resource_tuple = available_resources[0]
-                                    req = resource_tuple[0].request()
-                                    available_resources.append(available_resources.pop(0)) 
-                                    requests.append((resource_name, req, resource_tuple[1]))  # Include resource name and cost
+                                #print(node_id + f"|group n.{i}| OK | {resource_name}: {len(available_resources)}/{len(global_resources[resource_name])} resources available, {amount_needed} needed")
+                                appended=0
+                                to_request = []  # New data structure to store resources to request later
+                                for resource_tuple in available_resources:
+                                    if appended == amount_needed:
+                                        break
+                                    if resource_tuple[0].count < resource_tuple[0].capacity:  # Check if resource is available (not at full capacity)
+                                        to_request.append(resource_tuple)  # Add to the list instead of requesting
+                                        appended+=1
+                                    #print(appended)
+                                    #print(amount_needed)
+                                if appended == amount_needed:
+                                    for resource_tuple in to_request:
+                                        req = resource_tuple[0].request()
+                                        requests.append((resource_name, req, resource_tuple[1]))
 
                         # If all resources in the group can be allocated
+                        #print("req len:" +str(len(requests)))
                         if len(requests) == sum(amount for _, amount in resources):
                             resources_allocated = True
                             for resource_name, req, cost_per_hour in requests:  # Extract elements from the tuple
@@ -327,6 +338,11 @@ class Process:
                                 num_acquired = requests.count((resource_name, _, _))  # Count occurrences of the resource
                                 global_resources[resource_name] = global_resources[resource_name][num_acquired:] + global_resources[resource_name][:num_acquired]
                             break  # Break the loop as resources are allocated
+                        else:
+                            for _,req,_ in requests:
+                                if req.triggered:
+                                    req.cancel()
+
                     if not resources_allocated:
                         yield self.env.timeout(1)  # If no group can be allocated, wait for a timeout
                     else:
