@@ -18,6 +18,13 @@ import time
 
 #sys.setrecursionlimit(100000)
 
+
+
+#Put those 2 to true to have the log in console of resources locked and unlocked and timetable management
+resourcesOutputConsole=False
+timetableOutputConsole=False
+costsOutputConsole=True
+
 extraLog={}
 
 diagbpPath="../json/diagbp.json"
@@ -57,13 +64,6 @@ fields = ['traceId', 'activity', 'timestamp', 'status', 'nodeType', 'poolName','
 rows=[]
 logging_opt=diagbp['logging_opt']
 logging_opt = (logging_opt == 1)
-
-
-
-#Put those 2 to true to have the log in console of resources locked and unlocked and timetable management
-resourcesOutputConsole=True
-timetableOutputConsole=True
-costsOutputConsole=True
 
 #other glob var
 num_instances = sum(int(instance['count']) for instance in diagbp['processInstances'])
@@ -315,8 +315,6 @@ class Process:
                                 req = resource_tuple[0].request()
                                 available_resources.append(available_resources.pop(0)) 
                                 requests.append((resource_name, req, resource_tuple[1]))  # Include resource name and cost
-                                print(requests)
-                                print(amount_needed)
 
                     # If all resources in the group can be allocated
                     if len(requests) == sum(amount for _, amount in resources):
