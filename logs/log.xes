@@ -1,126 +1,113 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <log xes.version="1849-2016" xes.features="nested-attributes" xmlns="http://www.xes-standard.org/">
-	<extension name="Concept" prefix="concept" uri="http://www.xes-standard.org/concept.xesext" />
 	<extension name="Time" prefix="time" uri="http://www.xes-standard.org/time.xesext" />
 	<extension name="Lifecycle" prefix="lifecycle" uri="http://www.xes-standard.org/lifecycle.xesext" />
+	<extension name="Concept" prefix="concept" uri="http://www.xes-standard.org/concept.xesext" />
 	<string key="origin" value="csv" />
 	<trace>
 		<string key="concept:name" value="1" />
 		<event>
 			<int key="traceId" value="1" />
-			<string key="activity" value="StartEvent_1jmrson" />
-			<date key="timestamp" value="2024-04-25T18:23:55+00:00" />
+			<string key="activity" value="StartEvent_1vpywwb" />
+			<date key="timestamp" value="2024-04-22T16:47:34+00:00" />
 			<string key="lifecycle:transition" value="complete" />
 			<string key="nodeType" value="startEvent" />
 			<string key="poolName" value="main" />
 			<string key="instanceType" value="A" />
-			<string key="concept:name" value="StartEvent_1jmrson" />
-			<date key="time:timestamp" value="2024-04-25T18:23:55+00:00" />
+			<string key="concept:name" value="StartEvent_1vpywwb" />
+			<date key="time:timestamp" value="2024-04-22T16:47:34+00:00" />
 			<int key="@@index" value="0" />
 			<int key="@@case_index" value="0" />
 		</event>
 		<event>
 			<int key="traceId" value="1" />
-			<string key="activity" value="Event_0e0siow" />
-			<date key="timestamp" value="2024-04-25T18:23:55+00:00" />
+			<string key="activity" value="Activity_02ea4rd" />
+			<date key="timestamp" value="2024-04-22T16:47:34+00:00" />
 			<string key="lifecycle:transition" value="start" />
-			<string key="nodeType" value="intermediateCatchEvent/timerEventDefinition" />
+			<string key="nodeType" value="task" />
 			<string key="poolName" value="main" />
 			<string key="instanceType" value="A" />
-			<string key="concept:name" value="Event_0e0siow" />
-			<date key="time:timestamp" value="2024-04-25T18:23:55+00:00" />
+			<string key="concept:name" value="Activity_02ea4rd" />
+			<date key="time:timestamp" value="2024-04-22T16:47:34+00:00" />
 			<int key="@@index" value="1" />
 			<int key="@@case_index" value="0" />
 		</event>
 		<event>
 			<int key="traceId" value="1" />
-			<string key="activity" value="Event_10lonfr" />
-			<date key="timestamp" value="2024-04-25T18:23:55+00:00" />
-			<string key="lifecycle:transition" value="complete" />
-			<string key="nodeType" value="startEvent" />
-			<string key="poolName" value="second" />
+			<string key="activity" value="Activity_02ea4rd" />
+			<date key="timestamp" value="2024-04-22T16:47:34+00:00" />
+			<string key="lifecycle:transition" value="assign" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
 			<string key="instanceType" value="A" />
-			<string key="concept:name" value="Event_10lonfr" />
-			<date key="time:timestamp" value="2024-04-25T18:23:55+00:00" />
+			<string key="concept:name" value="Activity_02ea4rd" />
+			<date key="time:timestamp" value="2024-04-22T16:47:34+00:00" />
 			<int key="@@index" value="2" />
 			<int key="@@case_index" value="0" />
 		</event>
 		<event>
 			<int key="traceId" value="1" />
-			<string key="activity" value="Event_1mq0czv" />
-			<date key="timestamp" value="2024-04-25T18:23:55+00:00" />
-			<string key="lifecycle:transition" value="start" />
-			<string key="nodeType" value="intermediateCatchEvent/timerEventDefinition" />
+			<string key="activity" value="Event_1eggq47" />
+			<date key="timestamp" value="2024-04-22T16:47:34+00:00" />
+			<string key="lifecycle:transition" value="complete" />
+			<string key="nodeType" value="startEvent" />
 			<string key="poolName" value="second" />
 			<string key="instanceType" value="A" />
-			<string key="concept:name" value="Event_1mq0czv" />
-			<date key="time:timestamp" value="2024-04-25T18:23:55+00:00" />
+			<string key="concept:name" value="Event_1eggq47" />
+			<date key="time:timestamp" value="2024-04-22T16:47:34+00:00" />
 			<int key="@@index" value="3" />
 			<int key="@@case_index" value="0" />
 		</event>
 		<event>
 			<int key="traceId" value="1" />
-			<string key="activity" value="Event_0wnnk8g" />
-			<date key="timestamp" value="2024-04-25T18:23:55+00:00" />
+			<string key="activity" value="Gateway_0xxges3" />
+			<date key="timestamp" value="2024-04-22T16:47:34+00:00" />
 			<string key="lifecycle:transition" value="complete" />
-			<string key="nodeType" value="startEvent" />
-			<string key="poolName" value="third" />
+			<string key="nodeType" value="eventBasedGateway" />
+			<string key="poolName" value="second" />
 			<string key="instanceType" value="A" />
-			<string key="concept:name" value="Event_0wnnk8g" />
-			<date key="time:timestamp" value="2024-04-25T18:23:55+00:00" />
+			<string key="concept:name" value="Gateway_0xxges3" />
+			<date key="time:timestamp" value="2024-04-22T16:47:34+00:00" />
 			<int key="@@index" value="4" />
 			<int key="@@case_index" value="0" />
 		</event>
 		<event>
 			<int key="traceId" value="1" />
-			<string key="activity" value="Gateway_0gax6zd" />
-			<date key="timestamp" value="2024-04-25T18:23:55+00:00" />
+			<string key="activity" value="Event_1kp01ls" />
+			<date key="timestamp" value="2024-04-22T17:47:34+00:00" />
 			<string key="lifecycle:transition" value="complete" />
-			<string key="nodeType" value="parallelGatewayOpen" />
-			<string key="poolName" value="third" />
+			<string key="nodeType" value="endEvent" />
+			<string key="poolName" value="second" />
 			<string key="instanceType" value="A" />
-			<string key="concept:name" value="Gateway_0gax6zd" />
-			<date key="time:timestamp" value="2024-04-25T18:23:55+00:00" />
+			<string key="concept:name" value="Event_1kp01ls" />
+			<date key="time:timestamp" value="2024-04-22T17:47:34+00:00" />
 			<int key="@@index" value="5" />
 			<int key="@@case_index" value="0" />
 		</event>
 		<event>
 			<int key="traceId" value="1" />
-			<string key="activity" value="Event_0w0vp2r" />
-			<date key="timestamp" value="2024-04-25T18:23:55+00:00" />
+			<string key="activity" value="Activity_02ea4rd" />
+			<date key="timestamp" value="2024-04-22T19:34:14+00:00" />
 			<string key="lifecycle:transition" value="complete" />
-			<string key="nodeType" value="endEvent/terminateEventDefinition" />
-			<string key="poolName" value="third" />
+			<string key="nodeType" value="task" />
+			<string key="poolName" value="main" />
 			<string key="instanceType" value="A" />
-			<string key="concept:name" value="Event_0w0vp2r" />
-			<date key="time:timestamp" value="2024-04-25T18:23:55+00:00" />
+			<string key="concept:name" value="Activity_02ea4rd" />
+			<date key="time:timestamp" value="2024-04-22T19:34:14+00:00" />
 			<int key="@@index" value="6" />
 			<int key="@@case_index" value="0" />
 		</event>
 		<event>
 			<int key="traceId" value="1" />
-			<string key="activity" value="Event_0e0siow" />
-			<date key="timestamp" value="2024-04-25T19:23:55+00:00" />
+			<string key="activity" value="Event_1bzdqsi" />
+			<date key="timestamp" value="2024-04-22T19:34:14+00:00" />
 			<string key="lifecycle:transition" value="complete" />
-			<string key="nodeType" value="intermediateCatchEvent/timerEventDefinition" />
+			<string key="nodeType" value="endEvent" />
 			<string key="poolName" value="main" />
 			<string key="instanceType" value="A" />
-			<string key="concept:name" value="Event_0e0siow" />
-			<date key="time:timestamp" value="2024-04-25T19:23:55+00:00" />
+			<string key="concept:name" value="Event_1bzdqsi" />
+			<date key="time:timestamp" value="2024-04-22T19:34:14+00:00" />
 			<int key="@@index" value="7" />
-			<int key="@@case_index" value="0" />
-		</event>
-		<event>
-			<int key="traceId" value="1" />
-			<string key="activity" value="Event_1mq0czv" />
-			<date key="timestamp" value="2024-04-25T19:23:55+00:00" />
-			<string key="lifecycle:transition" value="complete" />
-			<string key="nodeType" value="intermediateCatchEvent/timerEventDefinition" />
-			<string key="poolName" value="second" />
-			<string key="instanceType" value="A" />
-			<string key="concept:name" value="Event_1mq0czv" />
-			<date key="time:timestamp" value="2024-04-25T19:23:55+00:00" />
-			<int key="@@index" value="8" />
 			<int key="@@case_index" value="0" />
 		</event>
 	</trace>

@@ -1,10 +1,9 @@
 traceId,activity,timestamp,status,nodeType,poolName,instanceType
-1,StartEvent_1jmrson,2024-04-25 18:23:55,complete,startEvent,main,A
-1,Event_0e0siow,2024-04-25 18:23:55,start,intermediateCatchEvent/timerEventDefinition,main,A
-1,Event_10lonfr,2024-04-25 18:23:55,complete,startEvent,second,A
-1,Event_1mq0czv,2024-04-25 18:23:55,start,intermediateCatchEvent/timerEventDefinition,second,A
-1,Event_0wnnk8g,2024-04-25 18:23:55,complete,startEvent,third,A
-1,Gateway_0gax6zd,2024-04-25 18:23:55,complete,parallelGatewayOpen,third,A
-1,Event_0w0vp2r,2024-04-25 18:23:55,complete,endEvent/terminateEventDefinition,third,A
-1,Event_0e0siow,2024-04-25 19:23:55,complete,intermediateCatchEvent/timerEventDefinition,main,A
-1,Event_1mq0czv,2024-04-25 19:23:55,complete,intermediateCatchEvent/timerEventDefinition,second,A
+1,StartEvent_1vpywwb,2024-04-22 16:47:34,complete,startEvent,main,A
+1,Activity_02ea4rd,2024-04-22 16:47:34,start,task,main,A
+1,Activity_02ea4rd,2024-04-22 16:47:34,assign,task,main,A
+1,Event_1eggq47,2024-04-22 16:47:34,complete,startEvent,second,A
+1,Gateway_0xxges3,2024-04-22 16:47:34,complete,eventBasedGateway,second,A
+1,Event_1kp01ls,2024-04-22 17:47:34,complete,endEvent,second,A
+1,Activity_02ea4rd,2024-04-22 19:34:14,complete,task,main,A
+1,Event_1bzdqsi,2024-04-22 19:34:14,complete,endEvent,main,A

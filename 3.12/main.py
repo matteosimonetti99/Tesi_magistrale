@@ -288,64 +288,64 @@ class Process:
                     grouped_resources[res['groupId']].append((res['resourceName'], int(res['amountNeeded'])))
                 # Check each group of resources
                         # Check each group of resources
-            while True:
-                resources_allocated = False
-                i = 0
-                numberOfGroupsWithNotEnoughResources = 0
-                for group_id, resources in grouped_resources.items():
-                    i += 1
-                    # Check if there are enough resources and within timetable for the group
-                    requests = []
-                    for resource_name, amount_needed in resources:
-                        available_resources = [res for res in global_resources[resource_name] if self.is_in_timetable(res[2])]
-                        if len(available_resources) < amount_needed:
-                            numberOfGroupsWithNotEnoughResources += 1
-                            if resourcesOutputConsole:
-                                if len(available_resources) == 0:
-                                    print(node_id + f"|group n.{i}| TIMETABLE-BREAK | {resource_name}: No resources available within timetable")
-                                else:
-                                    print(node_id + f"|group n.{i}| BREAK | {resource_name}: {len(available_resources)}/{len(global_resources[resource_name])} resources available, {amount_needed} needed")
-                            for name, req, costPerHour in requests:
-                                    req.resource.release(req)
-                                    req.cancel() # cancel the requests that were accumulated till now since this group is ko
-                            break  # Move to the next group if not enough resources
-                        else:
-                            for _ in range(amount_needed):
-                                resource_tuple = available_resources[0]
-                                req = resource_tuple[0].request()
-                                available_resources.append(available_resources.pop(0)) 
-                                requests.append((resource_name, req, resource_tuple[1]))  # Include resource name and cost
+                while True:
+                    resources_allocated = False
+                    i = 0
+                    numberOfGroupsWithNotEnoughResources = 0
+                    for group_id, resources in grouped_resources.items():
+                        i += 1
+                        # Check if there are enough resources and within timetable for the group
+                        requests = []
+                        for resource_name, amount_needed in resources:
+                            available_resources = [res for res in global_resources[resource_name] if self.is_in_timetable(res[2])]
+                            if len(available_resources) < amount_needed:
+                                numberOfGroupsWithNotEnoughResources += 1
+                                if resourcesOutputConsole:
+                                    if len(available_resources) == 0:
+                                        print(node_id + f"|group n.{i}| TIMETABLE-BREAK | {resource_name}: No resources available within timetable")
+                                    else:
+                                        print(node_id + f"|group n.{i}| BREAK | {resource_name}: {len(available_resources)}/{len(global_resources[resource_name])} resources available, {amount_needed} needed")
+                                for name, req, costPerHour in requests:
+                                        req.resource.release(req)
+                                        req.cancel() # cancel the requests that were accumulated till now since this group is ko
+                                break  # Move to the next group if not enough resources
+                            else:
+                                for _ in range(amount_needed):
+                                    resource_tuple = available_resources[0]
+                                    req = resource_tuple[0].request()
+                                    available_resources.append(available_resources.pop(0)) 
+                                    requests.append((resource_name, req, resource_tuple[1]))  # Include resource name and cost
 
-                    # If all resources in the group can be allocated
-                    if len(requests) == sum(amount for _, amount in resources):
-                        resources_allocated = True
-                        for resource_name, req, cost_per_hour in requests:  # Extract elements from the tuple
-                            yield req
-                            if resourcesOutputConsole:
-                                print(node_id + "|Resource locked: " + resource_name + ", Time: " + str(self.env.now))
-                        
-                        # Rotate global_resources list for each resource type based on acquired resources 
-                        for resource_name, _, _ in requests:
-                            num_acquired = requests.count((resource_name, _, _))  # Count occurrences of the resource
-                            global_resources[resource_name] = global_resources[resource_name][num_acquired:] + global_resources[resource_name][:num_acquired]
-                        break  # Break the loop as resources are allocated
+                        # If all resources in the group can be allocated
+                        if len(requests) == sum(amount for _, amount in resources):
+                            resources_allocated = True
+                            for resource_name, req, cost_per_hour in requests:  # Extract elements from the tuple
+                                yield req
+                                if resourcesOutputConsole:
+                                    print(node_id + "|Resource locked: " + resource_name + ", Time: " + str(self.env.now))
+                            
+                            # Rotate global_resources list for each resource type based on acquired resources 
+                            for resource_name, _, _ in requests:
+                                num_acquired = requests.count((resource_name, _, _))  # Count occurrences of the resource
+                                global_resources[resource_name] = global_resources[resource_name][num_acquired:] + global_resources[resource_name][:num_acquired]
+                            break  # Break the loop as resources are allocated
 
-                if numberOfGroupsWithNotEnoughResources == len(grouped_resources):
-                    raise Exception("Amount of resource needed for task '" + node_id + "' is more than the available capacity within timetables")
+                    if numberOfGroupsWithNotEnoughResources == len(grouped_resources):
+                        raise Exception("Amount of resource needed for task '" + node_id + "' is more than the available capacity within timetables")
 
-                if not resources_allocated:
-                    yield self.env.timeout(1)  # If no group can be allocated, wait for a timeout
-                else:
-                    break  # Break the while loop as resources are allocated
+                    if not resources_allocated:
+                        yield self.env.timeout(1)  # If no group can be allocated, wait for a timeout
+                    else:
+                        break  # Break the while loop as resources are allocated
 
-                if numberOfGroupsWithNotEnoughResources == len(grouped_resources):
-                    raise Exception("Amount of resource needed for task '" + node_id + "' is more than the available capacity within timetables")
+                    if numberOfGroupsWithNotEnoughResources == len(grouped_resources):
+                        raise Exception("Amount of resource needed for task '" + node_id + "' is more than the available capacity within timetables")
 
-                if not resources_allocated:
-                    yield self.env.timeout(1)  # If no group can be allocated, wait for a timeout
-                else:
-                    break  # Break the while loop as resources are allocated
-                #END resources
+                    if not resources_allocated:
+                        yield self.env.timeout(1)  # If no group can be allocated, wait for a timeout
+                    else:
+                        break  # Break the while loop as resources are allocated
+                    #END resources
 
             self.xeslog(node_id,"assign",node['type'])
             yield self.env.timeout(taskTime)
