@@ -186,7 +186,7 @@ class Process:
         return False
 
     def xeslog(self, node_id, status, nodeType):
-        if nodeType="parallelGateway":
+        if nodeType=="parallelGateway":
             nodeType="parallelGatewayOpen"
         start_time = datetime.strptime(Process.startDateTime, "%Y-%m-%dT%H:%M:%S")
         current_time = start_time + timedelta(seconds=self.env.now)
