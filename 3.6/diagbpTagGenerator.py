@@ -115,6 +115,18 @@ def diagbp(diagbpPath, bpmn_dict):
                 exit_loop = True 
                 break
             resource[key] = value
+        groupDur=["type", "mean", "arg1", "arg2", "timeUnit"]
+            for key in groupDur:
+                keyDisplay=key
+                if key=="type":
+                    keyDisplay="Setup time type (Fixed, Normal, Exponential, Uniform, Triangular, Log-Normal, Gamma, Histogram), leave empty if no setup time"
+                if key=="timeUnit":
+                    keyDisplay="time unit (seconds/minutes/hours/days)"
+                value=input(f"Insert the {keyDisplay} for the duration distribution of task '{task_name}' of process {process_name}: ")
+                if key=="type" and value="":
+                    break
+                durationDistributionDict[key] = value
+            element["setupTime"]=durationDistributionDict
         if exit_loop: 
             break
         resources.append(resource)

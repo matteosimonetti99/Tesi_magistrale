@@ -294,6 +294,7 @@ class Process:
                 while True:
                     resources_allocated = False
                     i = 0
+                    waited={}                    
                     for group_id, resources in grouped_resources.items():
                         timetablebreakFlag=False
                         i += 1
@@ -318,19 +319,30 @@ class Process:
                                     else:
                                         print(node_id + f"|group n.{i}| BREAK | {resource_name}: {len(available_resources)}/{len(global_resources[resource_name])} resources available, {amount_needed} needed")
                                 for name, req, costPerHour in requests:
-                                        req.resource.release(req)
-                                        req.cancel() # cancel the requests that were accumulated till now since this group is ko
+                                    req.resource.release(req)
+                                    req.cancel() # cancel the requests that were accumulated till now since this group is ko
                                 break  # Move to the next group if not enough resources
                             else:
                                 #print(node_id + f"|group n.{i}| OK | {resource_name}: {len(available_resources)}/{len(global_resources[resource_name])} resources available, {amount_needed} needed")
                                 appended=0
                                 to_request = []  # New data structure to store resources to request later
+                                #resource_tuple is: simpyRes, cost, timetableName, lastInstanceType, setupTime
                                 for resource_tuple in available_resources:
                                     if appended == amount_needed:
                                         break
-                                    if resource_tuple[0].count < resource_tuple[0].capacity:  # Check if resource is available (not at full capacity)
+                                    # Check if resource is available (not at full capacity), and checks if there is no setupTime or there is setupTime but no lastInstance, or there is lastInstance but it is our current instanceType
+                                    if (resource_tuple[0].count < resource_tuple[0].capacity) and (not resource_tuple[4] or not resource_tuple[3] or resource_tuple[3]==self.instance_type):  
                                         to_request.append(resource_tuple)  # Add to the list instead of requesting
                                         appended+=1
+                                    elif (resource_tuple[0].count < resource_tuple[0].capacity) and resource_tuple[3] and (resource_tuple[0] not in waited or waited[resource_tuple[0]]==False):
+                                        yield self.env.timeout(1)
+                                        waited[resource_tuple[0]]=True
+                                    elif (resource_tuple[0].count < resource_tuple[0].capacity) and resource_tuple[3] and waited==True:  # Check if resource is available (not at full capacity)
+                                        to_request.append(resource_tuple)  # Add to the list instead of requesting
+                                        appended+=1
+                                        #fai un wait di timeCalculator.convert_to_seconds(resource_tuple[4]) e inserisci resource_tuple[3] in global_resources e worklist_resources cercando tramite resource_tuple[0]
+                                    else:
+                                        waited[resource_tuple[0]]=False
                                     #print(appended)
                                     #print(amount_needed)
                                 if appended == amount_needed:
@@ -353,7 +365,13 @@ class Process:
                                     timetable_name = next(
                                         res_tuple[2] for res_tuple in global_resources[resource_name] if res_tuple[0] is req.resource
                                     )
-                                    worklist_resources[self.num][worklist_id][resource_name].append((req.resource, cost_per_hour, timetable_name))
+                                     last_instance = next(
+                                        res_tuple[3] for res_tuple in global_resources[resource_name] if res_tuple[0] is req.resource
+                                    )
+                                     setup_time = next(
+                                        res_tuple[4] for res_tuple in global_resources[resource_name] if res_tuple[0] is req.resource
+                                    )
+                                    worklist_resources[self.num][worklist_id][resource_name].append((req.resource, cost_per_hour, timetable_name, last_instance, setup_time))
 
                             for resource_name, req, cost_per_hour in requests:  # Extract elements from the tuple
                                 yield req
@@ -579,7 +597,7 @@ class Process:
 env = simpy.Environment()
 global_resources = {
     res['name']: [
-        (simpy.Resource(env, capacity=1), res['costPerHour'], res['timetableName'])
+        (simpy.Resource(env, capacity=1), res['costPerHour'], res['timetableName'],"",res['setupTime'])
         for _ in range(int(res['totalAmount']))
     ]
     for res in resources
