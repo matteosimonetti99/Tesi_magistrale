@@ -21,7 +21,7 @@ import time
 
 
 #Put those 2 to true to have the log in console of resources locked and unlocked and timetable management
-resourcesOutputConsole=True
+resourcesOutputConsole=False
 timetableOutputConsole=False
 costsOutputConsole=True
 
@@ -87,10 +87,11 @@ for _ in range(num_instances-1):
 task_durations = {element['elementId']: element['durationDistribution'] for element in diagbp['elements']} #dict contains: type, mean, arg1, arg2
 task_resources = {element['elementId']: element['resourceIds'] for element in diagbp['elements']} #array contains dicts with each: resourceName, amountNeeded, groupId
 task_costs = {element['elementId']: element['fixedCost'] for element in diagbp['elements']} #array contains dicts with each: resourceName, amountNeeded, groupId
-
+tasks_worklists={element['elementId']: element['worklistId'] for element in diagbp['elements']}
 
 totalCost={} #task_costs are summed here
 timeUsedPerResource={} #resources time being used are summed here
+worklist_resources={}
 class Process:
     executed_nodes = {}  # make executed_nodes a dictionary of sets
     startDateTime = diagbp['startDateTime']
@@ -120,6 +121,7 @@ class Process:
                             self.durationThresholds[element_id] = float(self.durationThresholds[element_id])*86400
         self.subprocessInternalError = {} #used in error end event
         self.subprocessExternalException = {}
+        worklist_resources[self.num]={}
         Process.terminateEndEvent[self.num] = False
         Process.subprocessTerminate[self.num] = {}
         totalCost[self.num]=0.0
@@ -280,6 +282,7 @@ class Process:
 
             # Resources zone
             taskNeededResources = task_resources[node_id]
+            worklist_id = tasks_worklists[node_id]
             if taskNeededResources:
                 grouped_resources = {}
                 for res in taskNeededResources:
@@ -292,14 +295,25 @@ class Process:
                     resources_allocated = False
                     i = 0
                     for group_id, resources in grouped_resources.items():
+                        timetablebreakFlag=False
                         i += 1
                         # Check if there are enough resources and within timetable for the group
                         requests = []
                         for resource_name, amount_needed in resources:
-                            available_resources = [res for res in global_resources[resource_name] if self.is_in_timetable(res[2])]
+                            if worklist_id and worklist_id in worklist_resources[self.num]:
+                                available_resources = []
+                                if resource_name in worklist_resources[self.num][worklist_id]:  # Check if the resource exists for this worklist_id
+                                    for resource_tuple in worklist_resources[self.num][worklist_id][resource_name]:
+                                        if self.is_in_timetable(resource_tuple[2]):
+                                            available_resources.append(resource_tuple)
+                                #print(f"WORKLIST {node_id}: {available_resources}")
+                                timetablebreakFlag=True
+                                
+                            else:
+                                available_resources = [res for res in global_resources[resource_name] if self.is_in_timetable(res[2])]
                             if len(available_resources) < amount_needed:
                                 if resourcesOutputConsole:
-                                    if len(available_resources) == 0:
+                                    if len(available_resources) == 0 and timetablebreakFlag==False:
                                         print(node_id + f"|group n.{i}| TIMETABLE-BREAK | {resource_name}: No resources available within timetable")
                                     else:
                                         print(node_id + f"|group n.{i}| BREAK | {resource_name}: {len(available_resources)}/{len(global_resources[resource_name])} resources available, {amount_needed} needed")
@@ -328,6 +342,19 @@ class Process:
                         #print("req len:" +str(len(requests)))
                         if len(requests) == sum(amount for _, amount in resources):
                             resources_allocated = True
+
+                            # Store acquired resources in instance-specific worklist_resources if worklist_id is not empty
+                            if worklist_id:
+                                if worklist_id not in worklist_resources[self.num]:
+                                    worklist_resources[self.num][worklist_id] = {}  
+                                for resource_name, req, cost_per_hour in requests:
+                                    if resource_name not in worklist_resources[self.num][worklist_id]:
+                                        worklist_resources[self.num][worklist_id][resource_name] = []
+                                    timetable_name = next(
+                                        res_tuple[2] for res_tuple in global_resources[resource_name] if res_tuple[0] is req.resource
+                                    )
+                                    worklist_resources[self.num][worklist_id][resource_name].append((req.resource, cost_per_hour, timetable_name))
+
                             for resource_name, req, cost_per_hour in requests:  # Extract elements from the tuple
                                 yield req
                                 if resourcesOutputConsole:
