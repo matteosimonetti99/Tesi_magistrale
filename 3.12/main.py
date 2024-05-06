@@ -360,7 +360,7 @@ class Process:
                                 if resourcesOutputConsole:
                                     print(node_id + "|Resource locked: " + resource_name + ", Time: " + str(self.env.now))
                             
-                            # Rotate global_resources list for each resource type based on acquired resources 
+                            # Rotate global_resources list for each resource type based on acquired resources NO MORE USEFUL
                             for resource_name, _, _ in requests:
                                 num_acquired = requests.count((resource_name, _, _))  # Count occurrences of the resource
                                 global_resources[resource_name] = global_resources[resource_name][num_acquired:] + global_resources[resource_name][:num_acquired]
