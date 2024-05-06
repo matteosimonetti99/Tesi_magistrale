@@ -111,14 +111,14 @@ class Process:
         self.durationThresholdTimeUnits={element['elementId']: element['durationThresholdTimeUnit'] for element in diagbp['elements']}
 
         for element_id, time_unit in self.durationThresholdTimeUnits.items(): #edit duratioThresholds multiplying by self.durationThresholdTimeUnits
-                    threshold = self.durationThresholds.get(element_id)
-                    if threshold is not None:
-                        if time_unit == 'minutes':
-                            self.durationThresholds[element_id] = float(self.durationThresholds[element_id])*60
-                        elif time_unit == 'hours':
-                            self.durationThresholds[element_id] = float(self.durationThresholds[element_id])*3600
-                        elif time_unit == 'days':
-                            self.durationThresholds[element_id] = float(self.durationThresholds[element_id])*86400
+            threshold = self.durationThresholds.get(element_id)
+            if threshold is not None:
+                if time_unit == 'minutes':
+                    self.durationThresholds[element_id] = float(self.durationThresholds[element_id])*60
+                elif time_unit == 'hours':
+                    self.durationThresholds[element_id] = float(self.durationThresholds[element_id])*3600
+                elif time_unit == 'days':
+                    self.durationThresholds[element_id] = float(self.durationThresholds[element_id])*86400
         self.subprocessInternalError = {} #used in error end event
         self.subprocessExternalException = {}
         worklist_resources[self.num]={}
@@ -365,10 +365,10 @@ class Process:
                                     timetable_name = next(
                                         res_tuple[2] for res_tuple in global_resources[resource_name] if res_tuple[0] is req.resource
                                     )
-                                     last_instance = next(
+                                    last_instance = next(
                                         res_tuple[3] for res_tuple in global_resources[resource_name] if res_tuple[0] is req.resource
                                     )
-                                     setup_time = next(
+                                    setup_time = next(
                                         res_tuple[4] for res_tuple in global_resources[resource_name] if res_tuple[0] is req.resource
                                     )
                                     worklist_resources[self.num][worklist_id][resource_name].append((req.resource, cost_per_hour, timetable_name, last_instance, setup_time))

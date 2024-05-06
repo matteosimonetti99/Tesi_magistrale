@@ -398,7 +398,7 @@
         "name": "Res2",
         "totalAmount": "3",
         "costPerHour": "2",
-        "timetableName": "Default"
+        "timetableName": "Default",
         "setupTime":""
       }
     ],
