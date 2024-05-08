@@ -16,7 +16,7 @@ import csv
 import random
 import time
 
-#sys.setrecursionlimit(100000)
+sys.setrecursionlimit(100000)
 
 
 
@@ -326,25 +326,107 @@ class Process:
                                 #print(node_id + f"|group n.{i}| OK | {resource_name}: {len(available_resources)}/{len(global_resources[resource_name])} resources available, {amount_needed} needed")
                                 appended=0
                                 to_request = []  # New data structure to store resources to request later
-                                #resource_tuple is: simpyRes, cost, timetableName, lastInstanceType, setupTime
+
+                                #resource_tuple is: simpyRes, cost, timetableName, lastInstanceType, setupTime, maxUsage, actualUsage
                                 for resource_tuple in available_resources:
+                                    if testing:
+                                        print(resource_tuple)
                                     if appended == amount_needed:
                                         break
                                     # Check if resource is available (not at full capacity), and checks if there is no setupTime or there is setupTime but no lastInstance, or there is lastInstance but it is our current instanceType
-                                    if (resource_tuple[0].count < resource_tuple[0].capacity) and (not resource_tuple[4] or not resource_tuple[3] or resource_tuple[3]==self.instance_type):  
-                                        to_request.append(resource_tuple)  # Add to the list instead of requesting
-                                        appended+=1
+                                    if (resource_tuple[0].count < resource_tuple[0].capacity) and (not resource_tuple[4]['type'] or not resource_tuple[3] or resource_tuple[3]==self.instance_type):                                            
+                                        if resource_tuple[4]['type']:
+                                            setup_time = timeCalculator.convert_to_seconds(resource_tuple[4])
+                                            # Update currentUsages and check for maintenance
+                                            for i, res_tuple in enumerate(global_resources[resource_name]):
+                                                if res_tuple[0] is resource_tuple[0]:
+                                                    if int(res_tuple[6]) + 1 >= int(res_tuple[5]):
+                                                        new_current_usages = 0  # Reset to 0 if maintenance is needed
+                                                        self.xeslog(node_id,"startSetupTime",node['type'])
+                                                        print(f"Cambio usura {resource_tuple[0]}")
+                                                        yield self.env.timeout(setup_time)  # Wait for setup time
+                                                        self.xeslog(node_id,"endSetupTime",node['type'])
+                                                    else:
+                                                        new_current_usages = int(res_tuple[6]) + 1  # Increment current usages if no maintenance
+                                                    global_resources[resource_name][i] = (
+                                                        res_tuple[0],  # simpy resource
+                                                        res_tuple[1],  # cost
+                                                        res_tuple[2],  # timetable
+                                                        self.instance_type,  # lastInstanceType
+                                                        res_tuple[4],  # setupTime
+                                                        int(res_tuple[5]),  # maxUsages
+                                                        new_current_usages  
+                                                    )                                                    
+                                                    break
+
+                                            # Similar update for worklist_resources (if applicable)
+                                            if worklist_id and worklist_id in worklist_resources[self.num]:
+                                                for i, res_tuple in enumerate(worklist_resources[self.num][worklist_id][resource_name]):
+                                                    if res_tuple[0] is resource_tuple[0]:
+                                                        new_current_usages = 0 if int(res_tuple[6]) + 1 >= int(res_tuple[5]) else int(res_tuple[6]) + 1
+                                                        worklist_resources[self.num][worklist_id][resource_name][i] = (
+                                                            res_tuple[0],  # simpy resource
+                                                            res_tuple[1],  # cost
+                                                            res_tuple[2],  # timetable
+                                                            self.instance_type,  # lastInstanceType
+                                                            res_tuple[4],  # setupTime
+                                                            int(res_tuple[5]),  # maxUsages
+                                                            new_current_usages  # Updated currentUsages
+                                                        )
+                                                        break
+
+                                        to_request.append(resource_tuple)  # Add to the list
+                                        appended += 1
+
+                                    #case where different lastInstanceType so i wait 1 second to give opportunity to other instances of same type to use resource, if there are any.
                                     elif (resource_tuple[0].count < resource_tuple[0].capacity) and resource_tuple[3] and (resource_tuple[0] not in waited or waited[resource_tuple[0]]==False):
                                         yield self.env.timeout(1)
                                         waited[resource_tuple[0]]=True
-                                    elif (resource_tuple[0].count < resource_tuple[0].capacity) and resource_tuple[3] and waited==True:  # Check if resource is available (not at full capacity)
+
+                                    # Check if resource is available (not at full capacity) but with different lastInstanceType, so needs setupTime (after having waited)
+                                    elif (resource_tuple[0].count < resource_tuple[0].capacity) and resource_tuple[3] and waited[resource_tuple[0]]==True: 
                                         to_request.append(resource_tuple)  # Add to the list instead of requesting
                                         appended+=1
-                                        #fai un wait di timeCalculator.convert_to_seconds(resource_tuple[4]) e inserisci resource_tuple[3] in global_resources e worklist_resources cercando tramite resource_tuple[0]
+                                        setup_time = timeCalculator.convert_to_seconds(resource_tuple[4])
+                                        self.xeslog(node_id,"startSetupTime",node['type'])
+                                        yield self.env.timeout(setup_time)  # Wait for setup time
+                                        print(f"Cambio instanceType {resource_tuple[0]}")
+                                        self.xeslog(node_id,"endSetupTime",node['type'])
+
+                                        # Update global_resources
+                                        for i, res_tuple in enumerate(global_resources[resource_name]):
+                                            if res_tuple[0] is resource_tuple[0]:  # Find the matching resource tuple
+                                                global_resources[resource_name][i] = (
+                                                    res_tuple[0],  # simpy resource remains the same
+                                                    res_tuple[1],  # cost remains the same
+                                                    res_tuple[2],  # timetable remains the same
+                                                    self.instance_type,  # Update lastInstanceType to current instance type
+                                                    res_tuple[4],  # setupTime remains the same
+                                                    int(res_tuple[5]),
+                                                    0
+                                                )
+                                                break  # No need to continue searching once found
+
+                                        # Update worklist_resources (if applicable)
+                                        if worklist_id and worklist_id in worklist_resources[self.num]:
+                                            for i, res_tuple in enumerate(worklist_resources[self.num][worklist_id][resource_name]):
+                                                if res_tuple[0] is resource_tuple[0]:  # Find the matching resource tuple
+                                                    worklist_resources[self.num][worklist_id][resource_name][i] = (
+                                                        res_tuple[0],  # simpy resource remains the same
+                                                        res_tuple[1],  # cost remains the same
+                                                        res_tuple[2],  # timetable remains the same
+                                                        self.instance_type,  # Update lastInstanceType to current instance type
+                                                        res_tuple[4],  # setupTime remains the same
+                                                        int(res_tuple[5]),  # maxUsages remains the same
+                                                        0  # Reset currentUsages to 0 after setup
+                                                    )
+                                                    break  # No need to continue searching once found
+                                    #This is if all resources occupied, resets waited to false in case it was put to true on the first elif
                                     else:
                                         waited[resource_tuple[0]]=False
                                     #print(appended)
                                     #print(amount_needed)
+
                                 if appended == amount_needed:
                                     for resource_tuple in to_request:
                                         req = resource_tuple[0].request()
@@ -362,26 +444,18 @@ class Process:
                                 for resource_name, req, cost_per_hour in requests:
                                     if resource_name not in worklist_resources[self.num][worklist_id]:
                                         worklist_resources[self.num][worklist_id][resource_name] = []
-                                    timetable_name = next(
-                                        res_tuple[2] for res_tuple in global_resources[resource_name] if res_tuple[0] is req.resource
+                                    # Find the matching resource tuple in global_resources
+                                    res_tuple = next(res for res in global_resources[resource_name] if res[0] is req.resource)
+                                    _, cost_per_hour, timetable_name, last_instance, setup_time, max_usages, current_usages = res_tuple
+                                    # Append to worklist_resources with all elements
+                                    worklist_resources[self.num][worklist_id][resource_name].append(
+                                        (req.resource, cost_per_hour, timetable_name, last_instance, setup_time, max_usages, current_usages)
                                     )
-                                    last_instance = next(
-                                        res_tuple[3] for res_tuple in global_resources[resource_name] if res_tuple[0] is req.resource
-                                    )
-                                    setup_time = next(
-                                        res_tuple[4] for res_tuple in global_resources[resource_name] if res_tuple[0] is req.resource
-                                    )
-                                    worklist_resources[self.num][worklist_id][resource_name].append((req.resource, cost_per_hour, timetable_name, last_instance, setup_time))
 
                             for resource_name, req, cost_per_hour in requests:  # Extract elements from the tuple
                                 yield req
                                 if resourcesOutputConsole:
-                                    print(node_id + "|Resource locked: " + resource_name + ", Time: " + str(self.env.now))
-                            
-                            # Rotate global_resources list for each resource type based on acquired resources NO MORE USEFUL
-                            for resource_name, _, _ in requests:
-                                num_acquired = requests.count((resource_name, _, _))  # Count occurrences of the resource
-                                global_resources[resource_name] = global_resources[resource_name][num_acquired:] + global_resources[resource_name][:num_acquired]
+                                    print(node_id + "|Resource locked: " + resource_name + ", Time: " + str(self.env.now))                            
                             break  # Break the loop as resources are allocated
                         else:
                             for _,req,_ in requests:
@@ -595,14 +669,40 @@ class Process:
                 return
 
 env = simpy.Environment()
-global_resources = {
-    res['name']: [
-        (simpy.Resource(env, capacity=1), res['costPerHour'], res['timetableName'],"",res['setupTime'])
-        for _ in range(int(res['totalAmount']))
-    ]
-    for res in resources
-} if resources else {}
+testing=True
 
+
+def timeout_proc(simpy_resource,env,time):
+    yield env.timeout(time)
+    print(f"Initial setup completed for resource {simpy_resource} at time {env.now}")
+    # You can add more actions here if needed, such as updating resource state
+
+#resource_tuple is: simpyRes, cost, timetableName, lastInstanceType, setupTime, maxUsage, actualUsage. Starts with actualUsage=MaxUsage so that it setups on first usage.
+global_resources = {}
+for res in resources:
+    resource_list = []
+    for _ in range(int(res['totalAmount'])):
+        simpy_resource = simpy.Resource(env, capacity=1)
+        resource_tuple = (
+            simpy_resource, 
+            res['costPerHour'], 
+            res['timetableName'], 
+            "", 
+            res['setupTime'], 
+            res['maxUsage'], 
+            0
+        )
+        resource_list.append(resource_tuple)
+
+        # Create and start a timeout event for each individual resource
+        if res['setupTime']['type']:
+            time=timeCalculator.convert_to_seconds(res['setupTime'])
+            env.process(timeout_proc(simpy_resource,env,time))
+
+    global_resources[res['name']] = resource_list
+
+if not resources:
+    global_resources = {}
 
 
 def simulate_bpmn(bpmn_dict):

@@ -335,17 +335,17 @@
   "processInstances": [
       {
           "type": "a",
-          "count": "1"
+          "count": "3"
       },
       {
         "type": "b",
-        "count": "1"
+        "count": "3"
       }
   ],
   "startDateTime": "2024-04-16T18:00:00",
   "arrivalRateDistribution": {
       "type": "FIXED",
-      "mean": "10",
+      "mean": "0",
       "arg1": "",
       "arg2": "",
       "timeUnit": "minutes"
@@ -392,20 +392,34 @@
         "totalAmount": "1",
         "costPerHour": "1",
         "timetableName": "Default",
-        "setupTime": "30"
+        "setupTime": {
+          "type": "",
+          "mean": "",
+          "arg1": "",
+          "arg2": "",
+          "timeUnit": ""
+        },
+        "maxUsage": ""
       },
       {
         "name": "Res2",
         "totalAmount": "3",
         "costPerHour": "2",
         "timetableName": "Default",
-        "setupTime":""
+        "setupTime": {
+          "type": "fixed",
+          "mean": "10",
+          "arg1": "",
+          "arg2": "",
+          "timeUnit": "seconds"
+        },
+        "maxUsage": "10"
       }
     ],
   "elements": [
       {
           "elementId": "Activity_10x08n3",
-          "worklistId": "1",
+          "worklistId": "",
           "fixedCost": "3",
           "costThreshold": "5",
           "durationDistribution": {
