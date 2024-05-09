@@ -122,13 +122,29 @@
         "name": "res1",
         "totalAmount": "1",
         "costPerHour": "1",
-        "timetableName": "tt1"
+        "timetableName": "tt1",
+        "setupTime": {
+          "type": "",
+          "mean": "",
+          "arg1": "",
+          "arg2": "",
+          "timeUnit": ""
+        },
+        "maxUsage": ""
       },
       {
         "name": "res2",
         "totalAmount": "1",
         "costPerHour": "1",
-        "timetableName": "tt1"
+        "timetableName": "tt1",
+        "setupTime": {
+          "type": "",
+          "mean": "",
+          "arg1": "",
+          "arg2": "",
+          "timeUnit": ""
+        },
+        "maxUsage": ""
       }
     ],
     "elements": [
@@ -161,7 +177,7 @@
       },
       {
         "elementId": "Activity_1se8o1q",
-        "worklistId": "21",
+        "worklistId": "1",
         "fixedCost": "",
         "costThreshold": "",
         "durationDistribution": {

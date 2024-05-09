@@ -26,7 +26,7 @@ resourcesOutputConsole=False
 timetableOutputConsole=False
 costsOutputConsole=True
 logSetupTime=True
-testing=True
+testing=False
 
 
 extraLog={}
@@ -134,9 +134,12 @@ class Process:
         for resource_name, resource_info in global_resources.items():
             timeUsedPerResource[resource_name]=0.0
         
-    def update_resources(self,resource_obj, mode, typee, worklist_id, resource_name):
+    def update_resources(self,resource_obj, mode, resource_name, node_id):
         #resource_tuple is: simpyRes, cost, timetableName, lastInstanceType, setupTime, maxUsage, actualUsage, lock
         #mode can either be, increment, instanceTypeChange
+        usura=False
+        instanceCambio=False
+
         for asd in global_resources[resource_name]:
             if asd[0] is resource_obj:
                 resource_tuple=asd
@@ -145,66 +148,43 @@ class Process:
             return
 
         if mode=="increment":
-            instanceCambio=False
             if int(resource_tuple[6].level) + 1 >= int(resource_tuple[5]):
                 resource_tuple[6].get(int(resource_tuple[5])-1)
                 usura=True
             else:
                 resource_tuple[6].put(1)
-                usura=False
         elif mode=="instanceTypeChange":
             instanceCambio=True
-            usura=False
             while resource_tuple[6].level > 0:
                 yield resource_tuple[6].get(1)
 
+        if usura==True:
+            logg="worn"
+        else:
+            logg="instanceTypeChange"
 
-        #typee is either global or worklist
-        #worklist_id is either the id or none
-        if typee=="worklist" and (worklist_id and worklist_id in worklist_resources[self.num]):
-            setup_time = timeCalculator.convert_to_seconds(resource_tuple[4])
-            # Update currentUsages and check for maintenance
-            for i, res_tuple in enumerate(worklist_resources[resource_name]):
-                if res_tuple[0] is resource_tuple[0]:
-                    #self.xeslog(node_id,"startSetupTime",node['type'])
-                    print(f"Cambio usura {resource_tuple[0]}") if logSetupTime and usura else None
-                    print(f"Cambio instance_type {resource_tuple[0]}") if logSetupTime and instanceCambio else None
-                    #self.xeslog(node_id,"endSetupTime",node['type'])
-                    with res_tuple[7]:
-                        worklist_resources[self.num][worklist_id][resource_name][i] = (
-                            res_tuple[0],  # simpy resource
-                            res_tuple[1],  # cost
-                            res_tuple[2],  # timetable
-                            self.instance_type,  # lastInstanceType
-                            res_tuple[4],  # setupTime
-                            int(res_tuple[5]),  # maxUsages
-                            res_tuple[6],
-                            res_tuple[7]  
-                        )                                                    
-                    break
-        if typee=="global":
-            setup_time = timeCalculator.convert_to_seconds(resource_tuple[4])
-            # Update currentUsages and check for maintenance
-            for i, res_tuple in enumerate(global_resources[resource_name]):
-                if res_tuple[0] is resource_tuple[0]:
-                    #self.xeslog(node_id,"startSetupTime",node['type'])
-                    print(f"Cambio usura {resource_tuple[0]}") if logSetupTime and usura else None
-                    print(f"Cambio instance_type {resource_tuple[0]}") if logSetupTime and instanceCambio else None
-                    if instanceCambio or usura:
-                        yield self.env.timeout(setup_time)  # Wait for setup time
-                    #self.xeslog(node_id,"endSetupTime",node['type'])
-                    with res_tuple[7]:
-                        global_resources[resource_name][i] = (
-                            res_tuple[0],  # simpy resource
-                            res_tuple[1],  # cost
-                            res_tuple[2],  # timetable
-                            self.instance_type,  # lastInstanceType
-                            res_tuple[4],  # setupTime
-                            int(res_tuple[5]),  # maxUsages
-                            res_tuple[6],
-                            res_tuple[7]  
-                        )                                                    
-                    break
+        setup_time = timeCalculator.convert_to_seconds(resource_tuple[4])
+        # Update currentUsages and check for maintenance
+        for i, res_tuple in enumerate(global_resources[resource_name]):
+            if res_tuple[0] is resource_tuple[0]:
+                self.xeslog(node_id,"startSetupTime",logg) if usura or instanceCambio else None
+                print(f"Cambio usura {resource_tuple[0]}") if logSetupTime and usura else None
+                print(f"Cambio instance_type {resource_tuple[0]}") if logSetupTime and instanceCambio else None
+                if instanceCambio or usura:
+                    yield self.env.timeout(setup_time)  # Wait for setup time
+                self.xeslog(node_id,"endSetupTime",logg) if usura or instanceCambio else None
+                with res_tuple[7]:
+                    global_resources[resource_name][i] = (
+                        res_tuple[0],  # simpy resource
+                        res_tuple[1],  # cost
+                        res_tuple[2],  # timetable
+                        self.instance_type,  # lastInstanceType
+                        res_tuple[4],  # setupTime
+                        int(res_tuple[5]),  # maxUsages
+                        res_tuple[6],
+                        res_tuple[7]  
+                    )                                                    
+                break
 
 
     
@@ -382,7 +362,7 @@ class Process:
                             if worklist_id and worklist_id in worklist_resources[self.num]:
                                 available_resources = []
                                 if resource_name in worklist_resources[self.num][worklist_id]:  # Check if the resource exists for this worklist_id
-                                    for resource_tuple in worklist_resources[self.num][worklist_id][resource_name]:
+                                    for resource_tuple in global_resources[resource_name]:
                                         if self.is_in_timetable(resource_tuple[2]):
                                             available_resources.append(resource_tuple)
                                 #print(f"WORKLIST {node_id}: {available_resources}")
@@ -468,8 +448,7 @@ class Process:
                                 #mode can either be, increment, instanceTypeChange
                                 #typee is either global or worklist
                                 #worklist_id is either the id or none
-                                yield from self.update_resources(req.resource, mode, "global", None,resource_name)
-                                yield from self.update_resources(req.resource, mode, "worklist", worklist_id,resource_name)
+                                yield from self.update_resources(req.resource, mode,resource_name, node_id)
                                 yield req
 
                                 if resourcesOutputConsole:
@@ -728,7 +707,6 @@ for res in resources:
             env.process(timeout_proc(simpy_resource,env,time))
 
     global_resources[res['name']] = resource_list
-print(global_resources)
 
 if not resources:
     global_resources = {}
