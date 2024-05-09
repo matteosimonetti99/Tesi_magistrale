@@ -61,7 +61,7 @@ logging_opt = (logging_opt == 1)
 
 
 #Put those 2 to true to have the log in console of resources locked and unlocked and timetable management
-resourcesOutputConsole=False
+resourcesOutputConsole=True
 timetableOutputConsole=False
 costsOutputConsole=True
 
