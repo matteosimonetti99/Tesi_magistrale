@@ -22,9 +22,10 @@ sys.setrecursionlimit(100000)
 
 
 #Put those 2 to true to have the log in console of resources locked and unlocked and timetable management
-resourcesOutputConsole=True
+resourcesOutputConsole=False
 timetableOutputConsole=False
 costsOutputConsole=True
+cambio=True
 
 extraLog={}
 
@@ -312,10 +313,12 @@ class Process:
                                 timetablebreakFlag=True
                                 
                             else:
-                                available_resources = [res for res in global_resources[resource_name] if self.is_in_timetable(res[2])]
+                                available_resources = [res for res in global_resources[resource_name] if self.is_in_timetable(res[2]) and res[0].count < res[0].capacity]
+                                resources_in_timetable = [res for res in global_resources[resource_name] if self.is_in_timetable(res[2])]
+                            
                             if len(available_resources) < amount_needed:
                                 if resourcesOutputConsole:
-                                    if len(available_resources) == 0 and timetablebreakFlag==False:
+                                    if len(resources_in_timetable) == 0 and timetablebreakFlag==False:
                                         print(node_id + f"|group n.{i}| TIMETABLE-BREAK | {resource_name}: No resources available within timetable")
                                     else:
                                         print(node_id + f"|group n.{i}| BREAK | {resource_name}: {len(available_resources)}/{len(global_resources[resource_name])} resources available, {amount_needed} needed")
@@ -336,7 +339,7 @@ class Process:
                                     if appended == amount_needed:
                                         break
                                     # Check if resource is available (not at full capacity), and checks if there is no setupTime or there is setupTime but no lastInstance, or there is lastInstance but it is our current instanceType
-                                    if (resource_tuple[0].count < resource_tuple[0].capacity) and (not resource_tuple[4]['type'] or not resource_tuple[3] or resource_tuple[3]==self.instance_type):                                            
+                                    if (not resource_tuple[4]['type'] or not resource_tuple[3] or resource_tuple[3]==self.instance_type):                                            
                                         if resource_tuple[4]['type']:
                                             setup_time = timeCalculator.convert_to_seconds(resource_tuple[4])
                                             # Update currentUsages and check for maintenance
@@ -345,7 +348,7 @@ class Process:
                                                     if int(res_tuple[6].level) + 1 >= int(res_tuple[5]):
                                                         res_tuple[6].get(int(res_tuple[5])-1)
                                                         #self.xeslog(node_id,"startSetupTime",node['type'])
-                                                        print(f"Cambio usura {resource_tuple[0]}") if testing else None
+                                                        print(f"Cambio usura {resource_tuple[0]}") if cambio else None
                                                         yield self.env.timeout(setup_time)  # Wait for setup time
                                                         #self.xeslog(node_id,"endSetupTime",node['type'])
                                                     else:
@@ -367,8 +370,8 @@ class Process:
                                             if worklist_id and worklist_id in worklist_resources[self.num]:
                                                 for i, res_tuple in enumerate(worklist_resources[self.num][worklist_id][resource_name]):
                                                     if res_tuple[0] is resource_tuple[0]:
-                                                        if int(res_tuple[6]) + 1 >= int(res_tuple[5]):
-                                                            res_tuple[6].get(int(res_tuple[5]))  # Reset to 0 if maintenance is needed (usage exceeds or equals max)
+                                                        if int(res_tuple[6].level) + 1 >= int(res_tuple[5]):
+                                                            res_tuple[6].get(int(res_tuple[5])-1)  # Reset to 0 if maintenance is needed (usage exceeds or equals max)
                                                         else:
                                                             res_tuple[6].put(1)  # Increment current usages if no maintenance
                                                         with resource_tuple[7]:
@@ -388,18 +391,18 @@ class Process:
                                         appended += 1
 
                                     #case where different lastInstanceType so i wait 1 second to give opportunity to other instances of same type to use resource, if there are any.
-                                    elif (resource_tuple[0].count < resource_tuple[0].capacity) and resource_tuple[3] and (resource_tuple[0] not in waited or waited[resource_tuple[0]]==False):
+                                    elif resource_tuple[3] and (resource_tuple[0] not in waited or waited[resource_tuple[0]]==False):
                                         yield self.env.timeout(1)
                                         waited[resource_tuple[0]]=True
 
                                     # Check if resource is available (not at full capacity) but with different lastInstanceType, so needs setupTime (after having waited)
-                                    elif (resource_tuple[0].count < resource_tuple[0].capacity) and resource_tuple[3] and waited[resource_tuple[0]]==True: 
+                                    elif resource_tuple[3] and waited[resource_tuple[0]]==True: 
                                         to_request.append(resource_tuple)  # Add to the list instead of requesting
                                         appended+=1
                                         setup_time = timeCalculator.convert_to_seconds(resource_tuple[4])
                                         #self.xeslog(node_id,"startSetupTime",node['type'])
                                         yield self.env.timeout(setup_time)  # Wait for setup time
-                                        print(f"Cambio instanceType {resource_tuple[0]}") if testing else None
+                                        print(f"Cambio instanceType {resource_tuple[0]}") if cambio else None
                                         waited[resource_tuple[0]]=False
                                         #self.xeslog(node_id,"endSetupTime",node['type'])
 
