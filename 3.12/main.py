@@ -10,6 +10,7 @@ from datetime import time as dt_time
 import pm4py
 import pandas as pd
 import csv
+import threading
 
 
 #to remove, credo
@@ -21,7 +22,7 @@ sys.setrecursionlimit(100000)
 
 
 #Put those 2 to true to have the log in console of resources locked and unlocked and timetable management
-resourcesOutputConsole=False
+resourcesOutputConsole=True
 timetableOutputConsole=False
 costsOutputConsole=True
 
@@ -327,10 +328,11 @@ class Process:
                                 appended=0
                                 to_request = []  # New data structure to store resources to request later
 
-                                #resource_tuple is: simpyRes, cost, timetableName, lastInstanceType, setupTime, maxUsage, actualUsage
+                                #resource_tuple is: simpyRes, cost, timetableName, lastInstanceType, setupTime, maxUsage, actualUsage, lock
                                 for resource_tuple in available_resources:
+                                    
                                     if testing:
-                                        print(resource_tuple[:-1] + (resource_tuple[6].level,))
+                                        print(f"({resource_tuple[0]}, {resource_tuple[1]}, {resource_tuple[2]}, {resource_tuple[3]}, {resource_tuple[4]}, {resource_tuple[5]}, {resource_tuple[6].level}, {resource_tuple[7]})")
                                     if appended == amount_needed:
                                         break
                                     # Check if resource is available (not at full capacity), and checks if there is no setupTime or there is setupTime but no lastInstance, or there is lastInstance but it is our current instanceType
@@ -343,20 +345,22 @@ class Process:
                                                     if int(res_tuple[6].level) + 1 >= int(res_tuple[5]):
                                                         res_tuple[6].get(int(res_tuple[5])-1)
                                                         #self.xeslog(node_id,"startSetupTime",node['type'])
-                                                        #print(f"Cambio usura {resource_tuple[0]}")
+                                                        print(f"Cambio usura {resource_tuple[0]}") if testing else None
                                                         yield self.env.timeout(setup_time)  # Wait for setup time
                                                         #self.xeslog(node_id,"endSetupTime",node['type'])
                                                     else:
                                                         res_tuple[6].put(1)  # Increment current usages if no maintenance
-                                                    global_resources[resource_name][i] = (
-                                                        res_tuple[0],  # simpy resource
-                                                        res_tuple[1],  # cost
-                                                        res_tuple[2],  # timetable
-                                                        self.instance_type,  # lastInstanceType
-                                                        res_tuple[4],  # setupTime
-                                                        int(res_tuple[5]),  # maxUsages
-                                                        res_tuple[6]  
-                                                    )                                                    
+                                                    with resource_tuple[7]:
+                                                        global_resources[resource_name][i] = (
+                                                            res_tuple[0],  # simpy resource
+                                                            res_tuple[1],  # cost
+                                                            res_tuple[2],  # timetable
+                                                            self.instance_type,  # lastInstanceType
+                                                            res_tuple[4],  # setupTime
+                                                            int(res_tuple[5]),  # maxUsages
+                                                            res_tuple[6],
+                                                            res_tuple[7]  
+                                                        )                                                    
                                                     break
 
                                             # Similar update for worklist_resources (if applicable)
@@ -367,15 +371,17 @@ class Process:
                                                             res_tuple[6].get(int(res_tuple[5]))  # Reset to 0 if maintenance is needed (usage exceeds or equals max)
                                                         else:
                                                             res_tuple[6].put(1)  # Increment current usages if no maintenance
-                                                        worklist_resources[self.num][worklist_id][resource_name][i] = (
-                                                            res_tuple[0],  # simpy resource
-                                                            res_tuple[1],  # cost
-                                                            res_tuple[2],  # timetable
-                                                            self.instance_type,  # lastInstanceType
-                                                            res_tuple[4],  # setupTime
-                                                            int(res_tuple[5]),  # maxUsages
-                                                            res_tuple[6]  # Updated currentUsages
-                                                        )
+                                                        with resource_tuple[7]:
+                                                            worklist_resources[self.num][worklist_id][resource_name][i] = (
+                                                                res_tuple[0],  # simpy resource
+                                                                res_tuple[1],  # cost
+                                                                res_tuple[2],  # timetable
+                                                                self.instance_type,  # lastInstanceType
+                                                                res_tuple[4],  # setupTime
+                                                                int(res_tuple[5]),  # maxUsages
+                                                                res_tuple[6],
+                                                                res_tuple[7]
+                                                            )
                                                         break
 
                                         to_request.append(resource_tuple)  # Add to the list
@@ -393,23 +399,26 @@ class Process:
                                         setup_time = timeCalculator.convert_to_seconds(resource_tuple[4])
                                         #self.xeslog(node_id,"startSetupTime",node['type'])
                                         yield self.env.timeout(setup_time)  # Wait for setup time
-                                        print(f"Cambio instanceType {resource_tuple[0]}")
+                                        print(f"Cambio instanceType {resource_tuple[0]}") if testing else None
+                                        waited[resource_tuple[0]]=False
                                         #self.xeslog(node_id,"endSetupTime",node['type'])
 
                                         # Update global_resources
                                         for i, res_tuple in enumerate(global_resources[resource_name]):
                                             if res_tuple[0] is resource_tuple[0]:  # Find the matching resource tuple
                                                 while res_tuple[6].level > 0:
-                                                    yield res_tuple[6].get(1)  # Get 1 item at a time 
-                                                global_resources[resource_name][i] = (
-                                                    res_tuple[0],  # simpy resource remains the same
-                                                    res_tuple[1],  # cost remains the same
-                                                    res_tuple[2],  # timetable remains the same
-                                                    self.instance_type,  # Update lastInstanceType to current instance type
-                                                    res_tuple[4],  # setupTime remains the same
-                                                    int(res_tuple[5]),
-                                                    res_tuple[6]
-                                                )
+                                                    yield res_tuple[6].get(1)  #Bring usage back to 0, 1 by 1
+                                                with resource_tuple[7]:
+                                                    global_resources[resource_name][i] = (
+                                                        res_tuple[0],  # simpy resource remains the same
+                                                        res_tuple[1],  # cost remains the same
+                                                        res_tuple[2],  # timetable remains the same
+                                                        self.instance_type,  # Update lastInstanceType to current instance type
+                                                        res_tuple[4],  # setupTime remains the same
+                                                        int(res_tuple[5]),
+                                                        res_tuple[6],
+                                                        res_tuple[7]
+                                                    )
                                                 break  # No need to continue searching once found
 
                                         # Update worklist_resources (if applicable)
@@ -418,15 +427,17 @@ class Process:
                                                 if res_tuple[0] is resource_tuple[0]:  # Find the matching resource tuple
                                                     while res_tuple[6].level > 0:
                                                         yield res_tuple[6].get(1)  # Get 1 item at a time 
-                                                    worklist_resources[self.num][worklist_id][resource_name][i] = (
-                                                        res_tuple[0],  # simpy resource remains the same
-                                                        res_tuple[1],  # cost remains the same
-                                                        res_tuple[2],  # timetable remains the same
-                                                        self.instance_type,  # Update lastInstanceType to current instance type
-                                                        res_tuple[4],  # setupTime remains the same
-                                                        int(res_tuple[5]),  # maxUsages remains the same
-                                                        res_tuple[6] # Reset currentUsages to 0 after setup
-                                                    )
+                                                    with resource_tuple[7]:
+                                                        worklist_resources[self.num][worklist_id][resource_name][i] = (
+                                                            res_tuple[0],  # simpy resource remains the same
+                                                            res_tuple[1],  # cost remains the same
+                                                            res_tuple[2],  # timetable remains the same
+                                                            self.instance_type,  # Update lastInstanceType to current instance type
+                                                            res_tuple[4],  # setupTime remains the same
+                                                            int(res_tuple[5]),  # maxUsages remains the same
+                                                            res_tuple[6],
+                                                            res_tuple[7]
+                                                        )
                                                     break  # No need to continue searching once found
                                     #This is if all resources occupied, resets waited to false in case it was put to true on the first elif
                                     else:
@@ -453,10 +464,10 @@ class Process:
                                         worklist_resources[self.num][worklist_id][resource_name] = []
                                     # Find the matching resource tuple in global_resources
                                     res_tuple = next(res for res in global_resources[resource_name] if res[0] is req.resource)
-                                    _, cost_per_hour, timetable_name, last_instance, setup_time, max_usages, current_usages = res_tuple
+                                    _, cost_per_hour, timetable_name, last_instance, setup_time, max_usages, current_usages,lock = res_tuple
                                     # Append to worklist_resources with all elements
                                     worklist_resources[self.num][worklist_id][resource_name].append(
-                                        (req.resource, cost_per_hour, timetable_name, last_instance, setup_time, max_usages, current_usages)
+                                        (req.resource, cost_per_hour, timetable_name, last_instance, setup_time, max_usages, current_usages,lock)
                                     )
 
                             for resource_name, req, cost_per_hour in requests:  # Extract elements from the tuple
@@ -701,7 +712,8 @@ for res in resources:
             "", 
             res['setupTime'], 
             res['maxUsage'], 
-            lastElement
+            lastElement,
+            threading.Lock()
         )
         resource_list.append(resource_tuple)
 
@@ -711,6 +723,7 @@ for res in resources:
             env.process(timeout_proc(simpy_resource,env,time))
 
     global_resources[res['name']] = resource_list
+print(global_resources)
 
 if not resources:
     global_resources = {}
