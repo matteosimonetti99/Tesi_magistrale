@@ -168,10 +168,11 @@ class Process:
         for i, res_tuple in enumerate(global_resources[resource_name]):
             if res_tuple[0] is resource_tuple[0]:
                 self.xeslog(node_id,"startSetupTime",logg) if usura or instanceCambio else None
-                print(f"Cambio usura {resource_tuple[0]}") if logSetupTime and usura else None
-                print(f"Cambio instance_type {resource_tuple[0]}") if logSetupTime and instanceCambio else None
+                print(f"Cambio usura {resource_tuple[0]} {self.env.now}") if logSetupTime and usura else None
+                print(f"Cambio instance_type {resource_tuple[0]} {self.env.now}") if logSetupTime and instanceCambio else None
                 if instanceCambio or usura:
                     yield self.env.timeout(setup_time)  # Wait for setup time
+                    print(f"Fine cambio {resource_tuple[0]} {self.env.now}")
                 self.xeslog(node_id,"endSetupTime",logg) if usura or instanceCambio else None
                 with res_tuple[7]:
                     global_resources[resource_name][i] = (
@@ -361,10 +362,14 @@ class Process:
                         for resource_name, amount_needed in resources:
                             if worklist_id and worklist_id in worklist_resources[self.num]:
                                 available_resources = []
+                                resources_in_timetable = []
                                 if resource_name in worklist_resources[self.num][worklist_id]:  # Check if the resource exists for this worklist_id
                                     for resource_tuple in global_resources[resource_name]:
-                                        if self.is_in_timetable(resource_tuple[2]):
+                                        if self.is_in_timetable(resource_tuple[2]) and resource_tuple[0].count < resource_tuple[0].capacity:
                                             available_resources.append(resource_tuple)
+                                        if self.is_in_timetable(resource_tuple[2]):
+                                            resources_in_timetable.append(resource_tuple)
+                                            
                                 #print(f"WORKLIST {node_id}: {available_resources}")
                                 timetablebreakFlag=True
                                 
@@ -375,9 +380,9 @@ class Process:
                             if len(available_resources) < amount_needed:
                                 if resourcesOutputConsole:
                                     if len(resources_in_timetable) == 0 and timetablebreakFlag==False:
-                                        print(node_id + f"|group n.{i}| TIMETABLE-BREAK | {resource_name}: No resources available within timetable")
+                                        print(node_id + f"|group n.{i}| TIMETABLE-BREAK | {resource_name}: No resources available within timetable #{self.num}")
                                     else:
-                                        print(node_id + f"|group n.{i}| BREAK | {resource_name}: {len(available_resources)}/{len(global_resources[resource_name])} resources available, {amount_needed} needed")
+                                        print(node_id + f"|group n.{i}| BREAK | {resource_name}: {len(available_resources)}/{len(global_resources[resource_name])} resources available, {amount_needed} needed #{self.num}")
                                 for name, req, costPerHour, resourceSimpy,_ in requests:
                                     req.resource.release(req)
                                     req.cancel() # cancel the requests that were accumulated till now since this group is ko
@@ -438,21 +443,19 @@ class Process:
                                     # Find the matching resource tuple in global_resources
                                     res_tuple = next(res for res in global_resources[resource_name] if res[0] is req.resource)
                                     _, cost_per_hour, timetable_name, last_instance, setup_time, max_usages, current_usages,lock = res_tuple
-                                    # Append to worklist_resources with all elements
+                                    # Append to worklist_resources with all elements (IMPORTANT: actually the tuple is USELESS (except for the resource), only the resource will be used in the rest of the code, the other info will be taken from global_resources using the res as id)
                                     worklist_resources[self.num][worklist_id][resource_name].append(
                                         (req.resource, cost_per_hour, timetable_name, last_instance, setup_time, max_usages, current_usages,lock)
                                     )
 
                             for resource_name, req, cost_per_hour, resourceSimpy,mode in requests:  # Extract elements from the tuple
-                                #update global_resources and worklist_resources, 2 cases: 1) self.instance.type is different and then throw setupTime 2) same instanceType, check usage
+                                #update global_resources 2 cases: 1) self.instance.type is different and then throw setupTime 2) same instanceType, check usage
                                 #mode can either be, increment, instanceTypeChange
-                                #typee is either global or worklist
-                                #worklist_id is either the id or none
                                 yield from self.update_resources(req.resource, mode,resource_name, node_id)
                                 yield req
 
                                 if resourcesOutputConsole:
-                                    print(node_id + "|Resource locked: " + resource_name + ", Time: " + str(self.env.now))                            
+                                    print(f"{node_id}|Resource locked: {resource_name} ({req.resource}), Time: {self.env.now} #{self.num}")                          
                             break  # Break the loop as resources are allocated
                         else:
                             for _,req,_,_,_ in requests:
@@ -675,7 +678,10 @@ env = simpy.Environment()
 
 
 def timeout_proc(simpy_resource,env,time):
+    req = simpy_resource.request()
+    yield req
     yield env.timeout(time)
+    req.resource.release(req)
     print(f"Initial setup completed for resource {simpy_resource} at time {env.now}")
     # You can add more actions here if needed, such as updating resource state
 

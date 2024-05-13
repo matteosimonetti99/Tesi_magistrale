@@ -451,7 +451,7 @@
       },
       {
           "elementId": "Activity_14rjj9v",
-          "worklistId": "",
+          "worklistId": "1",
           "fixedCost": "",
           "costThreshold": "",
           "durationDistribution": {
@@ -525,7 +525,7 @@
       },
       {
           "elementId": "Activity_12afiek",
-          "worklistId": "",
+          "worklistId": "1",
           "fixedCost": "1",
           "costThreshold": "",
           "durationDistribution": {
@@ -540,9 +540,15 @@
           "resourceIds": [
               {
                 "resourceName": "Res2",
-                "amountNeeded": "1",
+                "amountNeeded": "3",
                 "groupId":"1"
-              }]
+              },
+              {
+                "resourceName": "Res1",
+                "amountNeeded": "1",
+                "groupId":"2"
+              }
+              ]
       },
       {
           "elementId": "Activity_182s0e0",

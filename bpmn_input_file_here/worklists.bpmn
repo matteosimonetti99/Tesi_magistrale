@@ -124,13 +124,13 @@
         "costPerHour": "1",
         "timetableName": "tt1",
         "setupTime": {
-          "type": "",
-          "mean": "",
+          "type": "fixed",
+          "mean": "10",
           "arg1": "",
           "arg2": "",
-          "timeUnit": ""
+          "timeUnit": "seconds"
         },
-        "maxUsage": ""
+        "maxUsage": "3"
       },
       {
         "name": "res2",

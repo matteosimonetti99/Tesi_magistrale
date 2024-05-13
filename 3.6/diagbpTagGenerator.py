@@ -74,7 +74,7 @@ def diagbp(diagbpPath, bpmn_dict):
         if not value:
             print("\n")
             break
-        timetable["name"] = value
+        timetable["name"] = value.lower()
         rules=[]
         j=0
         while True:
@@ -114,7 +114,7 @@ def diagbp(diagbpPath, bpmn_dict):
                 print("\n")
                 exit_loop = True 
                 break
-            resource[key] = value
+            resource[key] = value.lower()
         groupDur=["type", "mean", "arg1", "arg2", "timeUnit"]
         for key in groupDur:
             keyDisplay=key
