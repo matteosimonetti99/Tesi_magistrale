@@ -10,13 +10,24 @@ from datetime import time as dt_time
 import pm4py
 import pandas as pd
 import csv
+import threading
 
 
 #to remove, credo
 import random
 import time
 
-#sys.setrecursionlimit(100000)
+sys.setrecursionlimit(100000)
+
+
+
+#Put those 2 to true to have the log in console of resources locked and unlocked and timetable management
+resourcesOutputConsole=False
+timetableOutputConsole=False
+costsOutputConsole=True
+logSetupTime=True
+testing=False
+
 
 extraLog={}
 
@@ -58,13 +69,6 @@ rows=[]
 logging_opt=diagbp['logging_opt']
 logging_opt = (logging_opt == 1)
 
-
-
-#Put those 2 to true to have the log in console of resources locked and unlocked and timetable management
-resourcesOutputConsole=True
-timetableOutputConsole=False
-costsOutputConsole=True
-
 #other glob var
 num_instances = sum(int(instance['count']) for instance in diagbp['processInstances'])
 print("NUM_INSTANCES: "+ str(num_instances))
@@ -87,16 +91,17 @@ for _ in range(num_instances-1):
 task_durations = {element['elementId']: element['durationDistribution'] for element in diagbp['elements']} #dict contains: type, mean, arg1, arg2
 task_resources = {element['elementId']: element['resourceIds'] for element in diagbp['elements']} #array contains dicts with each: resourceName, amountNeeded, groupId
 task_costs = {element['elementId']: element['fixedCost'] for element in diagbp['elements']} #array contains dicts with each: resourceName, amountNeeded, groupId
-
+tasks_worklists={element['elementId']: element['worklistId'] for element in diagbp['elements']}
 
 totalCost={} #task_costs are summed here
 timeUsedPerResource={} #resources time being used are summed here
+worklist_resources={}
 class Process:
     executed_nodes = {}  # make executed_nodes a dictionary of sets
     startDateTime = diagbp['startDateTime']
     terminateEndEvent={} # dictionary of true or false, to tell if that process has been terminated or not
     subprocessTerminate={} #this is used for subprocesses for terminate end events
-    def __init__(self, env, name, process_details, num, globalResources, start_delay=0, instance_type="default"):
+    def __init__(self, env, name, process_details, num, start_delay=0, instance_type="default"):
         self.env = env
         self.name = name
         self.process_details = process_details
@@ -110,26 +115,79 @@ class Process:
         self.durationThresholdTimeUnits={element['elementId']: element['durationThresholdTimeUnit'] for element in diagbp['elements']}
 
         for element_id, time_unit in self.durationThresholdTimeUnits.items(): #edit duratioThresholds multiplying by self.durationThresholdTimeUnits
-                    threshold = self.durationThresholds.get(element_id)
-                    if threshold is not None:
-                        if time_unit == 'minutes':
-                            self.durationThresholds[element_id] = float(self.durationThresholds[element_id])*60
-                        elif time_unit == 'hours':
-                            self.durationThresholds[element_id] = float(self.durationThresholds[element_id])*3600
-                        elif time_unit == 'days':
-                            self.durationThresholds[element_id] = float(self.durationThresholds[element_id])*86400
+            threshold = self.durationThresholds.get(element_id)
+            if threshold is not None:
+                if time_unit == 'minutes':
+                    self.durationThresholds[element_id] = float(self.durationThresholds[element_id])*60
+                elif time_unit == 'hours':
+                    self.durationThresholds[element_id] = float(self.durationThresholds[element_id])*3600
+                elif time_unit == 'days':
+                    self.durationThresholds[element_id] = float(self.durationThresholds[element_id])*86400
         self.subprocessInternalError = {} #used in error end event
         self.subprocessExternalException = {}
+        worklist_resources[self.num]={}
         Process.terminateEndEvent[self.num] = False
         Process.subprocessTerminate[self.num] = {}
         totalCost[self.num]=0.0
         #resources is a dict with name as key and a tuple made of simpy resource, cost and timetable.
-        self.resources = globalResources
         Process.executed_nodes[self.num] = set() 
-        for resource_name, resource_info in self.resources.items():
-            resource, cost_per_hour, timetable_name = resource_info
+        for resource_name, resource_info in global_resources.items():
             timeUsedPerResource[resource_name]=0.0
-            #print(f"Resource Name: {resource_name}, Capacity: {resource.capacity}")
+        
+    def update_resources(self,resource_obj, mode, resource_name, node_id):
+        #resource_tuple is: simpyRes, cost, timetableName, lastInstanceType, setupTime, maxUsage, actualUsage, lock
+        #mode can either be, increment, instanceTypeChange
+        usura=False
+        instanceCambio=False
+
+        for asd in global_resources[resource_name]:
+            if asd[0] is resource_obj:
+                resource_tuple=asd
+        
+        if not resource_tuple[4]["type"]:
+            return
+
+        if mode=="increment":
+            if int(resource_tuple[6].level) + 1 >= int(resource_tuple[5]):
+                resource_tuple[6].get(int(resource_tuple[5])-1)
+                usura=True
+            else:
+                resource_tuple[6].put(1)
+        elif mode=="instanceTypeChange":
+            instanceCambio=True
+            while resource_tuple[6].level > 0:
+                yield resource_tuple[6].get(1)
+
+        if usura==True:
+            logg="worn"
+        else:
+            logg="instanceTypeChange"
+
+        setup_time = timeCalculator.convert_to_seconds(resource_tuple[4])
+        # Update currentUsages and check for maintenance
+        for i, res_tuple in enumerate(global_resources[resource_name]):
+            if res_tuple[0] is resource_tuple[0]:
+                self.xeslog(node_id,"startSetupTime",logg) if usura or instanceCambio else None
+                print(f"Cambio usura {resource_tuple[0]} {self.env.now}") if logSetupTime and usura else None
+                print(f"Cambio instance_type {resource_tuple[0]} {self.env.now}") if logSetupTime and instanceCambio else None
+                if instanceCambio or usura:
+                    yield self.env.timeout(setup_time)  # Wait for setup time
+                    print(f"Fine cambio {resource_tuple[0]} {self.env.now}")
+                self.xeslog(node_id,"endSetupTime",logg) if usura or instanceCambio else None
+                with res_tuple[7]:
+                    global_resources[resource_name][i] = (
+                        res_tuple[0],  # simpy resource
+                        res_tuple[1],  # cost
+                        res_tuple[2],  # timetable
+                        self.instance_type,  # lastInstanceType
+                        res_tuple[4],  # setupTime
+                        int(res_tuple[5]),  # maxUsages
+                        res_tuple[6],
+                        res_tuple[7]  
+                    )                                                    
+                break
+
+
     
     def is_in_timetable(self, timetable_name):
         start_time = Process.startDateTime
@@ -281,59 +339,135 @@ class Process:
                 self.durationThresholds[node_id] -= taskTime
                 #print(self.durationThresholds)
 
-            #resources zone
-            taskNeededResources=task_resources[node_id]
-            if taskNeededResources: #if the task needs resources
+            # Resources zone
+            taskNeededResources = task_resources[node_id]
+            worklist_id = tasks_worklists[node_id]
+            if taskNeededResources:
                 grouped_resources = {}
                 for res in taskNeededResources:
                     if res['groupId'] not in grouped_resources:
                         grouped_resources[res['groupId']] = []
                     grouped_resources[res['groupId']].append((res['resourceName'], int(res['amountNeeded'])))
-                    #print(grouped_resources)              
                 # Check each group of resources
+                        # Check each group of resources
                 while True:
                     resources_allocated = False
-                    i=0
-                    numberOfGroupsWithNotEnoughResources=0          
-                    for group_id, resources in grouped_resources.items():    
-                        i+=1      
-                        # Check if there are enough resources to fulfill the request of a group
+                    i = 0
+                    waited={}                    
+                    for group_id, resources in grouped_resources.items():
+                        timetablebreakFlag=False
+                        i += 1
+                        # Check if there are enough resources and within timetable for the group
                         requests = []
-                        costsPerHour = []
-                        for resource, amount in resources:
-                            #capacity indica capacità della risorsa, count quante ne ho allocate. Inoltre controlla se la risorsa è in timetable
-                            if not self.is_in_timetable(self.resources[resource][2]) or self.resources[resource][0].capacity-self.resources[resource][0].count < amount:
-                                if self.resources[resource][0].capacity < amount:
-                                    numberOfGroupsWithNotEnoughResources+=1 #if there are not enough resources then this group will never be able to be allocated
-                                if not self.is_in_timetable(self.resources[resource][2]) and resourcesOutputConsole:
-                                    print(node_id + "|group n."+str(i)+"| TIMETABLE-BREAK | "+resource+": "+str(self.resources[resource][0].count)+"/"+str(self.resources[resource][0].capacity)+" amount: "+str(amount))
-                                elif resourcesOutputConsole:
-                                    print(node_id + "|group n."+str(i)+"| BREAK | "+resource+": "+str(self.resources[resource][0].count)+"/"+str(self.resources[resource][0].capacity)+" amount: "+str(amount))
-                                for name, req, costPerHour in requests:
+                        for resource_name, amount_needed in resources:
+                            if worklist_id and worklist_id in worklist_resources[self.num]:
+                                available_resources = []
+                                resources_in_timetable = []
+                                if resource_name in worklist_resources[self.num][worklist_id]:  # Check if the resource exists for this worklist_id
+                                    for resource_tuple in global_resources[resource_name]:
+                                        if self.is_in_timetable(resource_tuple[2]) and resource_tuple[0].count < resource_tuple[0].capacity:
+                                            available_resources.append(resource_tuple)
+                                        if self.is_in_timetable(resource_tuple[2]):
+                                            resources_in_timetable.append(resource_tuple)
+                                            
+                                #print(f"WORKLIST {node_id}: {available_resources}")
+                                timetablebreakFlag=True
+                                
+                            else:
+                                available_resources = [res for res in global_resources[resource_name] if self.is_in_timetable(res[2]) and res[0].count < res[0].capacity]
+                                resources_in_timetable = [res for res in global_resources[resource_name] if self.is_in_timetable(res[2])]
+                            
+                            if len(available_resources) < amount_needed:
+                                if resourcesOutputConsole:
+                                    if len(resources_in_timetable) == 0 and timetablebreakFlag==False:
+                                        print(node_id + f"|group n.{i}| TIMETABLE-BREAK | {resource_name}: No resources available within timetable #{self.num}")
+                                    else:
+                                        print(node_id + f"|group n.{i}| BREAK | {resource_name}: {len(available_resources)}/{len(global_resources[resource_name])} resources available, {amount_needed} needed #{self.num}")
+                                for name, req, costPerHour, resourceSimpy,_ in requests:
                                     req.resource.release(req)
                                     req.cancel() # cancel the requests that were accumulated till now since this group is ko
-                                break  # If not enough resources, break and check the next group
+                                break  # Move to the next group if not enough resources
                             else:
-                                for _ in range(amount):
-                                    req = self.resources[resource][0].request()  # If enough resources, request resources
-                                    costPerHour = self.resources[resource][1]
-                                    if resourcesOutputConsole:
-                                        print(node_id + "|group n."+str(i)+"|"+resource+": "+str(self.resources[resource][0].count)+"/"+str(self.resources[resource][0].capacity)+" total amount needed: "+str(amount))
-                                    requests.append((resource, req, costPerHour))
-                        total_resources_needed = sum(amount for _, amount in resources)
-                        if len(requests) == total_resources_needed:  # If all resources in the group can be allocated
+                                #print(node_id + f"|group n.{i}| OK | {resource_name}: {len(available_resources)}/{len(global_resources[resource_name])} resources available, {amount_needed} needed")
+                                appended=0
+                                to_request = []  # New data structure to store resources to request later
+
+                                #resource_tuple is: simpyRes, cost, timetableName, lastInstanceType, setupTime, maxUsage, actualUsage, lock
+                                for resource_tuple in available_resources:
+                                    
+                                    if testing:
+                                        print(f"({resource_tuple[0]}, {resource_tuple[1]}, {resource_tuple[2]}, {resource_tuple[3]}, {resource_tuple[4]}, {resource_tuple[5]}, {resource_tuple[6].level}, {resource_tuple[7]})")
+                                    if appended == amount_needed:
+                                        break
+                                    # Check if resource is available (not at full capacity), and checks if there is no setupTime or there is setupTime but no lastInstance, or there is lastInstance but it is our current instanceType
+                                    if (not resource_tuple[4]['type'] or not resource_tuple[3] or resource_tuple[3]==self.instance_type):
+                                        modified_tuple = resource_tuple + ("increment",)
+                                        to_request.append(modified_tuple)                                         
+                                        appended += 1
+                                        waited[resource_tuple[0]]=False
+
+                                    #case where different lastInstanceType so i wait 1 second to give opportunity to other instances of same type to use resource, if there are any.
+                                    elif resource_tuple[3] and (resource_tuple[0] not in waited or waited[resource_tuple[0]]==False):
+                                        yield self.env.timeout(1)
+                                        waited[resource_tuple[0]]=True
+
+                                    # Check if resource is available (not at full capacity) but with different lastInstanceType, so needs setupTime (after having waited)
+                                    elif resource_tuple[3] and waited[resource_tuple[0]]==True: 
+                                        modified_tuple = resource_tuple + ("instanceTypeChange",)
+                                        to_request.append(modified_tuple)  
+                                        appended+=1
+                                        waited[resource_tuple[0]]=False                                        
+                                    #This is if all resources occupied, resets waited to false in case it was put to true on the first elif
+                                    else:
+                                        waited[resource_tuple[0]]=False
+                                    #print(appended)
+                                    #print(amount_needed)
+
+                                if appended == amount_needed:
+                                    for resource_tuple in to_request:
+                                        req = resource_tuple[0].request()
+                                        requests.append((resource_name, req, resource_tuple[1], resource_tuple[0],resource_tuple[8])) #8 is for update_resource funct
+
+                        # If all resources in the group can be allocated
+                        #print("req len:" +str(len(requests)))
+                        if len(requests) == sum(amount for _, amount in resources):
                             resources_allocated = True
-                            for name, req, costPerHour in requests:
+
+                            # Store acquired resources in instance-specific worklist_resources if worklist_id is not empty
+                            if worklist_id:
+                                if worklist_id not in worklist_resources[self.num]:
+                                    worklist_resources[self.num][worklist_id] = {}  
+                                for resource_name, req, cost_per_hour, resourceSimpy,_ in requests:
+                                    if resource_name not in worklist_resources[self.num][worklist_id]:
+                                        worklist_resources[self.num][worklist_id][resource_name] = []
+                                    # Find the matching resource tuple in global_resources
+                                    res_tuple = next(res for res in global_resources[resource_name] if res[0] is req.resource)
+                                    _, cost_per_hour, timetable_name, last_instance, setup_time, max_usages, current_usages,lock = res_tuple
+                                    # Append to worklist_resources with all elements (IMPORTANT: actually the tuple is USELESS (except for the resource), only the resource will be used in the rest of the code, the other info will be taken from global_resources using the res as id)
+                                    worklist_resources[self.num][worklist_id][resource_name].append(
+                                        (req.resource, cost_per_hour, timetable_name, last_instance, setup_time, max_usages, current_usages,lock)
+                                    )
+
+                            for resource_name, req, cost_per_hour, resourceSimpy,mode in requests:  # Extract elements from the tuple
+                                #update global_resources 2 cases: 1) self.instance.type is different and then throw setupTime 2) same instanceType, check usage
+                                #mode can either be, increment, instanceTypeChange
+                                yield from self.update_resources(req.resource, mode,resource_name, node_id)
                                 yield req
+
                                 if resourcesOutputConsole:
-                                    print (node_id + "|Resource locked: " + name + ", Time: " + str(self.env.now) )  # Print + str(req.amount)
+                                    print(f"{node_id}|Resource locked: {resource_name} ({req.resource}), Time: {self.env.now} #{self.num}")                          
                             break  # Break the loop as resources are allocated
-                    if numberOfGroupsWithNotEnoughResources==len(grouped_resources): #if the number of groups that can't be allocated is equal to the number of groups, no group can be allocated
-                        raise Exception("Amount of resource needed for task '"+node_id+"' is more than the resource capacity")
+                        else:
+                            for _,req,_,_,_ in requests:
+                                if req.triggered:
+                                    req.cancel()
+
                     if not resources_allocated:
-                        yield self.env.timeout(1)  # If no group can be allocated, wait for a timeout(1)
+                        yield self.env.timeout(1)  # If no group can be allocated, wait for a timeout
                     else:
-                        break  # Break the while true as resources are allocated
+                        break  # Break the while loop as resources are allocated
+                    #END resources
+
             self.xeslog(node_id,"assign",node['type'])
             yield self.env.timeout(taskTime)
             self.xeslog(node_id,"complete",node['type'])
@@ -348,12 +482,18 @@ class Process:
             
             # Release resources
             if taskNeededResources:
-                for name, req, costPerHour in requests:
+                for name, req, costPerHour,_, _ in requests:
                     timeUsedPerResource[name]+=float(taskTime)
                     req.resource.release(req)
                     if resourcesOutputConsole:
                         print(node_id + "|Resource released: " + name  + ", Time: " + str(self.env.now))
             yield from self.run_node(next_node_id, subprocess_node)
+
+
+
+
+
+
 
 
         elif node['type'] == 'exclusiveGateway':
@@ -535,9 +675,47 @@ class Process:
                 return
 
 env = simpy.Environment()
-global_resources = {res['name']: (simpy.Resource(env, capacity=int(res['totalAmount'])), res['costPerHour'], res['timetableName']) for res in resources} if resources else {}
 
 
+def timeout_proc(simpy_resource,env,time):
+    req = simpy_resource.request()
+    yield req
+    yield env.timeout(time)
+    req.resource.release(req)
+    print(f"Initial setup completed for resource {simpy_resource} at time {env.now}")
+    # You can add more actions here if needed, such as updating resource state
+
+#resource_tuple is: simpyRes, cost, timetableName, lastInstanceType, setupTime, maxUsage, actualUsage. Starts with actualUsage=MaxUsage so that it setups on first usage.
+global_resources = {}
+for res in resources:
+    resource_list = []
+    for _ in range(int(res['totalAmount'])):
+        simpy_resource = simpy.Resource(env, capacity=1)
+        if res["maxUsage"]=="":
+            lastElement=""
+        else:
+            lastElement=simpy.Container(env, init=0, capacity=int(res['maxUsage']))
+        resource_tuple = (
+            simpy_resource, 
+            res['costPerHour'], 
+            res['timetableName'], 
+            "", 
+            res['setupTime'], 
+            res['maxUsage'], 
+            lastElement,
+            threading.Lock()
+        )
+        resource_list.append(resource_tuple)
+
+        # Create and start a timeout event for each individual resource
+        if res['setupTime']['type']:
+            time=timeCalculator.convert_to_seconds(res['setupTime'])
+            env.process(timeout_proc(simpy_resource,env,time))
+
+    global_resources[res['name']] = resource_list
+
+if not resources:
+    global_resources = {}
 
 
 def simulate_bpmn(bpmn_dict):
@@ -550,7 +728,7 @@ def simulate_bpmn(bpmn_dict):
         for participant_id, participant in bpmn_dict['collaboration']['participants'].items():
             process_details = bpmn_dict['process_elements'][participant['processRef']]
             # for each instance a class Process is created:
-            Process(env, participant['name'], process_details,i+1, global_resources, delays[i], instance_type)
+            Process(env, participant['name'], process_details,i+1, delays[i], instance_type)
 
         instance_count += 1
         if instance_count >= int(instance_types[instance_index]['count']):
@@ -576,14 +754,10 @@ for key, value in totalCost.items():
     taskCosts[key]=value
 
 for name, time in timeUsedPerResource.items():
-    total_amount=1
-    if name in global_resources:
-        target_resource, cost_per_hour, timetable_name = global_resources[name]
-        total_amount = target_resource.capacity
+    total_amount = len(global_resources[name])  # Get the total number of individual resources for this type
     if costsOutputConsole:
         print(f"Percentage of usage of resource '{name}': {((time*100)/env.now)/total_amount:.1f}%")
-
-    resourcesPercentageUsage[name]=f"{((time*100)/env.now)/total_amount:.1f}"
+    resourcesPercentageUsage[name] = f"{((time*100)/env.now)/total_amount:.1f}"
 
 
 for resource in resources:

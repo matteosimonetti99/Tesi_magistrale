@@ -74,7 +74,7 @@ def diagbp(diagbpPath, bpmn_dict):
         if not value:
             print("\n")
             break
-        timetable["name"] = value
+        timetable["name"] = value.lower()
         rules=[]
         j=0
         while True:
@@ -114,7 +114,21 @@ def diagbp(diagbpPath, bpmn_dict):
                 print("\n")
                 exit_loop = True 
                 break
-            resource[key] = value
+            resource[key] = value.lower()
+        groupDur=["type", "mean", "arg1", "arg2", "timeUnit"]
+        for key in groupDur:
+            keyDisplay=key
+            if key=="type":
+                keyDisplay="Not mandatory (leave empty to skip): Setup time type (Fixed, Normal, Exponential, Uniform, Triangular, Log-Normal, Gamma, Histogram), leave empty if no setup time"
+            if key=="timeUnit":
+                keyDisplay="time unit (seconds/minutes/hours/days)"
+            value=input(f"Insert the {keyDisplay} for the duration distribution of task '{task_name}' of process {process_name}: ")
+            if key=="type" and value=="":
+                break
+            durationDistributionDict[key] = value
+        element["setupTime"]=durationDistributionDict
+        element["maxUsage"]=input("Not mandatory (leave empty to skip): Insert the number of usages after which the resource needs a Maintenance (setupTime): ")
+
         if exit_loop: 
             break
         resources.append(resource)

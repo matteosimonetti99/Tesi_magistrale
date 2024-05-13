@@ -342,7 +342,7 @@
         "count": "3"
       }
   ],
-  "startDateTime": "2024-04-15T18:00:00",
+  "startDateTime": "2024-04-16T18:00:00",
   "arrivalRateDistribution": {
       "type": "FIXED",
       "mean": "0",
@@ -391,19 +391,35 @@
         "name": "Res1",
         "totalAmount": "1",
         "costPerHour": "1",
-        "timetableName": "Default"
+        "timetableName": "Default",
+        "setupTime": {
+          "type": "",
+          "mean": "",
+          "arg1": "",
+          "arg2": "",
+          "timeUnit": ""
+        },
+        "maxUsage": ""
       },
       {
         "name": "Res2",
         "totalAmount": "3",
         "costPerHour": "2",
-        "timetableName": "Default"
+        "timetableName": "Default",
+        "setupTime": {
+          "type": "fixed",
+          "mean": "10",
+          "arg1": "",
+          "arg2": "",
+          "timeUnit": "seconds"
+        },
+        "maxUsage": "10"
       }
     ],
   "elements": [
       {
           "elementId": "Activity_10x08n3",
-          "worklistId": "1",
+          "worklistId": "",
           "fixedCost": "3",
           "costThreshold": "5",
           "durationDistribution": {
@@ -435,7 +451,7 @@
       },
       {
           "elementId": "Activity_14rjj9v",
-          "worklistId": "",
+          "worklistId": "1",
           "fixedCost": "",
           "costThreshold": "",
           "durationDistribution": {
@@ -509,7 +525,7 @@
       },
       {
           "elementId": "Activity_12afiek",
-          "worklistId": "",
+          "worklistId": "1",
           "fixedCost": "1",
           "costThreshold": "",
           "durationDistribution": {
@@ -524,9 +540,15 @@
           "resourceIds": [
               {
                 "resourceName": "Res2",
-                "amountNeeded": "1",
+                "amountNeeded": "3",
                 "groupId":"1"
-              }]
+              },
+              {
+                "resourceName": "Res1",
+                "amountNeeded": "1",
+                "groupId":"2"
+              }
+              ]
       },
       {
           "elementId": "Activity_182s0e0",
