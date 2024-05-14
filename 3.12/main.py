@@ -22,11 +22,11 @@ sys.setrecursionlimit(100000)
 
 
 #Put those 2 to true to have the log in console of resources locked and unlocked and timetable management
+testing=False
 resourcesOutputConsole=False
 timetableOutputConsole=False
 costsOutputConsole=True
 logSetupTime=True
-testing=False
 
 
 extraLog={}
@@ -157,10 +157,11 @@ class Process:
             instanceCambio=True
             while resource_tuple[6].level > 0:
                 yield resource_tuple[6].get(1)
-
+        
+        logg=""
         if usura==True:
             logg="worn"
-        else:
+        elif instanceCambio==True:
             logg="instanceTypeChange"
 
         setup_time = timeCalculator.convert_to_seconds(resource_tuple[4])
@@ -349,11 +350,10 @@ class Process:
                         grouped_resources[res['groupId']] = []
                     grouped_resources[res['groupId']].append((res['resourceName'], int(res['amountNeeded'])))
                 # Check each group of resources
-                        # Check each group of resources
+                waited={}                                    
                 while True:
                     resources_allocated = False
                     i = 0
-                    waited={}                    
                     for group_id, resources in grouped_resources.items():
                         timetablebreakFlag=False
                         i += 1
@@ -370,13 +370,12 @@ class Process:
                                         if self.is_in_timetable(resource_tuple[2]):
                                             resources_in_timetable.append(resource_tuple)
                                             
-                                #print(f"WORKLIST {node_id}: {available_resources}")
                                 timetablebreakFlag=True
                                 
                             else:
                                 available_resources = [res for res in global_resources[resource_name] if self.is_in_timetable(res[2]) and res[0].count < res[0].capacity]
                                 resources_in_timetable = [res for res in global_resources[resource_name] if self.is_in_timetable(res[2])]
-                            
+                            #print(f"PREEEEE avail: {len(available_resources)} needed:{amount_needed} ")
                             if len(available_resources) < amount_needed:
                                 if resourcesOutputConsole:
                                     if len(resources_in_timetable) == 0 and timetablebreakFlag==False:
@@ -393,46 +392,46 @@ class Process:
                                 to_request = []  # New data structure to store resources to request later
 
                                 #resource_tuple is: simpyRes, cost, timetableName, lastInstanceType, setupTime, maxUsage, actualUsage, lock
-                                for resource_tuple in available_resources:
-                                    
-                                    if testing:
+                                for resource_tuple in available_resources:  
+                                    #print(f"to_req: {to_request}")
+                                    #print(f"waited:{waited}")                                  
+                                    if testing and not resource_tuple[4]=="" and resource_tuple[4]["type"]:
                                         print(f"({resource_tuple[0]}, {resource_tuple[1]}, {resource_tuple[2]}, {resource_tuple[3]}, {resource_tuple[4]}, {resource_tuple[5]}, {resource_tuple[6].level}, {resource_tuple[7]})")
+                                    elif testing:
+                                        print(f"({resource_tuple[0]}, {resource_tuple[1]}, {resource_tuple[2]}, {resource_tuple[3]}")
                                     if appended == amount_needed:
                                         break
-                                    # Check if resource is available (not at full capacity), and checks if there is no setupTime or there is setupTime but no lastInstance, or there is lastInstance but it is our current instanceType
+                                    # Checks if there is no setupTime or there is setupTime but no lastInstance, or there is lastInstance but it is our current instanceType
                                     if (not resource_tuple[4]['type'] or not resource_tuple[3] or resource_tuple[3]==self.instance_type):
                                         modified_tuple = resource_tuple + ("increment",)
                                         to_request.append(modified_tuple)                                         
                                         appended += 1
-                                        waited[resource_tuple[0]]=False
 
                                     #case where different lastInstanceType so i wait 1 second to give opportunity to other instances of same type to use resource, if there are any.
                                     elif resource_tuple[3] and (resource_tuple[0] not in waited or waited[resource_tuple[0]]==False):
-                                        yield self.env.timeout(1)
                                         waited[resource_tuple[0]]=True
+                                        yield self.env.timeout(1)
 
-                                    # Check if resource is available (not at full capacity) but with different lastInstanceType, so needs setupTime (after having waited)
+                                    # Check if resource is with different lastInstanceType, so needs setupTime (after having waited)
                                     elif resource_tuple[3] and waited[resource_tuple[0]]==True: 
                                         modified_tuple = resource_tuple + ("instanceTypeChange",)
                                         to_request.append(modified_tuple)  
                                         appended+=1
-                                        waited[resource_tuple[0]]=False                                        
-                                    #This is if all resources occupied, resets waited to false in case it was put to true on the first elif
+                                    #else resets waited to false in case it was put to true on the first elif
                                     else:
                                         waited[resource_tuple[0]]=False
-                                    #print(appended)
-                                    #print(amount_needed)
 
                                 if appended == amount_needed:
                                     for resource_tuple in to_request:
                                         req = resource_tuple[0].request()
-                                        requests.append((resource_name, req, resource_tuple[1], resource_tuple[0],resource_tuple[8])) #8 is for update_resource funct
+                                        requests.append((resource_name, req, resource_tuple[1], resource_tuple[0],resource_tuple[8])) #8 is for update_resources funct
 
                         # If all resources in the group can be allocated
-                        #print("req len:" +str(len(requests)))
+                        #print(f"requests: {len(requests)}")
+                        #print(f"amount sum: {sum(amount for _, amount in resources)}")
                         if len(requests) == sum(amount for _, amount in resources):
                             resources_allocated = True
-
+                            waited={}                            
                             # Store acquired resources in instance-specific worklist_resources if worklist_id is not empty
                             if worklist_id:
                                 if worklist_id not in worklist_resources[self.num]:
@@ -461,6 +460,7 @@ class Process:
                             for _,req,_,_,_ in requests:
                                 if req.triggered:
                                     req.cancel()
+                                    req.resource.release(req)
 
                     if not resources_allocated:
                         yield self.env.timeout(1)  # If no group can be allocated, wait for a timeout
@@ -484,7 +484,9 @@ class Process:
             if taskNeededResources:
                 for name, req, costPerHour,_, _ in requests:
                     timeUsedPerResource[name]+=float(taskTime)
-                    req.resource.release(req)
+                    if req.triggered:
+                        req.cancel()
+                        req.resource.release(req)
                     if resourcesOutputConsole:
                         print(node_id + "|Resource released: " + name  + ", Time: " + str(self.env.now))
             yield from self.run_node(next_node_id, subprocess_node)

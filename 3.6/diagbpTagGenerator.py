@@ -117,6 +117,28 @@ def diagbp(diagbpPath, bpmn_dict):
             resource[key] = value
         if exit_loop: 
             break
+        setupTime = {}
+        keys=["type","mean", "arg1", "arg2", "timeUnit"]
+        for key in keys:
+            keyDisplay=key
+            if key=="type":
+                keyDisplay="setup time type (Fixed, Normal, Exponential, Uniform, Triangular, Log-Normal, Gamma, Histogram)"
+            if key=="timeUnit":
+                keyDisplay="time unit (seconds/minutes/hours/days)"
+            value=input(f"Insert the {keyDisplay} for the arrival rate distribution: ")
+            if key=="type":
+                value=value.upper()
+            setupTime[key] = value
+        if not setupTime:
+            setupTime={
+                "type": "FIXED",
+                "mean": "0",
+                "arg1": "",
+                "arg2": "",
+                "timeUnit": "seconds"
+            }
+        resource["setupTime"]=setupTime
+        resource["maxUsages"]=input(f"Insert the max amount of usages for the resource before needing maintenance: ")
         resources.append(resource)
     
     #ELEMENTS
@@ -249,7 +271,7 @@ def diagbp(diagbpPath, bpmn_dict):
                 temp[key] = value
             catch_events[node_id]=temp
 
-    print("-------------------LOGGIN OPTIONS)----------------------")
+    print("-------------------LOGGING OPTIONS----------------------")
     logging_opt=1
     value=input("The logs contains the completion of each element of the bpmn. Do you also want to include in the log start and resource_assigned for each element? (Y/N)")
     if value.lower()=="n":
