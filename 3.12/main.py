@@ -22,8 +22,9 @@ sys.setrecursionlimit(100000)
 
 
 #Put those 2 to true to have the log in console of resources locked and unlocked and timetable management
+resourcesOutputConsole=True
 testing=False
-resourcesOutputConsole=False
+debug=False
 timetableOutputConsole=False
 costsOutputConsole=True
 logSetupTime=True
@@ -375,7 +376,7 @@ class Process:
                             else:
                                 available_resources = [res for res in global_resources[resource_name] if self.is_in_timetable(res[2]) and res[0].count < res[0].capacity]
                                 resources_in_timetable = [res for res in global_resources[resource_name] if self.is_in_timetable(res[2])]
-                            #print(f"PREEEEE avail: {len(available_resources)} needed:{amount_needed} ")
+                            print(f"PREEEEE avail: {len(available_resources)} needed:{amount_needed} ") if debug else None
                             if len(available_resources) < amount_needed:
                                 if resourcesOutputConsole:
                                     if len(resources_in_timetable) == 0 and timetablebreakFlag==False:
@@ -393,8 +394,8 @@ class Process:
 
                                 #resource_tuple is: simpyRes, cost, timetableName, lastInstanceType, setupTime, maxUsage, actualUsage, lock
                                 for resource_tuple in available_resources:  
-                                    #print(f"to_req: {to_request}")
-                                    #print(f"waited:{waited}")                                  
+                                    print(f"to_req: {to_request}") if debug else None
+                                    print(f"waited:{waited}") if debug else None                                 
                                     if testing and not resource_tuple[4]=="" and resource_tuple[4]["type"]:
                                         print(f"({resource_tuple[0]}, {resource_tuple[1]}, {resource_tuple[2]}, {resource_tuple[3]}, {resource_tuple[4]}, {resource_tuple[5]}, {resource_tuple[6].level}, {resource_tuple[7]})")
                                     elif testing:
@@ -417,7 +418,7 @@ class Process:
                                         modified_tuple = resource_tuple + ("instanceTypeChange",)
                                         to_request.append(modified_tuple)  
                                         appended+=1
-                                    #else resets waited to false in case it was put to true on the first elif
+                                        
                                     else:
                                         waited[resource_tuple[0]]=False
 
@@ -427,8 +428,8 @@ class Process:
                                         requests.append((resource_name, req, resource_tuple[1], resource_tuple[0],resource_tuple[8])) #8 is for update_resources funct
 
                         # If all resources in the group can be allocated
-                        #print(f"requests: {len(requests)}")
-                        #print(f"amount sum: {sum(amount for _, amount in resources)}")
+                        print(f"requests: {len(requests)}") if debug else None
+                        print(f"amount sum: {sum(amount for _, amount in resources)}") if debug else None
                         if len(requests) == sum(amount for _, amount in resources):
                             resources_allocated = True
                             waited={}                            
