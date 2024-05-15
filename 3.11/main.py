@@ -22,7 +22,7 @@ sys.setrecursionlimit(100000)
 
 
 #Put those 2 to true to have the log in console of resources locked and unlocked and timetable management
-resourcesOutputConsole=True
+resourcesOutputConsole=False
 testing=False
 debug=False
 timetableOutputConsole=False

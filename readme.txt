@@ -1,14 +1,14 @@
 To install (first time only, windows instructions but also works similar on linux, run by cmd inside this folder):
 
-python3.12 -m venv myenv312
+python3.11 -m venv myenv312
 myenv312/bin/Activate (if error is given try myenv312/bin/activate otherwise open powershell and execute: Set-ExecutionPolicy Unrestricted -Force)
-pip install -r requirements_3.12.txt
+pip install -r requirements_3.11.txt
 
 python3.6 -m venv myenv
 myenv/bin/Activate (same as before)
 pip install -r requirements_3.6.txt
 
-Instead of "python3.12" and "python3.6" commands, use any command that lets you run python on versions 3.12 and then 3.6.
+Instead of "python3.11" and "python3.6" commands, use any command that lets you run python on versions 3.11 and then 3.6.
 This software in facts works using 2 different versions of python due to library compatibility issues, and therefore uses 2 venvs with different python versions.
 
 

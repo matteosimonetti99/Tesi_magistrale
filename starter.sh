@@ -8,8 +8,8 @@ cd 3.6
 # Restore back to the original directory (optional)
 cd ..
 
-# Change directory to the "3.12" folder
-cd 3.12
+# Change directory to the "3.11" folder
+cd 3.11
 
 # Call the Python interpreter from your virtual environment
 ../myenv312/bin/python main.py
