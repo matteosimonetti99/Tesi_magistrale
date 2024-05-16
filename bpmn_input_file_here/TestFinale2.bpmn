@@ -101,4 +101,155 @@
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
+<diagbp>{
+  "processInstances": [
+      {
+          "type": "A",
+          "count": "3"
+      }
+  ],
+  "startDateTime": "2024-05-16T15:14:09",
+  "arrivalRateDistribution": {
+      "type": "FIXED",
+      "mean": "0",
+      "arg1": "",
+      "arg2": "",
+      "timeUnit": "seconds"
+  },
+  "timetables": [
+      {
+          "name": "tt1",
+          "rules": [
+              {
+                  "fromTime": "10:00:00",
+                  "toTime": "19:00:00",
+                  "fromWeekDay": "MONDAY",
+                  "toWeekDay": "SATURDAY"
+              }
+          ]
+      }
+  ],
+  "resources": [
+      {
+          "name": "res1",
+          "totalAmount": "2",
+          "costPerHour": "0",
+          "timetableName": "tt1",
+          "setupTime": {
+            "type": "",
+            "mean": "",
+            "arg1": "",
+            "arg2": "",
+            "timeUnit": ""
+        },
+          "maxUsage": ""
+      },
+      {
+          "name": "macchinario",
+          "totalAmount": "1",
+          "costPerHour": "10",
+          "timetableName": "tt1",
+          "setupTime": {
+              "type": "FIXED",
+              "mean": "10",
+              "arg1": "",
+              "arg2": "",
+              "timeUnit": "seconds"
+          },
+          "maxUsage": "5"
+      }
+  ],
+  "elements": [
+      {
+          "elementId": "Activity_0h5f76m",
+          "worklistId": "1",
+          "fixedCost": "0",
+          "costThreshold": "",
+          "durationDistribution": {
+              "type": "fixed",
+              "mean": "1",
+              "arg1": "",
+              "arg2": "",
+              "timeUnit": "seconds"
+          },
+          "durationThreshold": "",
+          "durationThresholdTimeUnit": "",
+          "resourceIds": [
+              {
+                  "resourceName": "res1",
+                  "amountNeeded": "1",
+                  "groupId": "1"
+              },
+              {
+                  "resourceName": "macchinario",
+                  "amountNeeded": "1",
+                  "groupId": "1"
+              }
+          ]
+      },
+      {
+          "elementId": "Activity_1ixa4gk",
+          "worklistId": "1",
+          "fixedCost": "",
+          "costThreshold": "",
+          "durationDistribution": {
+              "type": "fixed",
+              "mean": "1",
+              "arg1": "",
+              "arg2": "",
+              "timeUnit": "seconds"
+          },
+          "durationThreshold": "",
+          "durationThresholdTimeUnit": "",
+          "resourceIds": [
+              {
+                  "resourceName": "res1",
+                  "amountNeeded": "1",
+                  "groupId": "1"
+              },
+              {
+                  "resourceName": "macchinario",
+                  "amountNeeded": "1",
+                  "groupId": "1"
+              }
+          ]
+      },
+      {
+          "elementId": "Activity_0qj88tv",
+          "worklistId": "",
+          "fixedCost": "",
+          "costThreshold": "",
+          "durationDistribution": {
+              "type": "fixed",
+              "mean": "1",
+              "arg1": "",
+              "arg2": "",
+              "timeUnit": "seconds"
+          },
+          "durationThreshold": "",
+          "durationThresholdTimeUnit": "",
+          "resourceIds": [
+              {
+                  "resourceName": "res1",
+                  "amountNeeded": "1",
+                  "groupId": "1"
+              }
+          ]
+      }
+  ],
+  "sequenceFlows": [
+      {
+          "elementId": "Flow_1fuambp",
+          "executionProbability": "0.5",
+          "types": []
+      },
+      {
+          "elementId": "Flow_1gx3ym8",
+          "executionProbability": "0.5",
+          "types": []
+      }
+  ],
+  "catchEvents": {},
+  "logging_opt": 1
+}</diagbp>
 </bpmn:definitions>
