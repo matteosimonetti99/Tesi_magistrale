@@ -11,6 +11,7 @@ import pm4py
 import pandas as pd
 import csv
 import threading
+import os
 
 
 #to remove, credo
@@ -64,6 +65,9 @@ except Exception as e:
     sys.exit()
 
 #csv log
+logs_dir = "../logs"
+if not os.path.exists(logs_dir):
+    os.makedirs(logs_dir)
 csv_file = "../logs/log.csv"
 fields = ['traceId', 'activity', 'timestamp', 'status', 'nodeType', 'poolName','instanceType']
 rows=[]
