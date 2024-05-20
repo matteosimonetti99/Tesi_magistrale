@@ -18,6 +18,10 @@ tagName="diagbp"
 diagbpPath="../json/diagbp.json"
 bpmnPath="../json/bpmn.json"
 
+json_dir = "../json"  # Relative path to the json directory
+# Create the directory if it doesn't exist
+if not os.path.exists(json_dir):
+    os.makedirs(json_dir)
 
 if os.path.isfile(diagbpPath):
     os.remove(diagbpPath)
