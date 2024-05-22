@@ -24,7 +24,7 @@ sys.setrecursionlimit(100000)
 
 #Put those 2 to true to have the log in console of resources locked and unlocked and timetable management
 resourcesOutputConsole=False
-testing=False
+debug1=False
 debug=False
 timetableOutputConsole=False
 costsOutputConsole=True
@@ -274,6 +274,7 @@ class Process:
         if start_node_id is None:
             return
         yield from self.run_node(start_node_id)
+
         #This zone is executed after all process instance is over:
         for element_id, duration_threshold in self.durationThresholds.items():
             if self.durationThresholds[element_id] is not None and self.durationThresholds[element_id] < 0.0:
@@ -401,9 +402,9 @@ class Process:
                                 for resource_tuple in available_resources:  
                                     print(f"to_req: {to_request}") if debug else None
                                     print(f"waited:{waited}") if debug else None                                 
-                                    if testing and not resource_tuple[4]=="" and resource_tuple[4]["type"]:
+                                    if debug1 and not resource_tuple[4]=="" and resource_tuple[4]["type"]:
                                         print(f"({resource_tuple[0]}, {resource_tuple[1]}, {resource_tuple[2]}, {resource_tuple[3]}, {resource_tuple[4]}, {resource_tuple[5]}, {resource_tuple[6].level}, {resource_tuple[7]})")
-                                    elif testing:
+                                    elif debug1:
                                         print(f"({resource_tuple[0]}, {resource_tuple[1]}, {resource_tuple[2]}, {resource_tuple[3]}")
                                     if appended == amount_needed:
                                         break
@@ -811,3 +812,13 @@ with open('../logs/logExtra.csv', 'w', newline='') as f:
 
 
 pm4py.write_xes(event_log, '../logs/log.xes')
+
+try:
+  os.remove(diagbpPath)
+except OSError as e:
+  print(f"Error deleting {diagbpPath}: {e}")
+
+try:
+  os.remove(bpmnPath)
+except OSError as e:
+  print(f"Error deleting {bpmnPath}: {e}")

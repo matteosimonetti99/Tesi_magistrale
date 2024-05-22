@@ -120,12 +120,14 @@ bpmnDictionary['process_elements'] = process_elements
 with open(bpmnPath, "w") as outfile:
     json.dump(bpmnDictionary, outfile, indent=4)
 
-if diagbp_tag is not None:
+if os.path.exists(diagbpPath):
+    pass
+elif diagbp_tag is not None:
     # Convert to string and remove the <diagbp> and </diagbp> tags
     diagbp_str = ET.tostring(diagbp_tag, encoding='unicode')
     diagbp_str = diagbp_str.replace('<'+tagName+'>', '').replace('</'+tagName+'>', '')
     with open(diagbpPath, "w") as outfile:
-        outfile.write(diagbp_str)
+        outfile.write(diagbp_str)    
 else:
     diagbpTagGenerator.diagbp(diagbpPath, bpmnDictionary)
     with open(diagbpPath, 'r') as f:
