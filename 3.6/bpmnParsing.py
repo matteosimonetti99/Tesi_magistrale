@@ -127,7 +127,7 @@ elif diagbp_tag is not None:
     diagbp_str = ET.tostring(diagbp_tag, encoding='unicode')
     diagbp_str = diagbp_str.replace('<'+tagName+'>', '').replace('</'+tagName+'>', '')
     with open(diagbpPath, "w") as outfile:
-        outfile.write(diagbp_str)    
+        outfile.write(diagbp_str)
 else:
     diagbpTagGenerator.diagbp(diagbpPath, bpmnDictionary)
     with open(diagbpPath, 'r') as f:
