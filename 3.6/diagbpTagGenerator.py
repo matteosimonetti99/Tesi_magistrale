@@ -240,7 +240,7 @@ def diagbp(diagbpPath, bpmn_dict):
         targetId=flow["targetRef"]
         sourceName, sourceType, sourceSubType = support[sourceId]
         targetName, targetType, targetSubType = support[targetId]
-        if sourceType=="exclusiveGateway":
+        if sourceType=="exclusiveGateway" or sourceType=="inclusiveGateway":
             sequence_flow={}
             sequence_flow["elementId"]=id
             print(f"\nYou are now inserting data for the sequence flow named '{flowName}' that goes from '{sourceName}' to '{targetName}'")

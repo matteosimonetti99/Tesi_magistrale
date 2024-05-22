@@ -110,7 +110,7 @@ class Process:
         self.env = env
         self.name = name
         self.process_details = process_details
-        self.stack=[]
+        self.stack=[] #used to save parallel gateways closing pair
         self.start_delay = start_delay
         self.instance_type = instance_type
         self.num = num
@@ -580,6 +580,33 @@ class Process:
                 yield from self.run_node(next_node_after_parallel, subprocess_node)
 
         elif node['type'] == 'parallelGateway_close':
+            if (node_id, node['next'][0]) not in self.stack:
+                self.stack.append((node_id, node['next'][0]))
+            #print(self.stack)
+            return
+
+        elif node['type'] == 'inclusiveGateway':
+            events = []
+            for next_node_id in node['next']:
+                process = self.env.process(self.run_node(next_node_id, subprocess_node)) # a process is created for each path to ensure parallelism
+                events.append(process)
+            self.xeslog(node_id,"complete",node['type'])
+            self.printState(node,node_id,printFlag)
+            yield self.env.all_of(events)
+            # When all_of is done, proceed with the node after the close
+            # print for parallel close
+            if not printFlag:
+                print(f"#{self.num}|{self.name}: Parallel gateway closed. instance_type:{self.instance_type}. time: {self.env.now}.")
+            else:
+                print(f"#{self.num}|{self.name}| (inside subprocess): Parallel gateway closed. instance_type:{self.instance_type}. time: {self.env.now}.")
+            
+
+            if self.stack:  # checks if the list is not empty
+                parallel_close_id,next_node_after_parallel = self.stack.pop()
+                self.xeslog(parallel_close_id,"complete",node['type'])
+                yield from self.run_node(next_node_after_parallel, subprocess_node)
+
+        elif node['type'] == 'inclusiveGateway_close':
             if (node_id, node['next'][0]) not in self.stack:
                 self.stack.append((node_id, node['next'][0]))
             #print(self.stack)
