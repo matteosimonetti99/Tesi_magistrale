@@ -111,6 +111,7 @@ class Process:
         self.name = name
         self.process_details = process_details
         self.stack=[] #used to save parallel gateways closing pair
+        self.stackInclusive=[] #used to save inclusive gateways closing pair
         self.start_delay = start_delay
         self.instance_type = instance_type
         self.num = num
@@ -567,17 +568,15 @@ class Process:
             self.printState(node,node_id,printFlag)
             yield self.env.all_of(events)
             # When all_of is done, proceed with the node after the close
-            # print for parallel close
-            if not printFlag:
-                print(f"#{self.num}|{self.name}: Parallel gateway closed. instance_type:{self.instance_type}. time: {self.env.now}.")
-            else:
-                print(f"#{self.num}|{self.name}| (inside subprocess): Parallel gateway closed. instance_type:{self.instance_type}. time: {self.env.now}.")
-            
-
             if self.stack:  # checks if the list is not empty
                 parallel_close_id,next_node_after_parallel = self.stack.pop()
                 self.xeslog(parallel_close_id,"complete",node['type'])
                 yield from self.run_node(next_node_after_parallel, subprocess_node)
+            # print for parallel close                      
+            if not printFlag:
+                print(f"#{self.num}|{self.name}: {parallel_close_id}, Parallel gateway closed. instance_type:{self.instance_type}. time: {self.env.now}.")
+            else:
+                print(f"#{self.num}|{self.name}| (inside subprocess): {parallel_close_id}, Parallel gateway closed. instance_type:{self.instance_type}. time: {self.env.now}.")
 
         elif node['type'] == 'parallelGateway_close':
             if (node_id, node['next'][0]) not in self.stack:
@@ -586,30 +585,46 @@ class Process:
             return
 
         elif node['type'] == 'inclusiveGateway':
+            type_matched = False
+            flows_from_inclusive = [(flow_id, flow) for flow_id, flow in bpmn['sequence_flows'].items() if flow['sourceRef'] == node_id]
+            paths_to_take = []
+            for flow_id, flow in flows_from_inclusive:
+                diagbp_flow = next((item for item in diagbp['sequenceFlows'] if item['elementId'] == flow_id), None)
+                if diagbp_flow is not None:
+                    if 'types' in diagbp_flow:
+                        for type_dict in diagbp_flow['types']:
+                            if type_dict['type'] == self.instance_type:
+                                paths_to_take.append(flow['targetRef'])
+                                type_matched = True  # Mark that a type matched
+                                break 
+                    # If the type didn't match, use probability 
+                    if not type_matched: 
+                        probability = float(diagbp_flow['executionProbability'])
+                        if np.random.rand() <= probability: 
+                            paths_to_take.append(flow['targetRef'])
             events = []
-            for next_node_id in node['next']:
-                process = self.env.process(self.run_node(next_node_id, subprocess_node)) # a process is created for each path to ensure parallelism
-                events.append(process)
+            for next_node_id in paths_to_take:
+                process = self.env.process(self.run_node(next_node_id, subprocess_node))
+                events.append(process)           
             self.xeslog(node_id,"complete",node['type'])
             self.printState(node,node_id,printFlag)
             yield self.env.all_of(events)
-            # When all_of is done, proceed with the node after the close
-            # print for parallel close
+
+            if self.stackInclusive: 
+                inclusive_close_id,next_node_after_inclusive = self.stackInclusive.pop()
+                self.xeslog(inclusive_close_id,"complete",node['type'])
+                yield from self.run_node(next_node_after_inclusive, subprocess_node)
+
             if not printFlag:
-                print(f"#{self.num}|{self.name}: Parallel gateway closed. instance_type:{self.instance_type}. time: {self.env.now}.")
+                print(f"#{self.num}|{self.name}: {inclusive_close_id}, Inclusive gateway closed. instance_type:{self.instance_type}. time: {self.env.now}.")
             else:
-                print(f"#{self.num}|{self.name}| (inside subprocess): Parallel gateway closed. instance_type:{self.instance_type}. time: {self.env.now}.")
+                print(f"#{self.num}|{self.name}| (inside subprocess): {inclusive_close_id}, Inclusive gateway closed. instance_type:{self.instance_type}. time: {self.env.now}.")
+            
             
 
-            if self.stack:  # checks if the list is not empty
-                parallel_close_id,next_node_after_parallel = self.stack.pop()
-                self.xeslog(parallel_close_id,"complete",node['type'])
-                yield from self.run_node(next_node_after_parallel, subprocess_node)
-
         elif node['type'] == 'inclusiveGateway_close':
-            if (node_id, node['next'][0]) not in self.stack:
-                self.stack.append((node_id, node['next'][0]))
-            #print(self.stack)
+            if (node_id, node['next'][0]) not in self.stackInclusive:
+                self.stackInclusive.append((node_id, node['next'][0]))
             return
             
         elif node['type'] == 'subProcess':
