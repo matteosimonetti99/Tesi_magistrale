@@ -262,7 +262,7 @@ def diagbp(diagbpPath, bpmn_dict):
     print("-------------------CATCH EVENTS DURATIONS (excluded messages catch events)----------------------")
     catch_events={}
     for node_id, (name, typee, subtype) in support.items():
-        if typee == 'intermediateCatchEvent' and subtype != 'messageEventDefinition':
+        if (typee == 'intermediateCatchEvent' or typee=="startEvent") and subtype != 'messageEventDefinition':
             if subtype=="timerEventDefinition":
                 subtype="timer"
             temp={}

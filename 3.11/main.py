@@ -308,6 +308,11 @@ class Process:
             return
     
         if node['type'] == 'startEvent':
+            if node['subtype']=="timerEventDefinition":
+                waitTime = catchEvents[node_id]
+                waitTimeSeconds=timeCalculator.convert_to_seconds(waitTime)
+                self.xeslog(node_id,"start",fullType)
+                yield self.env.timeout(waitTimeSeconds)
             next_node_id = node['next'][0]
             if len(node['previous'])>0:
                 while not all(prev_node in Process.executed_nodes[self.num] for prev_node in node['previous']):
