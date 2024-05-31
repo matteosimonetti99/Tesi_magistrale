@@ -23,9 +23,9 @@ sys.setrecursionlimit(100000)
 
 
 #Put resourcesOutputConsole and timetableOutputConsole to true if you want the log in console of resources locked/unlocked and timetable management
-resourcesOutputConsole=False
 debug1=False
 debug=False
+resourcesOutputConsole=False
 timetableOutputConsole=False
 costsOutputConsole=True
 logSetupTime=True
@@ -577,11 +577,11 @@ class Process:
                 parallel_close_id,next_node_after_parallel = self.stack.pop()
                 self.xeslog(parallel_close_id,"complete",node['type'])
                 yield from self.run_node(next_node_after_parallel, subprocess_node)
-            # print for parallel close                      
-            if not printFlag:
-                print(f"#{self.num}|{self.name}: {parallel_close_id}, Parallel gateway closed. instance_type:{self.instance_type}. time: {self.env.now}.")
-            else:
-                print(f"#{self.num}|{self.name}| (inside subprocess): {parallel_close_id}, Parallel gateway closed. instance_type:{self.instance_type}. time: {self.env.now}.")
+                # print for parallel close                      
+                if not printFlag:
+                    print(f"#{self.num}|{self.name}: {parallel_close_id}, Parallel gateway closed. instance_type:{self.instance_type}. time: {self.env.now}.")
+                else:
+                    print(f"#{self.num}|{self.name}| (inside subprocess): {parallel_close_id}, Parallel gateway closed. instance_type:{self.instance_type}. time: {self.env.now}.")
 
         elif node['type'] == 'parallelGateway_close':
             if (node_id, node['next'][0]) not in self.stack:

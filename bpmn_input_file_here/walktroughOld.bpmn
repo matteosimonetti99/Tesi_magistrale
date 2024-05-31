@@ -97,35 +97,23 @@
     <bpmn:sequenceFlow id="Flow_1r9ngs9" sourceRef="Gateway_0xussxu" targetRef="Gateway_0a5f12j" />
     <bpmn:sequenceFlow id="Flow_0bvtaqu" sourceRef="Gateway_1ngxc9b" targetRef="Activity_0uqn82h" />
     <bpmn:sequenceFlow id="Flow_0fb8cf9" sourceRef="Event_0tccyun" targetRef="Event_1eji6rg" />
+    <bpmn:task id="Activity_10de8b2" name="lastTask">
+      <bpmn:incoming>Flow_0sub9wl</bpmn:incoming>
+      <bpmn:outgoing>Flow_1iouao4</bpmn:outgoing>
+    </bpmn:task>
     <bpmn:sequenceFlow id="Flow_0sub9wl" sourceRef="Gateway_0a5f12j" targetRef="Activity_10de8b2" />
     <bpmn:sequenceFlow id="Flow_1iouao4" sourceRef="Activity_10de8b2" targetRef="Event_183vzsy" />
     <bpmn:endEvent id="Event_183vzsy" name="final end 1_1">
       <bpmn:incoming>Flow_1iouao4</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_1taq8cx" sourceRef="Event_1dvkent" targetRef="Event_0cwulz5" />
-    <bpmn:endEvent id="Event_0cwulz5" name="error final end 1_2">
-      <bpmn:incoming>Flow_1taq8cx</bpmn:incoming>
-    </bpmn:endEvent>
-    <bpmn:subProcess id="Activity_10de8b2" name="lastTask">
-      <bpmn:incoming>Flow_0sub9wl</bpmn:incoming>
-      <bpmn:outgoing>Flow_1iouao4</bpmn:outgoing>
-      <bpmn:startEvent id="Event_1n1y0f7">
-        <bpmn:outgoing>Flow_1vjbjlj</bpmn:outgoing>
-      </bpmn:startEvent>
-      <bpmn:endEvent id="Event_116mz59">
-        <bpmn:incoming>Flow_1av0gw9</bpmn:incoming>
-      </bpmn:endEvent>
-      <bpmn:sequenceFlow id="Flow_1vjbjlj" sourceRef="Event_1n1y0f7" targetRef="Activity_0qi2qug" />
-      <bpmn:task id="Activity_0qi2qug" name="internalTask">
-        <bpmn:incoming>Flow_1vjbjlj</bpmn:incoming>
-        <bpmn:outgoing>Flow_1av0gw9</bpmn:outgoing>
-      </bpmn:task>
-      <bpmn:sequenceFlow id="Flow_1av0gw9" sourceRef="Activity_0qi2qug" targetRef="Event_116mz59" />
-    </bpmn:subProcess>
     <bpmn:boundaryEvent id="Event_1dvkent" name="ext.except." attachedToRef="Activity_10de8b2">
       <bpmn:outgoing>Flow_1taq8cx</bpmn:outgoing>
       <bpmn:messageEventDefinition id="MessageEventDefinition_0duofu3" />
     </bpmn:boundaryEvent>
+    <bpmn:endEvent id="Event_0cwulz5" name="error final end 1_2">
+      <bpmn:incoming>Flow_1taq8cx</bpmn:incoming>
+    </bpmn:endEvent>
   </bpmn:process>
   <bpmn:process id="Process_0ylak8v">
     <bpmn:startEvent id="Event_0pg18xv">
@@ -244,10 +232,6 @@
           <dc:Bounds x="1006" y="45" width="50" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0ovsycj_di" bpmnElement="Activity_0uqn82h">
-        <dc:Bounds x="590" y="170" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1ltwc30_di" bpmnElement="Gateway_1ngxc9b">
         <dc:Bounds x="475" y="75" width="50" height="50" />
         <bpmndi:BPMNLabel>
@@ -256,6 +240,10 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0d2lvn8_di" bpmnElement="Event_1eji6rg">
         <dc:Bounds x="717" y="292" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_10de8b2_di" bpmnElement="Activity_10de8b2">
+        <dc:Bounds x="1090" y="60" width="100" height="80" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_183vzsy_di" bpmnElement="Event_183vzsy">
         <dc:Bounds x="1122" y="212" width="36" height="36" />
@@ -269,8 +257,9 @@
           <dc:Bounds x="1095" y="343" width="90" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_046f8b5_di" bpmnElement="Activity_10de8b2">
-        <dc:Bounds x="1090" y="60" width="100" height="80" />
+      <bpmndi:BPMNShape id="Activity_0ovsycj_di" bpmnElement="Activity_0uqn82h">
+        <dc:Bounds x="590" y="170" width="100" height="80" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0tccyun_di" bpmnElement="Event_0tccyun">
         <dc:Bounds x="672" y="212" width="36" height="36" />
@@ -496,6 +485,9 @@
       <bpmndi:BPMNShape id="Event_1njp3xz_di" bpmnElement="Event_1njp3xz">
         <dc:Bounds x="192" y="102" width="36" height="36" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1ifisy0_di" bpmnElement="Gateway_1ifisy0" isMarkerVisible="true">
+        <dc:Bounds x="305" y="95" width="50" height="50" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_12afiek_di" bpmnElement="Activity_12afiek">
         <dc:Bounds x="420" y="80" width="100" height="80" />
         <bpmndi:BPMNLabel />
@@ -505,9 +497,6 @@
         <bpmndi:BPMNLabel>
           <dc:Bounds x="652" y="145" width="56" height="14" />
         </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1ifisy0_di" bpmnElement="Gateway_1ifisy0" isMarkerVisible="true">
-        <dc:Bounds x="305" y="95" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_15nwbmk_di" bpmnElement="Event_15cyotd">
         <dc:Bounds x="422" y="212" width="36" height="36" />
@@ -534,364 +523,342 @@
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
-  <bpmndi:BPMNDiagram id="BPMNDiagram_1i0x2do">
-    <bpmndi:BPMNPlane id="BPMNPlane_1fev1hk" bpmnElement="Activity_10de8b2">
-      <bpmndi:BPMNShape id="Event_1n1y0f7_di" bpmnElement="Event_1n1y0f7">
-        <dc:Bounds x="182" y="102" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_116mz59_di" bpmnElement="Event_116mz59">
-        <dc:Bounds x="522" y="102" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0qi2qug_di" bpmnElement="Activity_0qi2qug">
-        <dc:Bounds x="310" y="80" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Flow_1vjbjlj_di" bpmnElement="Flow_1vjbjlj">
-        <di:waypoint x="218" y="120" />
-        <di:waypoint x="310" y="120" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1av0gw9_di" bpmnElement="Flow_1av0gw9">
-        <di:waypoint x="410" y="120" />
-        <di:waypoint x="522" y="120" />
-      </bpmndi:BPMNEdge>
-    </bpmndi:BPMNPlane>
-  </bpmndi:BPMNDiagram>
-  <diagbp>{
-    "processInstances": [
-        {
-            "type": "B",
-            "count": "1"
-        },
-        {
-            "type": "A",
-            "count": "4"
-        }
-    ],
-    "startDateTime": "2024-05-31T14:16:18",
-    "arrivalRateDistribution": {
-        "type": "FIXED",
-        "mean": "5",
+<diagbp>{
+  "processInstances": [
+      {
+          "type": "B",
+          "count": "1"
+      },
+      {
+          "type": "A",
+          "count": "4"
+      }
+  ],
+  "startDateTime": "2024-05-31T14:16:18",
+  "arrivalRateDistribution": {
+      "type": "FIXED",
+      "mean": "5",
+      "arg1": "",
+      "arg2": "",
+      "timeUnit": "minutes"
+  },
+  "timetables": [
+      {
+          "name": "tt1",
+          "rules": [
+              {
+                  "fromTime": "10:00:00",
+                  "toTime": "19:00:00",
+                  "fromWeekDay": "MONDAY",
+                  "toWeekDay": "FRIDAY"
+              }
+          ]
+      },
+      {
+          "name": "tt2",
+          "rules": [
+              {
+                  "fromTime": "10:00:00",
+                  "toTime": "14:00:00",
+                  "fromWeekDay": "MONDAY",
+                  "toWeekDay": "FRIDAY"
+              },
+              {
+                  "fromTime": "14:18:00",
+                  "toTime": "19:00:00",
+                  "fromWeekDay": "MONDAY",
+                  "toWeekDay": "FRIDAY"
+              }
+          ]
+      }
+  ],
+  "resources": [
+      {
+          "name": "res1",
+          "totalAmount": "4",
+          "costPerHour": "10",
+          "timetableName": "tt1",
+          "setupTime": {
+              "type": "",
+              "mean": "",
+              "arg1": "",
+              "arg2": "",
+              "timeUnit": ""
+          },
+          "maxUsage": ""
+      },
+      {
+          "name": "res2",
+          "totalAmount": "4",
+          "costPerHour": "15",
+          "timetableName": "tt2",
+          "setupTime": {
+              "type": "",
+              "mean": "",
+              "arg1": "",
+              "arg2": "",
+              "timeUnit": ""
+          },
+          "maxUsage": ""
+      },
+      {
+          "name": "machinery",
+          "totalAmount": "1",
+          "costPerHour": "100",
+          "timetableName": "tt1",
+          "setupTime": {
+              "type": "FIXED",
+              "mean": "10",
+              "arg1": "",
+              "arg2": "",
+              "timeUnit": "minutes"
+          },
+          "maxUsage": "2"
+      }
+  ],
+  "elements": [
+      {
+          "elementId": "Activity_10x08n3",
+          "worklistId": "",
+          "fixedCost": "10",
+          "costThreshold": "",
+          "durationDistribution": {
+              "type": "fixed",
+              "mean": "3",
+              "arg1": "",
+              "arg2": "",
+              "timeUnit": "minutes"
+          },
+          "durationThreshold": "",
+          "durationThresholdTimeUnit": "",
+          "resourceIds": [
+              {
+                  "resourceName": "res2",
+                  "amountNeeded": "1",
+                  "groupId": "1"
+              },
+              {
+                  "resourceName": "res1",
+                  "amountNeeded": "2",
+                  "groupId": "2"
+              }
+          ]
+      },
+      {
+          "elementId": "Activity_14rjj9v",
+          "worklistId": "1",
+          "fixedCost": "4",
+          "costThreshold": "",
+          "durationDistribution": {
+              "type": "fixed",
+              "mean": "5",
+              "arg1": "",
+              "arg2": "",
+              "timeUnit": "minutes"
+          },
+          "durationThreshold": "",
+          "durationThresholdTimeUnit": "",
+          "resourceIds": [
+              {
+                  "resourceName": "res1",
+                  "amountNeeded": "1",
+                  "groupId": "1"
+              },
+              {
+                  "resourceName": "res2",
+                  "amountNeeded": "1",
+                  "groupId": "2"
+              }
+          ]
+      },
+      {
+          "elementId": "Activity_0qykc8o",
+          "worklistId": "",
+          "fixedCost": "",
+          "costThreshold": "",
+          "durationDistribution": {
+              "type": "fixed",
+              "mean": "2",
+              "arg1": "",
+              "arg2": "",
+              "timeUnit": "minutes"
+          },
+          "durationThreshold": "",
+          "durationThresholdTimeUnit": "",
+          "resourceIds": [
+              {
+                  "resourceName": "res1",
+                  "amountNeeded": "1",
+                  "groupId": "1"
+              }
+          ]
+      },
+      {
+          "elementId": "Activity_1ijxuyk",
+          "worklistId": "",
+          "fixedCost": "",
+          "costThreshold": "",
+          "durationDistribution": {
+              "type": "fixed",
+              "mean": "1",
+              "arg1": "",
+              "arg2": "",
+              "timeUnit": "minutes"
+          },
+          "durationThreshold": "",
+          "durationThresholdTimeUnit": "",
+          "resourceIds": [
+              {
+                  "resourceName": "res2",
+                  "amountNeeded": "1",
+                  "groupId": "1"
+              }
+          ]
+      },
+      {
+          "elementId": "Activity_10de8b2",
+          "worklistId": "",
+          "fixedCost": "",
+          "costThreshold": "",
+          "durationDistribution": {
+              "type": "fixed",
+              "mean": "1",
+              "arg1": "",
+              "arg2": "",
+              "timeUnit": "minutes"
+          },
+          "durationThreshold": "",
+          "durationThresholdTimeUnit": "",
+          "resourceIds": [
+              {
+                  "resourceName": "res1",
+                  "amountNeeded": "1",
+                  "groupId": "1"
+              }
+          ]
+      },
+      {
+          "elementId": "Activity_12afiek",
+          "worklistId": "",
+          "fixedCost": "",
+          "costThreshold": "",
+          "durationDistribution": {
+              "type": "fixed",
+              "mean": "30",
+              "arg1": "",
+              "arg2": "",
+              "timeUnit": "seconds"
+          },
+          "durationThreshold": "",
+          "durationThresholdTimeUnit": "",
+          "resourceIds": [
+              {
+                  "resourceName": "res1",
+                  "amountNeeded": "1",
+                  "groupId": "1"
+              }
+          ]
+      },
+      {
+          "elementId": "Activity_182s0e0",
+          "worklistId": "",
+          "fixedCost": "",
+          "costThreshold": "",
+          "durationDistribution": {
+              "type": "fixed",
+              "mean": "1",
+              "arg1": "",
+              "arg2": "",
+              "timeUnit": "minutes"
+          },
+          "durationThreshold": "",
+          "durationThresholdTimeUnit": "",
+          "resourceIds": [
+              {
+                  "resourceName": "res2",
+                  "amountNeeded": "1",
+                  "groupId": "1"
+              },
+              {
+                  "resourceName": "machinery",
+                  "amountNeeded": "1",
+                  "groupId": "1"
+              }
+          ]
+      },
+      {
+          "elementId": "Activity_1ur6qe3",
+          "worklistId": "1",
+          "fixedCost": "",
+          "costThreshold": "",
+          "durationDistribution": {
+              "type": "normal",
+              "mean": "20",
+              "arg1": "1",
+              "arg2": "",
+              "timeUnit": "seconds"
+          },
+          "durationThreshold": "",
+          "durationThresholdTimeUnit": "",
+          "resourceIds": [
+              {
+                  "resourceName": "res1",
+                  "amountNeeded": "1",
+                  "groupId": "1"
+              },
+              {
+                  "resourceName": "res2",
+                  "amountNeeded": "1",
+                  "groupId": "2"
+              }
+          ]
+      }
+  ],
+  "sequenceFlows": [
+      {
+          "elementId": "Flow_1gbq3g3",
+          "executionProbability": "0.5",
+          "types": []
+      },
+      {
+          "elementId": "Flow_09o0oot",
+          "executionProbability": "0.5",
+          "types": []
+      },
+      {
+          "elementId": "Flow_0d86tug",
+          "executionProbability": "0.1",
+          "types": []
+      },
+      {
+          "elementId": "Flow_0sub9wl",
+          "executionProbability": "0.9",
+          "types": []
+      },
+      {
+          "elementId": "Flow_1ghjdwp",
+          "executionProbability": "1",
+          "types": []
+      },
+      {
+          "elementId": "Flow_0yujz0x",
+          "executionProbability": "0.05",
+          "types": [
+              {
+                  "type": "B"
+              }
+          ]
+      }
+  ],
+  "catchEvents": {
+      "Event_07udv0q": {
+        "type": "fixed",
+        "mean": "7",
         "arg1": "",
         "arg2": "",
         "timeUnit": "minutes"
-    },
-    "timetables": [
-        {
-            "name": "tt1",
-            "rules": [
-                {
-                    "fromTime": "10:00:00",
-                    "toTime": "19:00:00",
-                    "fromWeekDay": "MONDAY",
-                    "toWeekDay": "FRIDAY"
-                }
-            ]
-        },
-        {
-            "name": "tt2",
-            "rules": [
-                {
-                    "fromTime": "10:00:00",
-                    "toTime": "14:00:00",
-                    "fromWeekDay": "MONDAY",
-                    "toWeekDay": "FRIDAY"
-                },
-                {
-                    "fromTime": "14:18:00",
-                    "toTime": "19:00:00",
-                    "fromWeekDay": "MONDAY",
-                    "toWeekDay": "FRIDAY"
-                }
-            ]
-        }
-    ],
-    "resources": [
-        {
-            "name": "res1",
-            "totalAmount": "4",
-            "costPerHour": "10",
-            "timetableName": "tt1",
-            "setupTime": {
-                "type": "",
-                "mean": "",
-                "arg1": "",
-                "arg2": "",
-                "timeUnit": ""
-            },
-            "maxUsage": ""
-        },
-        {
-            "name": "res2",
-            "totalAmount": "4",
-            "costPerHour": "15",
-            "timetableName": "tt2",
-            "setupTime": {
-                "type": "",
-                "mean": "",
-                "arg1": "",
-                "arg2": "",
-                "timeUnit": ""
-            },
-            "maxUsage": ""
-        },
-        {
-            "name": "machinery",
-            "totalAmount": "1",
-            "costPerHour": "100",
-            "timetableName": "tt1",
-            "setupTime": {
-                "type": "FIXED",
-                "mean": "10",
-                "arg1": "",
-                "arg2": "",
-                "timeUnit": "minutes"
-            },
-            "maxUsage": "2"
-        }
-    ],
-    "elements": [
-        {
-            "elementId": "Activity_10x08n3",
-            "worklistId": "",
-            "fixedCost": "10",
-            "costThreshold": "",
-            "durationDistribution": {
-                "type": "fixed",
-                "mean": "3",
-                "arg1": "",
-                "arg2": "",
-                "timeUnit": "minutes"
-            },
-            "durationThreshold": "",
-            "durationThresholdTimeUnit": "",
-            "resourceIds": [
-                {
-                    "resourceName": "res2",
-                    "amountNeeded": "1",
-                    "groupId": "1"
-                },
-                {
-                    "resourceName": "res1",
-                    "amountNeeded": "2",
-                    "groupId": "2"
-                }
-            ]
-        },
-        {
-            "elementId": "Activity_14rjj9v",
-            "worklistId": "1",
-            "fixedCost": "4",
-            "costThreshold": "",
-            "durationDistribution": {
-                "type": "fixed",
-                "mean": "5",
-                "arg1": "",
-                "arg2": "",
-                "timeUnit": "minutes"
-            },
-            "durationThreshold": "",
-            "durationThresholdTimeUnit": "",
-            "resourceIds": [
-                {
-                    "resourceName": "res1",
-                    "amountNeeded": "1",
-                    "groupId": "1"
-                },
-                {
-                    "resourceName": "res2",
-                    "amountNeeded": "1",
-                    "groupId": "2"
-                }
-            ]
-        },
-        {
-            "elementId": "Activity_0qykc8o",
-            "worklistId": "",
-            "fixedCost": "",
-            "costThreshold": "",
-            "durationDistribution": {
-                "type": "fixed",
-                "mean": "2",
-                "arg1": "",
-                "arg2": "",
-                "timeUnit": "minutes"
-            },
-            "durationThreshold": "",
-            "durationThresholdTimeUnit": "",
-            "resourceIds": [
-                {
-                    "resourceName": "res1",
-                    "amountNeeded": "1",
-                    "groupId": "1"
-                }
-            ]
-        },
-        {
-            "elementId": "Activity_1ijxuyk",
-            "worklistId": "",
-            "fixedCost": "",
-            "costThreshold": "",
-            "durationDistribution": {
-                "type": "fixed",
-                "mean": "1",
-                "arg1": "",
-                "arg2": "",
-                "timeUnit": "minutes"
-            },
-            "durationThreshold": "",
-            "durationThresholdTimeUnit": "",
-            "resourceIds": [
-                {
-                    "resourceName": "res2",
-                    "amountNeeded": "1",
-                    "groupId": "1"
-                }
-            ]
-        },
-        {
-            "elementId": "Activity_0qi2qug",
-            "worklistId": "",
-            "fixedCost": "",
-            "costThreshold": "",
-            "durationDistribution": {
-                "type": "fixed",
-                "mean": "1",
-                "arg1": "",
-                "arg2": "",
-                "timeUnit": "minutes"
-            },
-            "durationThreshold": "",
-            "durationThresholdTimeUnit": "",
-            "resourceIds": [
-                {
-                    "resourceName": "res1",
-                    "amountNeeded": "1",
-                    "groupId": "1"
-                }
-            ]
-        },
-        {
-            "elementId": "Activity_12afiek",
-            "worklistId": "",
-            "fixedCost": "",
-            "costThreshold": "",
-            "durationDistribution": {
-                "type": "fixed",
-                "mean": "30",
-                "arg1": "",
-                "arg2": "",
-                "timeUnit": "seconds"
-            },
-            "durationThreshold": "",
-            "durationThresholdTimeUnit": "",
-            "resourceIds": [
-                {
-                    "resourceName": "res1",
-                    "amountNeeded": "1",
-                    "groupId": "1"
-                }
-            ]
-        },
-        {
-            "elementId": "Activity_182s0e0",
-            "worklistId": "",
-            "fixedCost": "",
-            "costThreshold": "",
-            "durationDistribution": {
-                "type": "fixed",
-                "mean": "1",
-                "arg1": "",
-                "arg2": "",
-                "timeUnit": "minutes"
-            },
-            "durationThreshold": "",
-            "durationThresholdTimeUnit": "",
-            "resourceIds": [
-                {
-                    "resourceName": "res2",
-                    "amountNeeded": "1",
-                    "groupId": "1"
-                },
-                {
-                    "resourceName": "machinery",
-                    "amountNeeded": "1",
-                    "groupId": "1"
-                }
-            ]
-        },
-        {
-            "elementId": "Activity_1ur6qe3",
-            "worklistId": "1",
-            "fixedCost": "",
-            "costThreshold": "",
-            "durationDistribution": {
-                "type": "normal",
-                "mean": "20",
-                "arg1": "1",
-                "arg2": "",
-                "timeUnit": "seconds"
-            },
-            "durationThreshold": "",
-            "durationThresholdTimeUnit": "",
-            "resourceIds": [
-                {
-                    "resourceName": "res1",
-                    "amountNeeded": "1",
-                    "groupId": "1"
-                },
-                {
-                    "resourceName": "res2",
-                    "amountNeeded": "1",
-                    "groupId": "2"
-                }
-            ]
-        }
-    ],
-    "sequenceFlows": [
-        {
-            "elementId": "Flow_1gbq3g3",
-            "executionProbability": "0.5",
-            "types": []
-        },
-        {
-            "elementId": "Flow_09o0oot",
-            "executionProbability": "0.5",
-            "types": []
-        },
-        {
-            "elementId": "Flow_0d86tug",
-            "executionProbability": "0.1",
-            "types": []
-        },
-        {
-            "elementId": "Flow_0sub9wl",
-            "executionProbability": "0.9",
-            "types": []
-        },
-        {
-            "elementId": "Flow_1ghjdwp",
-            "executionProbability": "1",
-            "types": []
-        },
-        {
-            "elementId": "Flow_0yujz0x",
-            "executionProbability": "0.05",
-            "types": [
-                {
-                    "type": "B"
-                }
-            ]
-        }
-    ],
-    "catchEvents": {
-        "Event_07udv0q": {
-          "type": "fixed",
-          "mean": "7",
-          "arg1": "",
-          "arg2": "",
-          "timeUnit": "minutes"
-        }
-    },
-    "logging_opt": 1
-  }</diagbp>
+      }
+  },
+  "logging_opt": 1
+}</diagbp>
 </bpmn:definitions>
