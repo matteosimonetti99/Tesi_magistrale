@@ -590,10 +590,10 @@ class Process:
             return
 
         elif node['type'] == 'inclusiveGateway':
-            type_matched = False
             flows_from_inclusive = [(flow_id, flow) for flow_id, flow in bpmn['sequence_flows'].items() if flow['sourceRef'] == node_id]
             paths_to_take = []
             for flow_id, flow in flows_from_inclusive:
+                type_matched = False
                 diagbp_flow = next((item for item in diagbp['sequenceFlows'] if item['elementId'] == flow_id), None)
                 if diagbp_flow is not None:
                     if 'types' in diagbp_flow:
