@@ -15,6 +15,7 @@ ET.register_namespace('di', 'http://www.omg.org/spec/DD/20100524/DI')
 
 baseName="andVisualizationCopy"
 tagName="diagbp"
+extraPath="../json/extra.json"
 diagbpPath="../json/diagbp.json"
 bpmnPath="../json/bpmn.json"
 
@@ -120,7 +121,7 @@ bpmnDictionary['process_elements'] = process_elements
 with open(bpmnPath, "w") as outfile:
     json.dump(bpmnDictionary, outfile, indent=4)
 
-if os.path.exists(diagbpPath):
+if os.path.exists(extraPath):
     pass
 elif diagbp_tag is not None:
     # Convert to string and remove the <diagbp> and </diagbp> tags

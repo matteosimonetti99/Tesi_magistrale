@@ -33,8 +33,14 @@ logSetupTime=True
 
 extraLog={}
 
+extraFlag=False
+extraPath="../json/extra.json"
 diagbpPath="../json/diagbp.json"
 bpmnPath="../json/bpmn.json"
+
+if os.path.isfile(extraPath):
+    diagbpPath="../json/extra.json"
+    extraFlag=True
 
 parsingAgain.parse_again()
 
@@ -258,6 +264,8 @@ class Process:
     def xeslog(self, node_id, status, nodeType):
         if nodeType=="parallelGateway":
             nodeType="parallelGatewayOpen"
+        if nodeType=="inclusiveGateway":
+            nodeType="inclusiveGatewayOpen"
         start_time = datetime.strptime(Process.startDateTime, "%Y-%m-%dT%H:%M:%S")
         current_time = start_time + timedelta(seconds=self.env.now)
         if logging_opt or status=="complete":
@@ -889,10 +897,12 @@ with open('../logs/logExtra.csv', 'w', newline='') as f:
 
 pm4py.write_xes(event_log, '../logs/log.xes')
 
-try:
-  os.remove(diagbpPath)
-except OSError as e:
-  print(f"Error deleting {diagbpPath}: {e}")
+
+if not extraFlag:
+    try:
+        os.remove(diagbpPath)
+    except OSError as e:
+        print(f"Error deleting {diagbpPath}: {e}")
 
 try:
   os.remove(bpmnPath)
