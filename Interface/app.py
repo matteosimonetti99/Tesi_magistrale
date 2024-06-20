@@ -25,6 +25,7 @@ def index():
             # Save uploaded BPMN
             bpmn_path = os.path.join(app.config['UPLOAD_FOLDER'], bpmn_file.filename)
             bpmn_file.save(bpmn_path)
+            uploaded_filename = os.path.splitext(bpmn_file.filename)[0]
 
             # Prepare Docker command with placeholders
             docker_cmd = [
