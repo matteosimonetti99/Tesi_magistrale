@@ -8,23 +8,43 @@ LOGS_FOLDER = 'logs' # Directory for logs within the container
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['LOGS_FOLDER'] = LOGS_FOLDER
 
+# Create upload and logs folders if they don't exist, FORSE DA RIMUOVERE POI CON DOCKER
+os.makedirs(UPLOAD_FOLDER, exist_ok=True) 
+os.makedirs(LOGS_FOLDER, exist_ok=True)
+
+APP_ROOT = os.path.dirname(os.path.abspath(__file__))  
+BPMN_FOLDER = os.path.join(APP_ROOT, app.config['UPLOAD_FOLDER'])  # Relative to Flask app
+LOG_FOLDER = os.path.join(APP_ROOT, app.config['LOGS_FOLDER'])
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
         bpmn_file = request.files['bpmn_file']
-        parameters = request.form.get('parameters') 
 
         if bpmn_file:
             # Save uploaded BPMN
             bpmn_path = os.path.join(app.config['UPLOAD_FOLDER'], bpmn_file.filename)
             bpmn_file.save(bpmn_path)
 
-            # Run the simulation using subprocess (adjust command as needed)
-            subprocess.run(["docker", "exec", "python-app-container",  # Replace with your Python app container name
-                            "python", "your_app.py", bpmn_path, parameters], 
-                           check=True) 
+            # Prepare Docker command with placeholders
+            docker_cmd = [
+                "docker", "run", "-it", "--rm", 
+                "-v", "{BPMN_FOLDER}:/app/bpmn_input_file_here", 
+                "-v", "{LOG_FOLDER}:/app/logs", 
+                "diagbp" 
+            ]
+            # Format command with actual paths
+            formatted_cmd = [
+                part.format(
+                    BPMN_FOLDER=BPMN_FOLDER, 
+                    LOG_FOLDER=LOG_FOLDER
+                ) 
+                for part in docker_cmd
+            ]
+            # Run Docker command and capture output
+            consoleOutput = subprocess.run(formatted_cmd, check=True, capture_output=True, text=True)
+            return render_template('results.html', simulation_output=simulation_output)
 
-            return render_template('results.html') 
     return render_template('index.html')
 
 @app.route('/download_logs')

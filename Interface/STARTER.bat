@@ -6,6 +6,6 @@ call interfaceVenv\Scripts\activate.bat
 echo Running Flask app in DEBUG mode...
 set FLASK_APP=app.py 
 set FLASK_ENV=development
-flask run
+flask --app app.py --debug run
 
 pause 
