@@ -570,7 +570,7 @@
     "startDateTime": "2024-05-31T14:16:18",
     "arrivalRateDistribution": {
         "type": "FIXED",
-        "mean": "15",
+        "mean": "5",
         "arg1": "",
         "arg2": "",
         "timeUnit": "minutes"

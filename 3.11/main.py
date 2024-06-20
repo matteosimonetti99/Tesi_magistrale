@@ -370,6 +370,9 @@ class Process:
                     grouped_resources[res['groupId']].append((res['resourceName'], int(res['amountNeeded'])))
                 waited={}                                    
                 while True: #iterate till some resources can be allocated
+                    #check if terminate end events happened
+                    if Process.terminateEndEvent[self.num]==True:
+                        return
                     resources_allocated = False
                     i = 0
                     for group_id, resources in grouped_resources.items(): # Check each group of resources
