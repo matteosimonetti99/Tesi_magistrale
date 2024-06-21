@@ -30,21 +30,14 @@ def index():
             # Prepare Docker command with placeholders
             docker_cmd = [
                 "docker", "run", "-it", "--rm", 
-                "-v", "{BPMN_FOLDER}:/app/bpmn_input_file_here", 
-                "-v", "{LOG_FOLDER}:/app/logs", 
-                "diagbp" 
-            ]
-            # Format command with actual paths
-            formatted_cmd = [
-                part.format(
-                    BPMN_FOLDER=BPMN_FOLDER, 
-                    LOG_FOLDER=LOG_FOLDER
-                ) 
-                for part in docker_cmd
+                "-v", f"{BPMN_FOLDER}:/app/bpmn_input_file_here", 
+                "-v", f"{LOG_FOLDER}:/app/logs", 
+                "-e", f"BPMN_ARG={uploaded_filename}",
+                "diagbp"
             ]
             # Run Docker command and capture output
-            consoleOutput = subprocess.run(formatted_cmd, check=True, capture_output=True, text=True)
-            return render_template('results.html', simulation_output=simulation_output)
+            consoleOutput = subprocess.run(docker_cmd, check=True, capture_output=True, text=True)
+            return render_template('results.html', simulation_output=consoleOutput)
 
     return render_template('index.html')
 
