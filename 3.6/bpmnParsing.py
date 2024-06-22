@@ -174,7 +174,7 @@ if __name__ == "__main__":
     while True: 
         for filename in os.listdir(shared_dir):
             if filename.endswith(".bpmn"):
-                full_path = os.path.join(shared_dir, filename)
+                full_path = "../shared/"+filename
                 process_bpmn(full_path)
                 #os.remove(full_path)
         time.sleep(1)
