@@ -898,7 +898,17 @@ with open('../logs/logExtra.csv', 'w', newline='') as f:
     writer.writerow(combined_dict)
 
 
-pm4py.write_xes(event_log, '../logs/log.xes')
+original_stdout = sys.stdout
+try:
+    # Redirect sys.stdout to /dev/null to suppress the output
+    sys.stdout = open(os.devnull, 'w')    
+    # Call the pm4py.write_xes function
+    pm4py.write_xes(event_log, '../logs/log.xes')
+finally:
+    # Close the temporary file and restore the original stdout
+    sys.stdout.close()
+    sys.stdout = original_stdout
+
 
 
 if not extraFlag:

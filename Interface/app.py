@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, send_from_directory
 import os
 import subprocess
+import zipfile
+
 
 app = Flask(__name__)
 UPLOAD_FOLDER = 'uploads'
@@ -26,25 +28,32 @@ def index():
             bpmn_path = os.path.join(app.config['UPLOAD_FOLDER'], bpmn_file.filename)
             bpmn_file.save(bpmn_path)
             uploaded_filename = os.path.splitext(bpmn_file.filename)[0]
-
-            # Prepare Docker command with placeholders
-            docker_cmd = [
-                "docker", "run", "-it", "--rm", 
-                "-v", f"{BPMN_FOLDER}:/app/bpmn_input_file_here", 
-                "-v", f"{LOG_FOLDER}:/app/logs", 
-                "-e", f"BPMN_ARG={uploaded_filename}",
-                "diagbp"
-            ]
-            # Run Docker command and capture output
-            consoleOutput = subprocess.run(docker_cmd, check=True, capture_output=True, text=True)
-            return render_template('results.html', simulation_output=consoleOutput)
+            return render_template('results.html')
 
     return render_template('index.html')
 
 @app.route('/download_logs')
 def download_logs():
-    logs_file = 'simulation_logs.txt'  # Adjust if your log file name is different
-    return send_from_directory(app.config['LOGS_FOLDER'], logs_file, as_attachment=True)
+    for filename in os.listdir(app.config['LOGS_FOLDER']):
+        file_path = os.path.join(app.config['LOGS_FOLDER'], filename)
+        if filename.endswith('.rar'):
+            os.remove(file_path)
+    # 1. Create the ZIP archive
+    zip_filename = 'simulation_logs.zip'
+    zip_path = os.path.join(app.config['LOGS_FOLDER'], zip_filename)
+    if os.path.isfile(zip_path): 
+        os.remove(zip_path)
+    
+    with zipfile.ZipFile(zip_path, 'w') as zf:
+        for filename in os.listdir(app.config['LOGS_FOLDER']):
+            if filename != zip_filename: # Don't add the zip itself
+                file_path = os.path.join(app.config['LOGS_FOLDER'], filename)
+                zf.write(file_path, arcname=filename)  # Add file to archive
+
+    # 2. Send the ZIP file for download
+    response = send_from_directory(app.config['LOGS_FOLDER'], zip_filename, as_attachment=True)
+
+    return response 
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')

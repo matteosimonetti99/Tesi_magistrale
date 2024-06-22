@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  diagbp:
+    build:
+      context: ./
+    volumes:
+      - ./uploads:/app/shared
+      - ./logs:/app/logs
+
+  interface:
+    build:
+      context: ./interface
+    volumes:
+      - ./uploads:/app/uploads
+      - ./logs:/app/logs
+    ports:
+      - "5000:5000"
+    depends_on:
+      - diagbp
