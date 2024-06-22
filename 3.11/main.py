@@ -740,7 +740,7 @@ class Process:
                 waitedTimeInEventBasedGateway+=1
 
             self.printState(nextNode,next_node_id,printFlag) # print the state of the intermediate catch event (timer or msg, whatever)
-            self.xeslog(next_node_id,"complete",node['type'])        
+            self.xeslog(next_node_id,"complete",nextNode['type'])        
             yield from self.run_node(nextNodeToVisit, subprocess_node) # now it visits the node 2 times forward (2 times after the eventBasedGateway) because the catches have already been handled
             return
 

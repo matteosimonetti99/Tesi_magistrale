@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, send_from_directory
 import os
 import subprocess
 import zipfile
+import time
 
 
 app = Flask(__name__)
@@ -28,6 +29,7 @@ def index():
             bpmn_path = os.path.join(app.config['UPLOAD_FOLDER'], bpmn_file.filename)
             bpmn_file.save(bpmn_path)
             uploaded_filename = os.path.splitext(bpmn_file.filename)[0]
+            time.sleep(5)
             return render_template('results.html')
 
     return render_template('index.html')
