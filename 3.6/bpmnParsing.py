@@ -176,5 +176,5 @@ if __name__ == "__main__":
             if filename.endswith(".bpmn"):
                 full_path = os.path.join(shared_dir, filename)
                 process_bpmn(full_path)
-                os.remove(full_path)
+                #os.remove(full_path)
         time.sleep(1)
