@@ -911,13 +911,21 @@ finally:
 
 
 
-if not extraFlag:
-    try:
-        os.remove(diagbpPath)
-    except OSError as e:
-        print(f"Error deleting {diagbpPath}: {e}")
+#if not extraFlag:
+try:
+    os.remove(diagbpPath)
+except OSError as e:
+    print(f"Error deleting {diagbpPath}: {e}")
 
 try:
   os.remove(bpmnPath)
 except OSError as e:
   print(f"Error deleting {bpmnPath}: {e}")
+
+#creazione file flag per indicare terminazione simulazione a interfaccia web
+shared_dir = "../shared"
+flag_file_path = os.path.join(shared_dir, "flag.txt")
+
+try:
+    with open(flag_file_path, "w+") as f:
+        pass  

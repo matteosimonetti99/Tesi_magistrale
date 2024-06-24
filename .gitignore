@@ -156,3 +156,5 @@ cython_debug/
 /json
 /logs
 /Interface/interfaceVenv
+/Interface/uploads
+/Interface/preupload

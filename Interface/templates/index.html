@@ -6,8 +6,13 @@
 <body>
     <h1>BPMN Simulation</h1>
     <form method="POST" enctype="multipart/form-data">
-        <input type="file" name="bpmn_file">        
+        <label for="bpmn_file">BPMN File:</label>
+        <input type="file" id="bpmn_file" name="bpmn_file">        
         <br><br>
+        
+        <label for="extra">Extra.json (optional):</label>
+        <input type="file" id="extra" name="extra">        
+        <br><br> 
         <button type="submit">Simulate</button>
     </form>
 </body>
