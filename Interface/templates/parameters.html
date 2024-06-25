@@ -119,11 +119,13 @@
                 <input type="text" id="resource_name_${resourceCounter}" name="resource_name_${resourceCounter}" required>
                 <label for="resource_amount_${resourceCounter}"># of Resources:</label>
                 <input type="number" id="resource_amount_${resourceCounter}" name="resource_amount_${resourceCounter}" required>
+                <br>
                 <label for="resource_cost_${resourceCounter}">Cost per Hour:</label>
                 <input type="number" id="resource_cost_${resourceCounter}" name="resource_cost_${resourceCounter}" required>
                 <label for="resource_timetable_${resourceCounter}">Timetable:</label>
                 <select id="resource_timetable_${resourceCounter}" name="resource_timetable_${resourceCounter}">                    
                 </select>
+                <br>
                 <button type="button" class="redBg" onclick="removeResource(this)">Remove</button>
             `;
             resourcesContainer.appendChild(resourceDiv);
