@@ -135,7 +135,7 @@ def process_bpmn(name):
         }
     bpmnDictionary['process_elements'] = process_elements
 
-
+    stopFlag=False
     # Print the dictionary
     with open(bpmnPath, "w") as outfile:
         json.dump(bpmnDictionary, outfile, indent=4)
@@ -149,6 +149,7 @@ def process_bpmn(name):
         with open(diagbpPath, "w") as outfile:
             outfile.write(diagbp_str)
     else:
+        """
         diagbpTagGenerator.diagbp(diagbpPath, bpmnDictionary)
         with open(diagbpPath, 'r') as f:
             diagbp_text = f.read()
@@ -161,10 +162,12 @@ def process_bpmn(name):
         if (confirm=="y" or confirm=="Y"):
             with open(name, 'w') as file:
                 file.write(bpmn_content)
-
-    cmd = ["/usr/local/python3.11/bin/python3.11", "/app/3.11/main.py"] 
-    process = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True, universal_newlines=True, encoding='utf-8')
-    print(process.stdout)
+        """
+        stopFlag=True
+    if not stopFlag:
+        cmd = ["/usr/local/python3.11/bin/python3.11", "/app/3.11/main.py"] 
+        process = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True, universal_newlines=True, encoding='utf-8')
+        print(process.stdout)
 
 
 if __name__ == "__main__":
