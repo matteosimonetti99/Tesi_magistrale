@@ -63,7 +63,7 @@ def process_bpmn(name):
         print(f"Detailed Error: {e}") 
         print(f"Current Working Directory: {os.getcwd()}")
     except ET.ParseError:
-        print(f"-----ERROR-----: bpmn file bad syntax")
+        print(f"-----ERROR-----: bpmn file bad syntax in bpmnParsing.py")
         sys.exit()
     except Exception as e:
         print(f"An error occurred: {e}")
