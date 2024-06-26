@@ -5,6 +5,8 @@ services:
     build:
       context: ./
     volumes:
+      - ./3.6:/app/3.6 #to remove
+      - ./3.11:/app/3.11 #to remove      
       - uploads:/app/shared
       - logs:/app/logs
       - json:/app/json
@@ -13,6 +15,7 @@ services:
     build:
       context: ./interface
     volumes:
+      - ./interface/scripts:/app/scripts #to remove
       - uploads:/app/uploads
       - logs:/app/logs
       - json:/app/json

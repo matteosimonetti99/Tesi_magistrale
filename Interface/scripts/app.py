@@ -6,11 +6,11 @@ import time
 import xml.etree.ElementTree as ET
 
 
-app = Flask(__name__)
-JSON_FOLDER='json'
-UPLOAD_FOLDER = 'uploads'
-PREUPLOAD_FOLDER = 'preupload'
-LOGS_FOLDER = 'logs' # Directory for logs within the container
+app = Flask(__name__, template_folder='../templates')
+JSON_FOLDER='../json'
+UPLOAD_FOLDER = '../uploads'
+PREUPLOAD_FOLDER = '../preupload'
+LOGS_FOLDER = '../logs' # Directory for logs within the container
 tagName = "diagbp"
 
 
@@ -34,26 +34,33 @@ def wait_for_and_remove_flag():
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    try:
+        flag_path = os.path.join(UPLOAD_FOLDER, "flag.txt")
+        if os.path.exists(flag_path):
+            os.remove(flag_path) 
+            print("Flag file removed successfully.")
+    except OSError as e:
+        print(f"Error removing flag file: {e}")
+
     if request.method == 'POST':
         bpmn_file = request.files['bpmn_file']
         extra = request.files['extra']
         for filename in os.listdir(LOGS_FOLDER): # remove old log files
             file_path = os.path.join(LOGS_FOLDER, filename)
             os.remove(file_path)
-        #check diagbp tag
-        tree = ET.parse(bpmn_file)
-        root = tree.getroot()
-        diagbpTag = root.find('.//' + tagName)
 
         if bpmn_file:
+            bpmn_path = os.path.join(UPLOAD_FOLDER, bpmn_file.filename)
+            bpmn_file.save(bpmn_path)
+            #check diagbp tag
+            tree = ET.parse(bpmn_path)
+            root = tree.getroot()
+            diagbpTag = root.find('.//' + tagName)
             if diagbpTag is not None or extra: #se è presente o il tag nel file o l'extra.json file
                 if extra:
                     extra_path = os.path.join(JSON_FOLDER, extra.filename)
                     extra.save(extra_path)
                 # Save uploaded BPMN
-                bpmn_path = os.path.join(UPLOAD_FOLDER, bpmn_file.filename)
-                bpmn_file.save(bpmn_path)
-                uploaded_filename = os.path.splitext(bpmn_file.filename)[0]
                 return redirect(url_for('results'))
             else:
                 bpmn_path = os.path.join(PREUPLOAD_FOLDER, bpmn_file.filename)

@@ -926,6 +926,5 @@ except OSError as e:
 shared_dir = "../shared"
 flag_file_path = os.path.join(shared_dir, "flag.txt")
 
-try:
-    with open(flag_file_path, "w+") as f:
-        pass  
+with open(flag_file_path, "w+") as f:
+    pass

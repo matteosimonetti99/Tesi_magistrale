@@ -57,12 +57,13 @@ def process_bpmn(name):
         tree = ET.parse(name)
         root = tree.getroot()
         diagbp_tag = root.find('.//' + tagName)
-    except FileNotFoundError:
+    except FileNotFoundError as e:
         print(f"-----ERROR-----: bpmn file not found: {name}")
         print(f"Detailed Error: {e}") 
         print(f"Current Working Directory: {os.getcwd()}")
-    except ET.ParseError:
+    except ET.ParseError as e:
         print(f"-----ERROR-----: bpmn file bad syntax in bpmnParsing.py")
+        print(f"Detailed Error: {e}") 
         sys.exit()
     except Exception as e:
         print(f"An error occurred: {e}")
@@ -164,9 +165,20 @@ def process_bpmn(name):
         """
         stopFlag=True
     if not stopFlag:
-        cmd = ["/usr/local/python3.11/bin/python3.11", "/app/3.11/main.py"] 
-        process = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True, universal_newlines=True, encoding='utf-8')
-        print(process.stdout)
+        cmd = ["/usr/local/python3.11/bin/python3.11", "/app/3.11/main.py"]
+        try:
+            process = subprocess.run(
+                cmd,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                check=True,  # Keep this for raising exceptions
+                universal_newlines=True,
+                encoding='utf-8'
+            )
+            print(process.stdout)  # Print output on success
+        except subprocess.CalledProcessError as e:
+            print(f"-----ERROR-----: Subprocess exited with code {e.returncode}")
+            print(e.stderr)  # Print the error output
 
 
 if __name__ == "__main__":
