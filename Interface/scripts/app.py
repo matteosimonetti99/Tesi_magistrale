@@ -6,7 +6,7 @@ import time
 import xml.etree.ElementTree as ET
 
 
-app = Flask(__name__, template_folder='../templates')
+app = Flask(__name__, template_folder='../templates', static_folder='../static')
 JSON_FOLDER='../json'
 UPLOAD_FOLDER = '../uploads'
 PREUPLOAD_FOLDER = '../preupload'
@@ -99,7 +99,7 @@ def parameters():
 
         # Process resources
         resource_count = int(request.form.get('resource_count', 0))
-        for i in range(1, resource_count + 1):
+        for i in range(0, resource_count):
             resource_name = request.form.get(f'resource_name_{i}')
             resource_amount = int(request.form.get(f'resource_amount_{i}'))
             resource_cost = float(request.form.get(f'resource_cost_{i}'))
@@ -113,11 +113,11 @@ def parameters():
 
         # Process timetables
         timetable_count = int(request.form.get('timetable_count', 0))
-        for i in range(1, timetable_count + 1):
+        for i in range(0, timetable_count):
             timetable_name = request.form.get(f'timetable_name_{i}')
             timetable_rules = []
             rule_count = int(request.form.get(f'rule_count_{i}', 0))
-            for j in range(1, rule_count + 1):
+            for j in range(0, rule_count):
                 from_time = request.form.get(f'rule_from_time_{i}_{j}')
                 to_time = request.form.get(f'rule_to_time_{i}_{j}')
                 from_day = request.form.get(f'rule_from_day_{i}_{j}')

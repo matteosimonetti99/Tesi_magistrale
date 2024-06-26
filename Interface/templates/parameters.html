@@ -4,104 +4,96 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simulation Parameters</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
     <style>
-        body {
-            font-family: sans-serif;
-        }
-        form {
-            display: flex;
-            flex-direction: column;
-            width: 50%;
-            margin: 0 auto;
-        }
-        h1 {
-            display: flex;
-            flex-direction: column;
-            width: 50%;
-            margin: 0 auto;
-        }
-        label {
-            margin-top: 10px;
-        }
-        input, select {
-            border-radius: 4px;
-            padding: 5px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-        }
-        button {
-            border-radius: 4px;
-            padding: 10px;
-            margin: 5px;
-            color: white;
-            border: none;
-            cursor: pointer;
-            background-color: #1d64ff;
-        }
-        .greenBg{
-            background-color: #4CAF50;
-        }
-        .redBg{
-            background-color: hsl(0, 68%, 52%);
-        }
-        .blueBg{
-            background-color: #1e32ee;
-        }
-        .resource-group, .timetable-group {
-            border: 1px solid #ccc;
-            padding: 10px;
-            margin-bottom: 10px;
-        }
+        /* You can add any VERY specific custom styles here, but try to use Bootstrap classes first */
     </style>
 </head>
 <body>
+    <div class="container"> 
+        <h1 class="text-center mt-4">Simulation Parameters</h1>
 
-    <h1>Simulation Parameters</h1>
-    <br><br>
-    <form method="POST" action="{{ url_for('parameters') }}">
-        <label for="inter_arrival_time_type">Inter Arrival Time Type:</label>
-        <select id="inter_arrival_time_type" name="inter_arrival_time_type">
-            <option value="FIXED">Fixed</option>
-            <option value="NORMAL">Normal</option>
-            <option value="EXPONENTIAL">Exponential</option>
-            <option value="UNIFORM">Uniform</option>
-            <option value="TRIANGULAR">Triangular</option>
-            <option value="LOGNORMAL">Log-Normal</option>
-            <option value="GAMMA">Gamma</option>
-            <option value="HISTOGRAM">Histogram</option>
-        </select>
+        <form method="POST" action="{{ url_for('parameters') }}" class="mt-4">
+            <div class="form-group">
+                <label for="inter_arrival_time_type">Inter Arrival Time Type:</label>
+                <select id="inter_arrival_time_type" name="inter_arrival_time_type" class="form-control">
+                    <option value="FIXED">Fixed</option>
+                    <option value="NORMAL">Normal</option>
+                    <option value="EXPONENTIAL">Exponential</option>
+                    <option value="UNIFORM">Uniform</option>
+                    <option value="TRIANGULAR">Triangular</option>
+                    <option value="LOGNORMAL">Log-Normal</option>
+                    <option value="GAMMA">Gamma</option>
+                    <option value="HISTOGRAM">Histogram</option>
+                </select>
+            </div>
 
-        <label for="inter_arrival_time_mean">Mean:</label>
-        <input type="number" id="inter_arrival_time_mean" name="inter_arrival_time_mean" required>
-        <label for="inter_arrival_time_arg1">Arg1 (if applicable):</label>
-        <input type="number" id="inter_arrival_time_arg1" name="inter_arrival_time_arg1">
-        <label for="inter_arrival_time_arg2">Arg2 (if applicable):</label>
-        <input type="number" id="inter_arrival_time_arg2" name="inter_arrival_time_arg2">
-        <label for="inter_arrival_time_time_unit">Time Unit:</label>
-        <select id="inter_arrival_time_time_unit" name="inter_arrival_time_time_unit">
-            <option value="seconds">seconds</option>
-            <option value="minutes">minutes</option>
-            <option value="hours">hours</option>
-            <option value="days">days</option>
-        </select>
-        <br>
-        <label for="instances">Total number of process instances:</label>
-        <input type="number" id="instances" name="instances" required value="1"> <br>
-        <label for="start_date">Scenario start date and time:</label>
-        <input type="datetime-local" id="start_date" name="start_date">
-        
-        <h2>Resources</h2>
-        <div id="resources-container">
-        </div>
-        <button type="button" onclick="addResource()">Add Resource</button>
+            <div class="form-group">
+                <label for="inter_arrival_time_mean">Mean:</label>
+                <input type="number" id="inter_arrival_time_mean" name="inter_arrival_time_mean" class="form-control" required>
+            </div>
 
-        <h2>Timetables / Work schedules</h2>
-        <div id="timetables-container">
-        </div>
-        <button type="button" onclick="addTimetable()">Add Timetable</button>
-        <br><br>
-        <button type="submit">Save Parameters and Run Simulation</button>
-    </form>
+            <div class="form-group">
+                <label for="inter_arrival_time_arg1">Arg1 (if applicable):</label>
+                <input type="number" id="inter_arrival_time_arg1" name="inter_arrival_time_arg1" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="inter_arrival_time_arg2">Arg2 (if applicable):</label>
+                <input type="number" id="inter_arrival_time_arg2" name="inter_arrival_time_arg2" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="inter_arrival_time_time_unit">Time Unit:</label>
+                <select id="inter_arrival_time_time_unit" name="inter_arrival_time_time_unit" class="form-control">
+                    <option value="seconds">seconds</option>
+                    <option value="minutes">minutes</option>
+                    <option value="hours">hours</option>
+                    <option value="days">days</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="instances">Total number of process instances:</label>
+                <input type="number" id="instances" name="instances" class="form-control" required value="1"> 
+            </div>
+
+            <div class="form-group">
+                <label for="start_date">Scenario start date and time:</label>
+                <input type="datetime-local" id="start_date" name="start_date" class="form-control">
+            </div>
+            <div class="container px-0">
+                <div class="row">
+                  <div class="col-md-11">
+                    <h2 class="my-5">Resources</h2>
+                  </div>
+                  <div class="col-md-1 d-flex align-items-center justify-content-center">
+                    <button type="button" onclick="addResource()" class="btn btn-secondary mb-3">+</button>
+                  </div>
+                </div>
+              </div>
+            <div id="resources-container">
+            </div>
+
+            <div class="container px-0">
+                <div class="row">
+                  <div class="col-md-11">
+                    <h2 class="my-5">Timetables</h2>
+                  </div>
+                  <div class="col-md-1 d-flex align-items-center justify-content-center">
+                    <button type="button" onclick="addTimetable()" class="btn btn-secondary mb-3">+</button>
+                  </div>
+                </div>
+              </div>
+            <div id="timetables-container">
+            </div>
+            <br>
+            <button type="submit" class="btn btn-primary my-3">Save Parameters and Run Simulation</button>
+        </form>
+    </div>
+    <script src="{{ url_for('static', filename='js/jquery-3.5.1.slim.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
 
     <script>
         let resourceCounter = 0;
@@ -112,21 +104,37 @@
             resourceCounter++;
             const resourcesContainer = document.getElementById('resources-container');
             const resourceDiv = document.createElement('div');
-            resourceDiv.classList.add('resource-group');
+            resourceDiv.classList.add('resource-group', 'mb-3'); // Add 'mb-3' for bottom margin
             resourceDiv.innerHTML = `
-                <h3>Resource ${resourceCounter}</h3>
-                <label for="resource_name_${resourceCounter}">Name:</label>
-                <input type="text" id="resource_name_${resourceCounter}" name="resource_name_${resourceCounter}" required>
-                <label for="resource_amount_${resourceCounter}"># of Resources:</label>
-                <input type="number" id="resource_amount_${resourceCounter}" name="resource_amount_${resourceCounter}" required>
-                <br>
-                <label for="resource_cost_${resourceCounter}">Cost per Hour:</label>
-                <input type="number" id="resource_cost_${resourceCounter}" name="resource_cost_${resourceCounter}" required>
-                <label for="resource_timetable_${resourceCounter}">Timetable:</label>
-                <select id="resource_timetable_${resourceCounter}" name="resource_timetable_${resourceCounter}">                    
-                </select>
-                <br>
-                <button type="button" class="redBg" onclick="removeResource(this)">Remove</button>
+                <div class="form-row"> 
+                    <div class="col-md-12">
+                        <h4>Resource ${resourceCounter}</h4>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="resource_name_${resourceCounter}">Name:</label>
+                        <input type="text" class="form-control" id="resource_name_${resourceCounter}" name="resource_name_${resourceCounter}" required>
+                    </div>
+                </div>
+                <div class="form-row"> 
+                    <div class="form-group col-md-12">
+                        <label for="resource_amount_${resourceCounter}"># of Resources:</label>
+                        <input type="number" class="form-control" id="resource_amount_${resourceCounter}" name="resource_amount_${resourceCounter}" required>
+                    </div>
+                    <div class="form-group col-md-12"> 
+                        <label for="resource_cost_${resourceCounter}">Cost per Hour:</label>
+                        <input type="number" class="form-control" id="resource_cost_${resourceCounter}" name="resource_cost_${resourceCounter}" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="resource_timetable_${resourceCounter}">Timetable:</label>
+                        <select id="resource_timetable_${resourceCounter}" name="resource_timetable_${resourceCounter}" class="form-control">                    
+                        </select>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-danger mt-3" onclick="removeResource(this)">Remove Resource</button> 
             `;
             resourcesContainer.appendChild(resourceDiv);
             updateTimetableOptions(); 
@@ -140,69 +148,108 @@
 
         function addTimetable() {
             timetableCounter++;
-            ruleCounter[timetableCounter] = 0; // Initialize rule counter for this timetable
+            ruleCounter[timetableCounter] = 0;
             const timetablesContainer = document.getElementById('timetables-container');
             const timetableDiv = document.createElement('div');
-            timetableDiv.classList.add('timetable-group');
+            timetableDiv.classList.add('timetable-group', 'mb-3'); // Add margin-bottom
             timetableDiv.innerHTML = `
-                <h3>Timetable ${timetableCounter}</h3>
-                <label for="timetable_name_${timetableCounter}">Name:</label>
-                <input type="text" id="timetable_name_${timetableCounter}" name="timetable_name_${timetableCounter}" required>
-                <div id="rules-container-${timetableCounter}">
+                <div class="row my-3">
+                    <div class="col-10">
+                        <h4>Timetable ${timetableCounter}</h4>
+                    </div>
+                    <div class="col-2 d-flex align-items-center justify-content-center">
+                        <button type="button" class="btn btn-danger btn-block mb-3" onclick="removeTimetable(this)">Remove Timetable</button>
+                    </div>
                 </div>
-                <button type="button" onclick="addRule(${timetableCounter})">Add Rule</button>
-                <button type="button" class="redBg" onclick="removeTimetable(this)">Remove</button>
+                <div class="row">
+                    <div class="form-group col-md-12">
+                        <label for="timetable_name_${timetableCounter}">Name:</label>
+                        <input type="text" class="form-control" id="timetable_name_${timetableCounter}" name="timetable_name_${timetableCounter}" required>
+                    </div>
+                </div>
+                <div id="rules-container-${timetableCounter}"></div>
+                <div class="form-row"> 
+                    <div class="col-md-6"> 
+                        <button type="button" class="btn btn-secondary btn-block mb-3" onclick="addRule(${timetableCounter})">Add Rule</button>
+                    </div>
+                </div>
             `;
             timetablesContainer.appendChild(timetableDiv);
             updateTimetableOptions(); 
         }
 
         function removeTimetable(button) {
-            const timetableDiv = button.parentElement;
-            timetableDiv.remove();
-            updateTimetableOptions(); 
+            const timetableDiv = button.closest('.timetable-group'); // Use closest()
+            if (timetableDiv) { 
+                timetableDiv.remove();
+                updateTimetableOptions(); 
+            }
         }
 
         function addRule(timetableNum) {
             ruleCounter[timetableNum]++;
             const rulesContainer = document.getElementById(`rules-container-${timetableNum}`);
             const ruleDiv = document.createElement('div');
+            ruleDiv.classList.add('rule-group', 'mb-3'); // Add 'rule-group' and margin 
             ruleDiv.innerHTML = `
-                <h4>Rule ${ruleCounter[timetableNum]}</h4>
-                <label for="rule_from_time_${timetableNum}_${ruleCounter[timetableNum]}">From Time:</label>
-                <input type="time" id="rule_from_time_${timetableNum}_${ruleCounter[timetableNum]}" name="rule_from_time_${timetableNum}_${ruleCounter[timetableNum]}" required>
-                <label for="rule_to_time_${timetableNum}_${ruleCounter[timetableNum]}">To Time:</label>
-                <input type="time" id="rule_to_time_${timetableNum}_${ruleCounter[timetableNum]}" name="rule_to_time_${timetableNum}_${ruleCounter[timetableNum]}" required>
-                <label for="rule_from_day_${timetableNum}_${ruleCounter[timetableNum]}">From Day:</label>
-                <select id="rule_from_day_${timetableNum}_${ruleCounter[timetableNum]}" name="rule_from_day_${timetableNum}_${ruleCounter[timetableNum]}">
-                    <option value="MONDAY">Monday</option>
-                    <option value="TUESDAY">Tuesday</option>
-                    <option value="WEDNESDAY">Wednesday</option>
-                    <option value="THURSDAY">Thursday</option>
-                    <option value="FRIDAY">Friday</option>
-                    <option value="SATURDAY">Saturday</option>
-                    <option value="SUNDAY">Sunday</option>
-                </select>
-                <label for="rule_to_day_${timetableNum}_${ruleCounter[timetableNum]}">To Day:</label>
-                <select id="rule_to_day_${timetableNum}_${ruleCounter[timetableNum]}" name="rule_to_day_${timetableNum}_${ruleCounter[timetableNum]}">
-                    <option value="MONDAY">Monday</option>
-                    <option value="TUESDAY">Tuesday</option>
-                    <option value="WEDNESDAY">Wednesday</option>
-                    <option value="THURSDAY">Thursday</option>
-                    <option value="FRIDAY">Friday</option>
-                    <option value="SATURDAY">Saturday</option>
-                    <option value="SUNDAY">Sunday</option>
-                </select>
-                <button type="button" class="redBg" onclick="removeRule(this, ${timetableNum})">Remove</button>
+                <div class="row my-3">
+                    <div class="col-10">
+                        <h4>Rule ${ruleCounter[timetableNum]}</h4>
+                    </div>
+                    <div class="col-2 d-flex align-items-center justify-content-center">
+                        <button type="button" class="btn btn-danger btn-block" onclick="removeRule(this, ${timetableNum})">Remove Rule</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-6">
+                        <label for="rule_from_time_${timetableNum}_${ruleCounter[timetableNum]}">From Time:</label>
+                        <input type="time" class="form-control" id="rule_from_time_${timetableNum}_${ruleCounter[timetableNum]}" name="rule_from_time_${timetableNum}_${ruleCounter[timetableNum]}" required>
+                    </div>
+                    <div class="form-group col-6">
+                        <label for="rule_to_time_${timetableNum}_${ruleCounter[timetableNum]}">To Time:</label>
+                        <input type="time" class="form-control" id="rule_to_time_${timetableNum}_${ruleCounter[timetableNum]}" name="rule_to_time_${timetableNum}_${ruleCounter[timetableNum]}" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-6">
+                        <label for="rule_from_day_${timetableNum}_${ruleCounter[timetableNum]}">From Day:</label>
+                        <select id="rule_from_day_${timetableNum}_${ruleCounter[timetableNum]}" name="rule_from_day_${timetableNum}_${ruleCounter[timetableNum]}" class="form-control">
+                            <option value="MONDAY">Monday</option>
+                            <option value="TUESDAY">Tuesday</option>
+                            <option value="WEDNESDAY">Wednesday</option>
+                            <option value="THURSDAY">Thursday</option>
+                            <option value="FRIDAY">Friday</option>
+                            <option value="SATURDAY">Saturday</option>
+                            <option value="SUNDAY">Sunday</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-6">
+                        <label for="rule_to_day_${timetableNum}_${ruleCounter[timetableNum]}">To Day:</label>
+                        <select id="rule_to_day_${timetableNum}_${ruleCounter[timetableNum]}" name="rule_to_day_${timetableNum}_${ruleCounter[timetableNum]}" class="form-control">
+                            <option value="MONDAY">Monday</option>
+                            <option value="TUESDAY">Tuesday</option>
+                            <option value="WEDNESDAY">Wednesday</option>
+                            <option value="THURSDAY">Thursday</option>
+                            <option value="FRIDAY">Friday</option>
+                            <option value="SATURDAY">Saturday</option>
+                            <option value="SUNDAY">Sunday</option>
+                        </select>
+                    </div>
+                </div>
             `;
             rulesContainer.appendChild(ruleDiv);
-            updateTimetableOptions()
+            updateTimetableOptions();
         }
-
-        function removeRule(button, timetableNum) {
-            const ruleDiv = button.parentElement;
-            ruleDiv.remove();
-            ruleCounter[timetableNum]--; // Decrement rule counter for the timetable
+        function removeRule(button) {
+            const ruleDiv = button.closest('.rule-group'); // Find the ancestor with class 'rule-group'
+            if (ruleDiv) {
+                const timetableDiv = ruleDiv.closest('.timetable-group'); // Find the ancestor timetable
+                if (timetableDiv) {
+                const timetableNum = timetableDiv.querySelector('h4').textContent.split(' ')[1]; // Extract timetable number
+                ruleCounter[timetableNum]--; // Decrement rule counter for the timetable
+                }
+                ruleDiv.remove(); 
+            }
         }
         function updateTimetableOptions() {
             // Get all the timetable name input fields

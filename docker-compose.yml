@@ -16,6 +16,8 @@ services:
       context: ./interface
     volumes:
       - ./interface/scripts:/app/scripts #to remove
+      - ./interface/templates:/app/templates #to remove
+      - ./interface/static:/app/static #to remove
       - uploads:/app/uploads
       - logs:/app/logs
       - json:/app/json
