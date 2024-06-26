@@ -5,18 +5,23 @@ services:
     build:
       context: ./
     volumes:
-      - ./uploads:/app/shared
-      - ./logs:/app/logs
-      - ./json:/app/json
+      - uploads:/app/shared
+      - logs:/app/logs
+      - json:/app/json
 
   interface:
     build:
       context: ./interface
     volumes:
-      - ./uploads:/app/uploads
-      - ./logs:/app/logs
-      - ./json:/app/json
+      - uploads:/app/uploads
+      - logs:/app/logs
+      - json:/app/json
     ports:
       - "5000:5000"
     depends_on:
       - diagbp
+
+volumes:
+  uploads:
+  logs:
+  json:

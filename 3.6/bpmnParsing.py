@@ -38,7 +38,6 @@ ET.register_namespace('bpmndi', 'http://www.omg.org/spec/BPMN/20100524/DI')
 ET.register_namespace('dc', 'http://www.omg.org/spec/DD/20100524/DC')
 ET.register_namespace('di', 'http://www.omg.org/spec/DD/20100524/DI')
 
-baseName = "andVisualizationCopy"
 tagName = "diagbp"
 extraPath = "../json/extra.json"
 diagbpPath = "../json/diagbp.json"
