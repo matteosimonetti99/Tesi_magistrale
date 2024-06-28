@@ -97,41 +97,63 @@ def parameters():
             "catchEvents": {}
         }
 
-        # Process resources
-        resource_count = int(request.form.get('resource_count', 0))
-        for i in range(0, resource_count):
-            resource_name = request.form.get(f'resource_name_{i}')
-            resource_amount = int(request.form.get(f'resource_amount_{i}'))
-            resource_cost = float(request.form.get(f'resource_cost_{i}'))
-            resource_timetable = request.form.get(f'resource_timetable_{i}')
-            diagbp_data["resources"].append({
-                "name": resource_name,
-                "totalAmount": resource_amount,
-                "costPerHour": resource_cost,
-                "timetableName": resource_timetable
-            })
+        # Process instance types
+        for key, value in request.form.items():
+            if key.startswith('instance_type_'):
+                instance_type = value
+                instance_count_key = key.replace('instance_type_', 'instance_count_')
+                instance_count = int(request.form.get(instance_count_key))
 
-        # Process timetables
-        timetable_count = int(request.form.get('timetable_count', 0))
-        for i in range(0, timetable_count):
-            timetable_name = request.form.get(f'timetable_name_{i}')
-            timetable_rules = []
-            rule_count = int(request.form.get(f'rule_count_{i}', 0))
-            for j in range(0, rule_count):
-                from_time = request.form.get(f'rule_from_time_{i}_{j}')
-                to_time = request.form.get(f'rule_to_time_{i}_{j}')
-                from_day = request.form.get(f'rule_from_day_{i}_{j}')
-                to_day = request.form.get(f'rule_to_day_{i}_{j}')
-                timetable_rules.append({
-                    "fromTime": from_time,
-                    "toTime": to_time,
-                    "fromWeekDay": from_day,
-                    "toWeekDay": to_day
+                diagbp_data["processInstances"].append({
+                    "type": instance_type,
+                    "count": instance_count
                 })
-            diagbp_data["timetables"].append({
-                "name": timetable_name,
-                "rules": timetable_rules
-            })
+
+        # Process resources
+        for key, value in request.form.items():
+            if key.startswith('resource_name_'):
+                resource_name = value
+                resource_amount_key = key.replace('resource_name_', 'resource_amount_')
+                resource_cost_key = key.replace('resource_name_', 'resource_cost_')
+                resource_timetable_key = key.replace('resource_name_', 'resource_timetable_')
+
+                resource_amount = int(request.form.get(resource_amount_key))
+                resource_cost = float(request.form.get(resource_cost_key))
+                resource_timetable = request.form.get(resource_timetable_key)
+
+                diagbp_data["resources"].append({
+                    "name": resource_name,
+                    "totalAmount": resource_amount,
+                    "costPerHour": resource_cost,
+                    "timetableName": resource_timetable
+                })
+               
+        # Timetables
+        for key, value in request.form.items():
+            if key.startswith('timetable_name_'):
+                timetable_name = value
+                timetable_rules = []
+
+                # Find rules related to this timetable
+                for rule_key, rule_value in request.form.items():
+                    if rule_key.startswith(f'rule_from_time_{key.split("_")[2]}_'):
+                        rule_index = rule_key.split("_")[3]  # Extract rule index
+                        from_time = rule_value
+                        to_time = request.form.get(f'rule_to_time_{key.split("_")[2]}_{rule_index}')
+                        from_day = request.form.get(f'rule_from_day_{key.split("_")[2]}_{rule_index}')
+                        to_day = request.form.get(f'rule_to_day_{key.split("_")[2]}_{rule_index}')
+
+                        timetable_rules.append({
+                            "fromTime": from_time,
+                            "toTime": to_time,
+                            "fromWeekDay": from_day,
+                            "toWeekDay": to_day
+                        })
+
+                diagbp_data["timetables"].append({
+                    "name": timetable_name,
+                    "rules": timetable_rules
+                })
 
         # Process elements (example, needs to be adapted to your BPMN)
         for element_id in bpmn_dict['process_elements']:
@@ -153,12 +175,17 @@ def parameters():
                 "durationThresholdTimeUnit": "seconds",
                 "resourceIds": []  
             })
-        diagbp_path = os.path.join(JSON_FOLDER, "diagbp.json")
-        diagbp(diagbp_path, diagbp_data)
-        
+
         source_path = os.path.join(PREUPLOAD_FOLDER, bpmn_filename)
         destination_path = os.path.join(UPLOAD_FOLDER, bpmn_filename)
-        os.rename(source_path, destination_path)  
+        
+        #Write to upload folder so that diagbp can simulate it
+        with open(destination_path, 'w') as file:
+            bpmn_content = bpmn_dict.replace('</bpmn:definitions>', f'<diagbp>{diagbp_data}</diagbp>\n</bpmn:definitions>')
+            file.write(bpmn_content)
+        
+        #Remove file from preupload folder
+        os.remove(source_path)    
 
         return redirect(url_for('results'))
 

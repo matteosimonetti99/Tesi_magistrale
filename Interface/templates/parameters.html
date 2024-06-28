@@ -6,12 +6,25 @@
     <title>Simulation Parameters</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
     <style>
-        /* You can add any VERY specific custom styles here, but try to use Bootstrap classes first */
+        .box {
+            border: 2px solid #ced4da; /* Light gray border */
+            padding: 20px; /* More padding */
+            border-radius: 8px; /* Slightly larger border radius */
+            box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1); /* Very subtle shadow */
+        }
     </style>
 </head>
 <body>
-    <div class="container"> 
-        <h1 class="text-center mt-4">Simulation Parameters</h1>
+    <div class="container mt-3"> 
+        <div class="row d-flex align-items-center mb-5"> 
+            <div class="col-md-9 text-left"> 
+                <h1>Simulation Parameters insertion</h1>
+            </div>
+            <div class="col-md-3 d-flex justify-content-end">
+                <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">Home</a>
+            </div>
+        </div>
+        
 
         <form method="POST" action="{{ url_for('parameters') }}" class="mt-4">
             <div class="form-group">
@@ -27,66 +40,79 @@
                     <option value="HISTOGRAM">Histogram</option>
                 </select>
             </div>
+            <div class="row my-2">
+                <div class="form-group col-3" id="mean-group">
+                    <label for="inter_arrival_time_mean">Mean:</label>
+                    <input type="number" id="inter_arrival_time_mean" name="inter_arrival_time_mean" class="form-control" required>
+                </div>
 
-            <div class="form-group">
-                <label for="inter_arrival_time_mean">Mean:</label>
-                <input type="number" id="inter_arrival_time_mean" name="inter_arrival_time_mean" class="form-control" required>
+                <div class="form-group col-3" id="arg1-group" style="display: none;">
+                    <label for="inter_arrival_time_arg1">Arg1:</label>
+                    <input type="number" id="inter_arrival_time_arg1" name="inter_arrival_time_arg1" class="form-control">
+                </div>
+
+                <div class="form-group col-3" id="arg2-group" style="display: none;">
+                    <label for="inter_arrival_time_arg2">Arg2:</label>
+                    <input type="number" id="inter_arrival_time_arg2" name="inter_arrival_time_arg2" class="form-control">
+                </div>
+                <div class="form-group col-3">
+                    <label for="inter_arrival_time_time_unit">Time Unit:</label>
+                    <select id="inter_arrival_time_time_unit" name="inter_arrival_time_time_unit" class="form-control">
+                        <option value="seconds">Seconds</option>
+                        <option value="minutes">Minutes</option>
+                        <option value="hours">Hours</option>
+                        <option value="days">Days</option>
+                    </select>
+                </div>
             </div>
-
-            <div class="form-group">
-                <label for="inter_arrival_time_arg1">Arg1 (if applicable):</label>
-                <input type="number" id="inter_arrival_time_arg1" name="inter_arrival_time_arg1" class="form-control">
-            </div>
-
-            <div class="form-group">
-                <label for="inter_arrival_time_arg2">Arg2 (if applicable):</label>
-                <input type="number" id="inter_arrival_time_arg2" name="inter_arrival_time_arg2" class="form-control">
-            </div>
-
-            <div class="form-group">
-                <label for="inter_arrival_time_time_unit">Time Unit:</label>
-                <select id="inter_arrival_time_time_unit" name="inter_arrival_time_time_unit" class="form-control">
-                    <option value="seconds">seconds</option>
-                    <option value="minutes">minutes</option>
-                    <option value="hours">hours</option>
-                    <option value="days">days</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="instances">Total number of process instances:</label>
-                <input type="number" id="instances" name="instances" class="form-control" required value="1"> 
-            </div>
-
             <div class="form-group">
                 <label for="start_date">Scenario start date and time:</label>
                 <input type="datetime-local" id="start_date" name="start_date" class="form-control">
             </div>
+
+            <div class="container px-0">
+                <div class="row">
+                  <div class="col-md-11">
+                    <h2 class="my-5">Instance types</h2>
+                  </div>
+                  <div class="col-md-1 d-flex align-items-center justify-content-center">
+                    <button type="button" onclick="addInstanceGroup()" class="btn btn-outline-secondary">+</button>
+                  </div>
+                </div>
+            </div>
+            <div id="instances-container">
+            </div> 
+
+            
+
             <div class="container px-0">
                 <div class="row">
                   <div class="col-md-11">
                     <h2 class="my-5">Resources</h2>
                   </div>
                   <div class="col-md-1 d-flex align-items-center justify-content-center">
-                    <button type="button" onclick="addResource()" class="btn btn-secondary mb-3">+</button>
+                    <button type="button" onclick="addResource()" class="btn btn-outline-secondary">+</button>
                   </div>
                 </div>
               </div>
             <div id="resources-container">
             </div>
 
+            
+            
             <div class="container px-0">
                 <div class="row">
-                  <div class="col-md-11">
+                    <div class="col-md-11">
                     <h2 class="my-5">Timetables</h2>
-                  </div>
-                  <div class="col-md-1 d-flex align-items-center justify-content-center">
-                    <button type="button" onclick="addTimetable()" class="btn btn-secondary mb-3">+</button>
-                  </div>
+                    </div>
+                    <div class="col-md-1 d-flex align-items-center justify-content-center">
+                    <button type="button" onclick="addTimetable()" class="btn btn-outline-secondary">+</button>
+                    </div>
                 </div>
-              </div>
+            </div>
             <div id="timetables-container">
             </div>
+            
             <br>
             <button type="submit" class="btn btn-primary my-3">Save Parameters and Run Simulation</button>
         </form>
@@ -99,36 +125,116 @@
         let resourceCounter = 0;
         let timetableCounter = 0;
         let ruleCounter = {}; 
+        let instanceGroupCounter = 0;
+        const timeTypeSelect = document.getElementById('inter_arrival_time_type');
+        const meanGroup = document.getElementById('mean-group');
+        const arg1Group = document.getElementById('arg1-group');
+        const arg2Group = document.getElementById('arg2-group');
+        const meanLabel = document.querySelector('#mean-group label');
+        const arg1Label = document.querySelector('#arg1-group label');
+
+        const now = new Date();
+        const defaultDateTime = now.toISOString().slice(0, 16);
+        document.getElementById('start_date').value = defaultDateTime;
+
+        timeTypeSelect.addEventListener('change', () => {
+            const selectedType = timeTypeSelect.value;
+            meanLabel.textContent = 'Mean:'; // Reset label text
+
+            if (selectedType === 'FIXED') {
+                meanGroup.style.display = 'block';
+                arg1Group.style.display = 'none';
+                arg2Group.style.display = 'none';
+                meanLabel.textContent = 'Amount:'; 
+            } else if (selectedType === 'NORMAL') {
+                meanGroup.style.display = 'block';
+                arg1Group.style.display = 'block';
+                arg2Group.style.display = 'none';
+                arg1Label.textContent = 'Std. Deviation:';
+            } else if (selectedType === 'EXPONENTIAL') {
+                meanGroup.style.display = 'block';
+                arg1Group.style.display = 'none';
+                arg2Group.style.display = 'none';
+            } else if (selectedType === 'UNIFORM') {
+                meanGroup.style.display = 'none'; 
+                arg1Group.style.display = 'block';
+                arg2Group.style.display = 'block';
+                arg1Label.textContent = 'Low:';
+                arg2Group.querySelector('label').textContent = 'High:'; 
+            } else if (selectedType === 'TRIANGULAR') {
+                meanGroup.style.display = 'block';
+                arg1Group.style.display = 'block';
+                arg2Group.style.display = 'block';
+                meanLabel.textContent = 'Mode:';
+                arg1Label.textContent = 'Low:';
+                arg2Group.querySelector('label').textContent = 'High:';
+            } else if (selectedType === 'LOGNORMAL') {
+                meanGroup.style.display = 'block';
+                arg1Group.style.display = 'block';
+                arg2Group.style.display = 'none';
+                arg1Label.textContent = 'Variance:';
+            } else if (selectedType === 'GAMMA') {
+                meanGroup.style.display = 'block';
+                arg1Group.style.display = 'block';
+                arg2Group.style.display = 'none';
+                arg1Label.textContent = 'Variance:';
+            } else if (selectedType === 'HISTOGRAM') {
+                meanGroup.style.display = 'none';
+                arg1Group.style.display = 'block';
+                arg2Group.style.display = 'block';
+                arg1Label.textContent = 'Bin Edges (comma-separated):';
+                arg2Group.querySelector('label').textContent = 'Frequencies (comma-separated):';
+            }
+        });
+
+        function addInstanceGroup() {
+            instanceGroupCounter++;
+            const instancesContainer = document.getElementById('instances-container');
+            const instanceGroupDiv = document.createElement('div');
+                instanceGroupDiv.classList.add('instance-group', 'mb-3', 'box'); 
+            instanceGroupDiv.innerHTML = `
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label for="instance_type_${instanceGroupCounter}">Instance Type:</label>
+                        <input type="text" class="form-control" id="instance_type_${instanceGroupCounter}" name="instance_type_${instanceGroupCounter}" required>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="instance_count_${instanceGroupCounter}">Count:</label>
+                        <input type="number" class="form-control" id="instance_count_${instanceGroupCounter}" name="instance_count_${instanceGroupCounter}" required>
+                    </div>
+                    <div class="col-md-12 mt-3">
+                      <button type="button" class="btn btn-danger btn-block" onclick="removeInstanceGroup(this)">Remove instance type</button>
+                    </div>
+                </div>
+            `;
+            instancesContainer.appendChild(instanceGroupDiv);
+        }
+
+        function removeInstanceGroup(button) {
+            const instanceGroupDiv = button.parentElement.parentElement.parentElement;
+            instanceGroupDiv.remove();
+        }
 
         function addResource() {
             resourceCounter++;
             const resourcesContainer = document.getElementById('resources-container');
             const resourceDiv = document.createElement('div');
-            resourceDiv.classList.add('resource-group', 'mb-3'); // Add 'mb-3' for bottom margin
+            resourceDiv.classList.add('resource-group', 'mb-3', 'box'); // Add 'mb-3' for bottom margin
             resourceDiv.innerHTML = `
-                <div class="form-row"> 
-                    <div class="col-md-12">
-                        <h4>Resource ${resourceCounter}</h4>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group col-md-12">
+                <div class="row">
+                    <div class="form-group col-md-3">
                         <label for="resource_name_${resourceCounter}">Name:</label>
                         <input type="text" class="form-control" id="resource_name_${resourceCounter}" name="resource_name_${resourceCounter}" required>
                     </div>
-                </div>
-                <div class="form-row"> 
-                    <div class="form-group col-md-12">
+                    <div class="form-group col-md-3">
                         <label for="resource_amount_${resourceCounter}"># of Resources:</label>
                         <input type="number" class="form-control" id="resource_amount_${resourceCounter}" name="resource_amount_${resourceCounter}" required>
                     </div>
-                    <div class="form-group col-md-12"> 
+                    <div class="form-group col-md-3"> 
                         <label for="resource_cost_${resourceCounter}">Cost per Hour:</label>
                         <input type="number" class="form-control" id="resource_cost_${resourceCounter}" name="resource_cost_${resourceCounter}" required>
                     </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group col-md-12">
+                    <div class="form-group col-md-3">
                         <label for="resource_timetable_${resourceCounter}">Timetable:</label>
                         <select id="resource_timetable_${resourceCounter}" name="resource_timetable_${resourceCounter}" class="form-control">                    
                         </select>
@@ -137,13 +243,11 @@
                 <button type="button" class="btn btn-danger mt-3" onclick="removeResource(this)">Remove Resource</button> 
             `;
             resourcesContainer.appendChild(resourceDiv);
-            updateTimetableOptions(); 
         }
 
         function removeResource(button) {
             const resourceDiv = button.parentElement;
             resourceDiv.remove();
-            updateTimetableOptions(); 
         }
 
         function addTimetable() {
@@ -151,31 +255,29 @@
             ruleCounter[timetableCounter] = 0;
             const timetablesContainer = document.getElementById('timetables-container');
             const timetableDiv = document.createElement('div');
-            timetableDiv.classList.add('timetable-group', 'mb-3'); // Add margin-bottom
+            timetableDiv.classList.add('timetable-group', 'mb-3', 'box'); // Add margin-bottom
             timetableDiv.innerHTML = `
-                <div class="row my-3">
-                    <div class="col-10">
-                        <h4>Timetable ${timetableCounter}</h4>
-                    </div>
-                    <div class="col-2 d-flex align-items-center justify-content-center">
-                        <button type="button" class="btn btn-danger btn-block mb-3" onclick="removeTimetable(this)">Remove Timetable</button>
-                    </div>
-                </div>
                 <div class="row">
-                    <div class="form-group col-md-12">
+                    <div class="form-group col-md-12 mb-3">
                         <label for="timetable_name_${timetableCounter}">Name:</label>
                         <input type="text" class="form-control" id="timetable_name_${timetableCounter}" name="timetable_name_${timetableCounter}" required>
                     </div>
                 </div>
                 <div id="rules-container-${timetableCounter}"></div>
-                <div class="form-row"> 
-                    <div class="col-md-6"> 
-                        <button type="button" class="btn btn-secondary btn-block mb-3" onclick="addRule(${timetableCounter})">Add Rule</button>
+                <div class="row"> 
+                    <div class="col-10"> 
+                        <button type="button" class="btn btn-secondary btn-block my-3" onclick="addRule(${timetableCounter})">Add Rule</button>
+                    </div>
+                    <div class="col-2 d-flex align-items-center justify-content-end">
+                        <button type="button" class="btn btn-danger btn-block" onclick="removeTimetable(this)">Remove Timetable</button>
                     </div>
                 </div>
             `;
             timetablesContainer.appendChild(timetableDiv);
-            updateTimetableOptions(); 
+
+            // Add an event listener to the input field
+            const timetableNameInput = document.getElementById(`timetable_name_${timetableCounter}`);
+            timetableNameInput.addEventListener('input', updateTimetableOptions);
         }
 
         function removeTimetable(button) {
@@ -190,28 +292,25 @@
             ruleCounter[timetableNum]++;
             const rulesContainer = document.getElementById(`rules-container-${timetableNum}`);
             const ruleDiv = document.createElement('div');
-            ruleDiv.classList.add('rule-group', 'mb-3'); // Add 'rule-group' and margin 
+            ruleDiv.classList.add('rule-group', 'mb-3', 'box'); // Add 'rule-group' and margin 
             ruleDiv.innerHTML = `
-                <div class="row my-3">
-                    <div class="col-10">
-                        <h4>Rule ${ruleCounter[timetableNum]}</h4>
+                <div class="row my-2">
+                    <div class="col-10 d-flex align-items-center">
                     </div>
-                    <div class="col-2 d-flex align-items-center justify-content-center">
+                    <div class="col-2 d-flex align-items-center justify-content-end">
                         <button type="button" class="btn btn-danger btn-block" onclick="removeRule(this, ${timetableNum})">Remove Rule</button>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="form-group col-6">
+                    <div class="form-group col-3">
                         <label for="rule_from_time_${timetableNum}_${ruleCounter[timetableNum]}">From Time:</label>
                         <input type="time" class="form-control" id="rule_from_time_${timetableNum}_${ruleCounter[timetableNum]}" name="rule_from_time_${timetableNum}_${ruleCounter[timetableNum]}" required>
                     </div>
-                    <div class="form-group col-6">
+                    <div class="form-group col-3">
                         <label for="rule_to_time_${timetableNum}_${ruleCounter[timetableNum]}">To Time:</label>
                         <input type="time" class="form-control" id="rule_to_time_${timetableNum}_${ruleCounter[timetableNum]}" name="rule_to_time_${timetableNum}_${ruleCounter[timetableNum]}" required>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="form-group col-6">
+                    <div class="form-group col-3">
                         <label for="rule_from_day_${timetableNum}_${ruleCounter[timetableNum]}">From Day:</label>
                         <select id="rule_from_day_${timetableNum}_${ruleCounter[timetableNum]}" name="rule_from_day_${timetableNum}_${ruleCounter[timetableNum]}" class="form-control">
                             <option value="MONDAY">Monday</option>
@@ -223,7 +322,7 @@
                             <option value="SUNDAY">Sunday</option>
                         </select>
                     </div>
-                    <div class="form-group col-6">
+                    <div class="form-group col-3">
                         <label for="rule_to_day_${timetableNum}_${ruleCounter[timetableNum]}">To Day:</label>
                         <select id="rule_to_day_${timetableNum}_${ruleCounter[timetableNum]}" name="rule_to_day_${timetableNum}_${ruleCounter[timetableNum]}" class="form-control">
                             <option value="MONDAY">Monday</option>
@@ -238,16 +337,11 @@
                 </div>
             `;
             rulesContainer.appendChild(ruleDiv);
-            updateTimetableOptions();
         }
-        function removeRule(button) {
-            const ruleDiv = button.closest('.rule-group'); // Find the ancestor with class 'rule-group'
+        function removeRule(button, timetableNum) { // Pass timetableNum directly
+            const ruleDiv = button.closest('.rule-group'); 
             if (ruleDiv) {
-                const timetableDiv = ruleDiv.closest('.timetable-group'); // Find the ancestor timetable
-                if (timetableDiv) {
-                const timetableNum = timetableDiv.querySelector('h4').textContent.split(' ')[1]; // Extract timetable number
-                ruleCounter[timetableNum]--; // Decrement rule counter for the timetable
-                }
+                ruleCounter[timetableNum]--; 
                 ruleDiv.remove(); 
             }
         }
@@ -260,7 +354,6 @@
                     timetableNames.push(timetableNameInput.value);
                 }
             }
-
             // Update the options for each resource's timetable select
             for (let i = 1; i <= resourceCounter; i++) {
                 let timetableSelect = document.getElementById(`resource_timetable_${i}`);
