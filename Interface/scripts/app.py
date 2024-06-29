@@ -3,7 +3,8 @@ import os
 import subprocess
 import zipfile
 import time
-import xml.etree.ElementTree as ET
+import xml.etree.ElementTree as ETù
+import json
 
 
 app = Flask(__name__, template_folder='../templates', static_folder='../static')
@@ -65,6 +66,8 @@ def index():
             else:
                 bpmn_path = os.path.join(PREUPLOAD_FOLDER, bpmn_file.filename)
                 bpmn_file.save(bpmn_path)
+                bpmn_path = os.path.join(UPLOAD_FOLDER, bpmn_file.filename) #save in upload so that simulator reads it and creates bpmn.json for parameters.html
+                bpmn_file.save(bpmn_path)
                 return redirect(url_for('parameters'))
 
     return render_template('index.html')
@@ -76,10 +79,10 @@ def results():
 
 @app.route('/parameters', methods=['GET', 'POST'])
 def parameters():
+    bpmn_filename = os.listdir(PREUPLOAD_FOLDER)[0]
+    with open(os.path.join(JSON_FOLDER, "bpmn.json"), 'r') as f:
+        bpmn_dict = json.load(f)
     if request.method == 'POST':
-        bpmn_filename = os.listdir(PREUPLOAD_FOLDER)[0]
-        with open(os.path.join(PREUPLOAD_FOLDER, bpmn_filename), 'r') as f:
-            bpmn_dict = json.load(f)
         diagbp_data = {
             "processInstances": [],
             "startDateTime": request.form.get('start_date'),
@@ -189,7 +192,7 @@ def parameters():
 
         return redirect(url_for('results'))
 
-    return render_template('parameters.html')
+    return render_template('parameters.html', bpmn_dict=bpmn_dict)
 
 @app.route('/download_logs')
 def download_logs():
