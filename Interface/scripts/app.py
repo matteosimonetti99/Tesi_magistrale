@@ -3,7 +3,7 @@ import os
 import subprocess
 import zipfile
 import time
-import xml.etree.ElementTree as ETù
+import xml.etree.ElementTree as ET
 import json
 
 
