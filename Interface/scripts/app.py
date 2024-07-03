@@ -35,6 +35,13 @@ def wait_for_and_remove_flag():
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    for filename in os.listdir(PREUPLOAD_FOLDER): # remove old log files
+        file_path = os.path.join(PREUPLOAD_FOLDER, filename)
+        os.remove(file_path)
+    for filename in os.listdir(LOGS_FOLDER): # remove old log files
+        file_path = os.path.join(LOGS_FOLDER, filename)
+        os.remove(file_path)
+    
     try:
         flag_path = os.path.join(UPLOAD_FOLDER, "flag.txt")
         if os.path.exists(flag_path):
@@ -46,13 +53,12 @@ def index():
     if request.method == 'POST':
         bpmn_file = request.files['bpmn_file']
         extra = request.files['extra']
-        for filename in os.listdir(LOGS_FOLDER): # remove old log files
-            file_path = os.path.join(LOGS_FOLDER, filename)
-            os.remove(file_path)
 
         if bpmn_file:
-            bpmn_path = os.path.join(UPLOAD_FOLDER, bpmn_file.filename)
+            bpmn_path = os.path.join(PREUPLOAD_FOLDER, bpmn_file.filename)
             bpmn_file.save(bpmn_path)
+            bpmn_file.seek(0)  
+
             #check diagbp tag
             tree = ET.parse(bpmn_path)
             root = tree.getroot()
@@ -62,12 +68,14 @@ def index():
                     extra_path = os.path.join(JSON_FOLDER, extra.filename)
                     extra.save(extra_path)
                 # Save uploaded BPMN
+                bpmn_path = os.path.join(UPLOAD_FOLDER, bpmn_file.filename)
+                bpmn_file.save(bpmn_path)
+                os.remove(os.path.join(PREUPLOAD_FOLDER, bpmn_file.filename)) 
                 return redirect(url_for('results'))
             else:
-                bpmn_path = os.path.join(PREUPLOAD_FOLDER, bpmn_file.filename)
-                bpmn_file.save(bpmn_path)
                 bpmn_path = os.path.join(UPLOAD_FOLDER, bpmn_file.filename) #save in upload so that simulator reads it and creates bpmn.json for parameters.html
                 bpmn_file.save(bpmn_path)
+                wait_for_and_remove_flag()
                 return redirect(url_for('parameters'))
 
     return render_template('index.html')

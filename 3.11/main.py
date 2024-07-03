@@ -52,23 +52,23 @@ except FileNotFoundError:
     sys.exit()
 except json.JSONDecodeError:
     print(f"-----ERROR-----: bpmn file bad syntax")
-    sys.exit()
+    #sys.exit()
 except Exception as e:
     print(f"An error occurred: {e}")
-    sys.exit()
+    #sys.exit()
 
 try:
     with open(diagbpPath, "r") as file:
         diagbp = json.load(file) #Simulations parameters
 except FileNotFoundError:
     print(f"-----ERROR-----: simulation parameters not found")
-    sys.exit()
+    #sys.exit()
 except json.JSONDecodeError:
     print(f"-----ERROR-----: simulation parameters bad syntax")
-    sys.exit()
+    #sys.exit()
 except Exception as e:
     print(f"An error occurred: {e}")
-    sys.exit()
+    #sys.exit()
 
 #csv log
 logs_dir = "../logs"

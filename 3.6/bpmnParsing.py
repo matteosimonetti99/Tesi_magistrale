@@ -62,12 +62,14 @@ def process_bpmn(name):
         print(f"Detailed Error: {e}") 
         print(f"Current Working Directory: {os.getcwd()}")
     except ET.ParseError as e:
+        os.remove(name)
         print(f"-----ERROR-----: bpmn file bad syntax in bpmnParsing.py")
         print(f"Detailed Error: {e}") 
-        sys.exit()
+        #sys.exit()
     except Exception as e:
+        os.remove(name)
         print(f"An error occurred: {e}")
-        sys.exit()
+        #sys.exit()
 
 
     # BPMN STRUCTURE
@@ -179,6 +181,11 @@ def process_bpmn(name):
         except subprocess.CalledProcessError as e:
             print(f"-----ERROR-----: Subprocess exited with code {e.returncode}")
             print(e.stderr)  # Print the error output
+    else:
+        shared_dir = "../shared"
+        flag_file_path = os.path.join(shared_dir, "flag.txt")
+        with open(flag_file_path, "w+") as f:
+            pass
 
 
 if __name__ == "__main__":

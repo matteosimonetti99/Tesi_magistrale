@@ -323,7 +323,6 @@
     <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
 
     <script>
-        let resourceCounter = 0;
         let timetableCounter = 0;
         let ruleCounter = {}; 
         let instanceGroupCounter = 0;
@@ -418,51 +417,135 @@
             instanceGroupDiv.remove();
         }
 
+
+
+
+        //RESOURCES
+        let resourceCounter = 0;
+        let resourcesData = {};
+
         function addResource() {
             resourceCounter++;
             const resourcesContainer = document.getElementById('resources-container');
             const resourceDiv = document.createElement('div');
-            resourceDiv.classList.add('resource-group', 'mb-3', 'box'); // Add 'mb-3' for bottom margin
+            resourceDiv.classList.add('resource-group', 'mb-3', 'box');
+            const resourceId = `resource_${resourceCounter}`; // Unique ID for the resource
+            resourceDiv.setAttribute('data-resource-id', resourceId);
+
             resourceDiv.innerHTML = `
-                <div class="row">
-                    <div class="form-group col-md-12">
-                        <label for="resource_name_${resourceCounter}">Name:</label>
-                        <input type="text" class="form-control" id="resource_name_${resourceCounter}" name="resource_name_${resourceCounter}" required>
-                    </div>
-                    <div class="form-group col-md-6">
-                        <label for="resource_amount_${resourceCounter}"># of Resources:</label>
-                        <input type="number" class="form-control" id="resource_amount_${resourceCounter}" name="resource_amount_${resourceCounter}" required>
-                    </div>
-                    <div class="form-group col-md-6"> 
-                        <label for="resource_cost_${resourceCounter}">Cost per Hour:</label>
-                        <input type="number" class="form-control" id="resource_cost_${resourceCounter}" name="resource_cost_${resourceCounter}" required>
-                    </div>
-                    <div class="form-group col-md-12">
-                        <label for="resource_timetable_${resourceCounter}">Timetable:</label>
-                        <select id="resource_timetable_${resourceCounter}" name="resource_timetable_${resourceCounter}" class="form-control">                    
-                        </select>
-                    </div>
-                </div>
-                <button type="button" class="btn btn-danger mt-3" onclick="removeResource(this)">Remove Resource</button> 
-            `;
+                        <div class="row">
+                            <div class="form-group col-md-3">
+                                <label for="${resourceId}_name">Name:</label>
+                                <input type="text" class="form-control" id="${resourceId}_name" name="resource_name_${resourceCounter}" required>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="${resourceId}_amount">Amount:</label>
+                                <input type="number" class="form-control" id="${resourceId}_amount" name="resource_amount_${resourceCounter}" required>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="${resourceId}_cost">Cost per Hour:</label>
+                                <input type="number" class="form-control" id="${resourceId}_cost" name="resource_cost_${resourceCounter}" required>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="${resourceId}_timetable">Timetable:</label>
+                                <select id="${resourceId}_timetable" name="resource_timetable_${resourceCounter}" class="form-control">
+                                </select>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-danger mt-3" onclick="removeResource('${resourceId}')">Remove Resource</button>
+                    `;
             resourcesContainer.appendChild(resourceDiv);
-            // Add an event listener to the input field
-            const resourceNameInput = document.getElementById(`resource_name_${resourceCounter}`); // Use resourceCounter here
-            resourceNameInput.addEventListener('input', updateResourceOptions); 
+
+            // Add resource data to the resourcesData object
+            resourcesData[resourceId] = {
+                name: '',
+                amount: '',
+                cost: '',
+                timetable: '' 
+            };
+
+            // Add event listeners for input fields to update resourcesData
+            document.getElementById(`${resourceId}_name`).addEventListener('input', function() {
+                resourcesData[resourceId].name = this.value;
+                updateResourceOptions(); 
+            });
+            document.getElementById(`${resourceId}_amount`).addEventListener('input', function() {
+                resourcesData[resourceId].amount = this.value;
+            });
+            document.getElementById(`${resourceId}_cost`).addEventListener('input', function() {
+                resourcesData[resourceId].cost = this.value;
+            });
+            document.getElementById(`${resourceId}_timetable`).addEventListener('change', function () {
+                    resourcesData[resourceId].timetable = this.value;
+                    });
+            
+            updateTimetableOptions();
+            updateResourceOptions(); 
         }
 
-        function removeResource(button) {
-            const resourceDiv = button.parentElement;
-            resourceDiv.remove();
+        function removeResource(resourceId) {
+            // Find the resourceDiv to be removed directly using its resourceId
+            const resourceDiv = document.querySelector(`.resource-group[data-resource-id="${resourceId}"]`);
+            if (resourceDiv) { 
+                resourceDiv.remove();
+                delete resourcesData[resourceId];
+                updateResourceOptions();
+            } else {
+                console.error('Resource not found:', resourceId);
+            }
+        }
+
+        // Function to add a resource input to an element
+        function addResourceInput(elementId) {
+            const resourcesContainer = document.querySelector(`.resources-container[data-element-id="${elementId}"]`);
+            const resourceCount = resourcesContainer.querySelectorAll('.resource-input').length + 1;
+            const resourceInput = document.createElement('div');
+            resourceInput.classList.add('resource-input', 'row', 'mb-2');
+            resourceInput.innerHTML = `
+                <div class="form-group col-md-4">
+                    <label for="resourceName_${resourceCount}_${elementId}">Resource Name:</label>
+                    <select class="form-control" id="resourceName_${resourceCount}_${elementId}" name="resourceName_${resourceCount}_${elementId}">
+                        <option value=""></option> 
+                    </select>
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="amountNeeded_${resourceCount}_${elementId}">Amount Needed:</label>
+                    <input type="number" class="form-control" id="amountNeeded_${resourceCount}_${elementId}" name="amountNeeded_${resourceCount}_${elementId}">
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="groupId_${resourceCount}_${elementId}">Group ID:</label>
+                    <input type="text" class="form-control" id="groupId_${resourceCount}_${elementId}" name="groupId_${resourceCount}_${elementId}">
+                </div>
+            `;
+            resourcesContainer.appendChild(resourceInput);
             updateResourceOptions();
         }
 
+        function updateResourceOptions() {
+            const resourceSelects = document.querySelectorAll('.element-group .resource-input select');
+            resourceSelects.forEach(select => {
+                const selectedResourceId = select.value;
+                select.innerHTML = '<option value=""></option>'; // Clear existing options 
+
+                for (const resourceId in resourcesData) {
+                    const resourceName = resourcesData[resourceId].name;
+                    const option = new Option(resourceName, resourceId, false, resourceId === selectedResourceId);
+                    select.add(option);
+                }
+            });
+        }
+
+
+
+
+
+        //TIMETABLE
         function addTimetable() {
             timetableCounter++;
             ruleCounter[timetableCounter] = 0;
             const timetablesContainer = document.getElementById('timetables-container');
             const timetableDiv = document.createElement('div');
-            timetableDiv.classList.add('timetable-group', 'mb-3', 'box'); // Add margin-bottom
+            timetableDiv.classList.add('timetable-group', 'mb-3', 'box'); 
             timetableDiv.innerHTML = `
                 <div class="row">
                     <div class="form-group col-md-12 mb-3">
@@ -482,7 +565,6 @@
             `;
             timetablesContainer.appendChild(timetableDiv);
 
-            // Add an event listener to the input field
             const timetableNameInput = document.getElementById(`timetable_name_${timetableCounter}`);
             timetableNameInput.addEventListener('input', updateTimetableOptions);
         }
@@ -555,24 +637,24 @@
         // ... (previous JavaScript code) ...
 
         function updateTimetableOptions() {
-            // Get all the timetable name input fields
-            let timetableNames = [];
-            for (let i = 0; i <= timetableCounter; i++) {
-                let timetableNameInput = document.getElementById(`timetable_name_${i}`);
-                if (timetableNameInput) { 
-                    timetableNames.push(timetableNameInput.value);
-                }
-            }
             // Update the options for each resource's timetable select
             for (let i = 1; i <= resourceCounter; i++) {
-                let timetableSelect = document.getElementById(`resource_timetable_${i}`);
+                const resourceId = `resource_${i}`; // Get the resource ID
+                const timetableSelect = document.getElementById(`${resourceId}_timetable`);
+                const selectedTimetable = resourcesData[resourceId].timetable; // Get the previously selected timetable ID
+                
                 if (timetableSelect) {
-                    // Clear existing options
-                    timetableSelect.innerHTML = ''; 
+                    timetableSelect.innerHTML = ''; // Clear existing options
+
                     // Add options for each available timetable
-                    timetableNames.forEach(name => {
-                        timetableSelect.add(new Option(name, name));
-                    });
+                    for (let j = 1; j <= timetableCounter; j++) {
+                        const timetableNameInput = document.getElementById(`timetable_name_${j}`);
+                        if (timetableNameInput) {
+                            const timetableName = timetableNameInput.value;
+                            const option = new Option(timetableName, `timetable_${j}`, false, `timetable_${j}` === selectedTimetable);
+                            timetableSelect.add(option);
+                        }
+                    }
                 }
             }
         }
@@ -584,39 +666,6 @@
             if (target.classList.contains('add-resource')) {
                 const elementId = target.dataset.elementId;
                 addResourceInput(elementId);
-            }
-        });
-
-        function addResourceInput(elementId) {
-            const resourcesContainer = document.querySelector(`.resources-container[data-element-id="${elementId}"]`);
-            const resourceCount = resourcesContainer.querySelectorAll('.resource-input').length + 1;
-            const resourceInput = document.createElement('div');
-            resourceInput.classList.add('resource-input', 'row', 'mb-2');
-            resourceInput.innerHTML = `
-                <div class="form-group col-md-4">
-                    <label for="resourceName_${resourceCount}_${elementId}">Resource Name:</label>
-                    <select class="form-control" id="resourceName_${resourceCount}_${elementId}" name="resourceName_${resourceCount}_${elementId}">
-                        <option value=""></option>
-                    </select>
-                </div>
-                <div class="form-group col-md-4">
-                    <label for="amountNeeded_${resourceCount}_${elementId}">Amount Needed:</label>
-                    <input type="number" class="form-control" id="amountNeeded_${resourceCount}_${elementId}" name="amountNeeded_${resourceCount}_${elementId}">
-                </div>
-                <div class="form-group col-md-4">
-                    <label for="groupId_${resourceCount}_${elementId}">Group ID:</label>
-                    <input type="text" class="form-control" id="groupId_${resourceCount}_${elementId}" name="groupId_${resourceCount}_${elementId}">
-                </div>
-            `;
-            resourcesContainer.appendChild(resourceInput);
-        }
-
-        // Duration Distributions for Elements and Catch Events
-        elementsContainer.addEventListener('change', (event) => {
-            const target = event.target;
-            if (target.classList.contains('duration-type') || target.classList.contains('catch-event-duration-type')) {
-                const elementId = target.dataset.elementId;
-                updateDurationParams(elementId, target.classList.contains('catch-event-duration-type'));
             }
         });
 
@@ -791,25 +840,6 @@ for (const processId in bpmn_dict['process_elements']) {
             instanceTypesContainer.appendChild(instanceTypeInput);
         }
 
-        function updateResourceOptions() {
-            // Get all available resource names
-            let resourceNames = [];
-            for (let i = 1; i <= resourceCounter; i++) {
-                let resourceNameInput = document.getElementById(`resource_name_${i}`);
-                if (resourceNameInput) {
-                    resourceNames.push(resourceNameInput.value);
-                }
-            }
-
-            // Update the options for each resource select in the Elements section
-            const resourceSelects = document.querySelectorAll('.element-group .resource-input select');
-            resourceSelects.forEach(select => {
-                select.innerHTML = '<option value=""></option>'; // Clear existing options except default empty
-                resourceNames.forEach(name => {
-                    select.add(new Option(name, name));
-                });
-            });
-        }
         function updateInstanceTypeSelects() {
         // Get all available instance types 
         let instanceTypes = [];
