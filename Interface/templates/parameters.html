@@ -74,7 +74,7 @@
                     <div class="col-md-11">
                         <h2 class="my-5">Instance types</h2>
                     </div>
-                    <div class="col-md-1 d-flex align-items-center justify-content-center">
+                    <div class="col-md-1 d-flex align-items-center justify-content-end">
                         <button type="button" onclick="addInstanceGroup()" class="btn btn-outline-secondary">+</button>
                     </div>
                 </div>
@@ -87,7 +87,7 @@
                     <div class="col-md-11">
                         <h2 class="my-5">Resources</h2>
                     </div>
-                    <div class="col-md-1 d-flex align-items-center justify-content-center">
+                    <div class="col-md-1 d-flex align-items-center justify-content-end">
                         <button type="button" onclick="addResource()" class="btn btn-outline-secondary">+</button>
                     </div>
                 </div>
@@ -100,7 +100,7 @@
                     <div class="col-md-11">
                         <h2 class="my-5">Timetables</h2>
                     </div>
-                    <div class="col-md-1 d-flex align-items-center justify-content-center">
+                    <div class="col-md-1 d-flex align-items-center justify-content-end">
                         <button type="button" onclick="addTimetable()" class="btn btn-outline-secondary">+</button>
                     </div>
                 </div>
@@ -172,7 +172,7 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="form-group col-md-4">
+                                <div class="form-group col-md-3">
                                     <label for="durationTimeUnit_{{ node_id }}">Time Unit:</label>
                                     <select class="form-control" id="durationTimeUnit_{{ node_id }}" name="durationTimeUnit_{{ node_id }}">
                                         <option value="seconds">Seconds</option>
@@ -181,11 +181,11 @@
                                         <option value="days">Days</option>
                                     </select>
                                 </div>
-                                <div class="form-group col-md-4">
+                                <div class="form-group col-md-3">
                                     <label for="durationThreshold_{{ node_id }}">Duration Threshold:</label>
                                     <input type="number" class="form-control" id="durationThreshold_{{ node_id }}" name="durationThreshold_{{ node_id }}" value="">
                                 </div>
-                                <div class="form-group col-md-4">
+                                <div class="form-group col-md-3">
                                     <label for="durationThresholdTimeUnit_{{ node_id }}">Threshold Time Unit:</label>
                                     <select class="form-control" id="durationThresholdTimeUnit_{{ node_id }}" name="durationThresholdTimeUnit_{{ node_id }}">
                                         <option value="seconds">Seconds</option>
@@ -254,7 +254,7 @@
             <div id="catch-events-container">
                 {% for process_id, process_data in bpmn_dict['process_elements'].items() %}
                     {% for node_id, node_data in process_data['node_details'].items() %}
-                        {% if node_data['type'] in ['intermediateCatchEvent', 'startEvent'] and node_data.get('subtype') != 'messageEventDefinition' %}
+                        {% if node_data['type'] in ['intermediateCatchEvent', 'startEvent'] and node_data.get('subtype') not in ['messageEventDefinition', None] %}
                             <div class="catch-event-group mb-3 box" data-element-id="{{ node_id }}" data-process-id="{{ process_id }}">
                                 <h4>
                                     {% if node_data['type'] == 'startEvent' %}
@@ -433,27 +433,74 @@
             resourceDiv.setAttribute('data-resource-id', resourceId);
 
             resourceDiv.innerHTML = `
-                        <div class="row">
-                            <div class="form-group col-md-3">
-                                <label for="${resourceId}_name">Name:</label>
-                                <input type="text" class="form-control" id="${resourceId}_name" name="resource_name_${resourceCounter}" required>
-                            </div>
-                            <div class="form-group col-md-3">
-                                <label for="${resourceId}_amount">Amount:</label>
-                                <input type="number" class="form-control" id="${resourceId}_amount" name="resource_amount_${resourceCounter}" required>
-                            </div>
-                            <div class="form-group col-md-3">
-                                <label for="${resourceId}_cost">Cost per Hour:</label>
-                                <input type="number" class="form-control" id="${resourceId}_cost" name="resource_cost_${resourceCounter}" required>
-                            </div>
-                            <div class="form-group col-md-3">
-                                <label for="${resourceId}_timetable">Timetable:</label>
-                                <select id="${resourceId}_timetable" name="resource_timetable_${resourceCounter}" class="form-control">
-                                </select>
-                            </div>
+                <div class="row">
+                    <div class="form-group col-md-3">
+                        <label for="${resourceId}_name">Name:</label>
+                        <input type="text" class="form-control" id="${resourceId}_name" name="resource_name_${resourceCounter}" required>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="${resourceId}_amount">Amount:</label>
+                        <input type="number" class="form-control" id="${resourceId}_amount" name="resource_amount_${resourceCounter}" required>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="${resourceId}_cost">Cost per Hour:</label>
+                        <input type="number" class="form-control" id="${resourceId}_cost" name="resource_cost_${resourceCounter}" required>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="${resourceId}_timetable">Timetable:</label>
+                        <select id="${resourceId}_timetable" name="resource_timetable_${resourceCounter}" class="form-control">
+                        </select>
+                    </div>
+                </div>
+                <div class="setup-time-container" data-resource-id="${resourceId}">
+                    <h5>Setup Time (optional):</h5>
+                    <div class="row">
+                        <div class="form-group col-md-3">
+                            <label for="${resourceId}_setupTimeType">Type:</label>
+                            <select class="form-control setup-time-type" id="${resourceId}_setupTimeType" name="${resourceId}_setupTimeType" data-resource-id="${resourceId}">
+                                <option value="FIXED">Fixed</option>
+                                <option value="NORMAL">Normal</option>
+                                <option value="EXPONENTIAL">Exponential</option>
+                                <option value="UNIFORM">Uniform</option>
+                                <option value="TRIANGULAR">Triangular</option>
+                                <option value="LOGNORMAL">Log-Normal</option>
+                                <option value="GAMMA">Gamma</option>
+                                <option value="HISTOGRAM">Histogram</option>
+                            </select>
                         </div>
-                        <button type="button" class="btn btn-danger mt-3" onclick="removeResource('${resourceId}')">Remove Resource</button>
-                    `;
+                        <div class="form-group col-md-3 setup-time-param" data-param-type="mean" data-resource-id="${resourceId}">
+                            <label for="${resourceId}_setupTimeMean">Mean:</label>
+                            <input type="number" class="form-control" id="${resourceId}_setupTimeMean" name="${resourceId}_setupTimeMean">
+                        </div>
+                        <div class="form-group col-md-3 setup-time-param" data-param-type="arg1" data-resource-id="${resourceId}" style="display: none;">
+                            <label for="${resourceId}_setupTimeArg1">Arg1:</label>
+                            <input type="number" class="form-control" id="${resourceId}_setupTimeArg1" name="${resourceId}_setupTimeArg1">
+                        </div>
+                        <div class="form-group col-md-3 setup-time-param" data-param-type="arg2" data-resource-id="${resourceId}" style="display: none;">
+                            <label for="${resourceId}_setupTimeArg2">Arg2:</label>
+                            <input type="number" class="form-control" id="${resourceId}_setupTimeArg2" name="${resourceId}_setupTimeArg2">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="${resourceId}_setupTimeUnit">Time Unit:</label>
+                            <select class="form-control" id="${resourceId}_setupTimeUnit" name="${resourceId}_setupTimeUnit">
+                                <option value="seconds">Seconds</option>
+                                <option value="minutes">Minutes</option>
+                                <option value="hours">Hours</option>
+                                <option value="days">Days</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="${resourceId}_maxUsage">Max Usage before setup time is needed:</label>
+                            <input type="number" class="form-control" id="${resourceId}_maxUsage" name="resource_maxUsage_${resourceCounter}">
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" class="btn btn-danger mt-3" onclick="removeResource('${resourceId}')">Remove Resource</button>
+            `;
+
             resourcesContainer.appendChild(resourceDiv);
 
             // Add resource data to the resourcesData object
@@ -461,28 +508,61 @@
                 name: '',
                 amount: '',
                 cost: '',
-                timetable: '' 
+                timetable: '',
+                setupTimeType: 'FIXED', // Default setupTimeType 
+                setupTimeMean: '',
+                setupTimeArg1: '',
+                setupTimeArg2: '',
+                setupTimeUnit: 'seconds', // Default setupTimeUnit
+                maxUsage: '' 
             };
 
             // Add event listeners for input fields to update resourcesData
-            document.getElementById(`${resourceId}_name`).addEventListener('input', function() {
+            document.getElementById(`${resourceId}_name`).addEventListener('input', function () {
                 resourcesData[resourceId].name = this.value;
-                updateResourceOptions(); 
+                updateResourceOptions();
             });
-            document.getElementById(`${resourceId}_amount`).addEventListener('input', function() {
+            document.getElementById(`${resourceId}_amount`).addEventListener('input', function () {
                 resourcesData[resourceId].amount = this.value;
             });
-            document.getElementById(`${resourceId}_cost`).addEventListener('input', function() {
+            document.getElementById(`${resourceId}_cost`).addEventListener('input', function () {
                 resourcesData[resourceId].cost = this.value;
             });
             document.getElementById(`${resourceId}_timetable`).addEventListener('change', function () {
-                    resourcesData[resourceId].timetable = this.value;
-                    });
-            
-            updateTimetableOptions();
-            updateResourceOptions(); 
-        }
+                resourcesData[resourceId].timetable = this.value;
+            });
+            document.getElementById(`${resourceId}_setupTimeType`).addEventListener('change', function () {
+                resourcesData[resourceId].setupTimeType = this.value;
+                updateSetupTimeParams(resourceId); // Update params based on new type
+            });
+            document.getElementById(`${resourceId}_setupTimeMean`).addEventListener('input', function () {
+                resourcesData[resourceId].setupTimeMean = this.value;
+            });
+            document.getElementById(`${resourceId}_setupTimeArg1`).addEventListener('input', function () {
+                resourcesData[resourceId].setupTimeArg1 = this.value;
+            });
+            document.getElementById(`${resourceId}_setupTimeArg2`).addEventListener('input', function () {
+                resourcesData[resourceId].setupTimeArg2 = this.value;
+            });
+            document.getElementById(`${resourceId}_setupTimeUnit`).addEventListener('change', function () {
+                resourcesData[resourceId].setupTimeUnit = this.value;
+            });
+            document.getElementById(`${resourceId}_maxUsage`).addEventListener('input', function () {
+                resourcesData[resourceId].maxUsage = this.value;
+            });
 
+
+            // Add event listener for setup time type change
+            const setupTimeTypeSelect = document.getElementById(`${resourceId}_setupTimeType`);
+            setupTimeTypeSelect.addEventListener('change', (event) => {
+                const targetResourceId = event.target.dataset.resourceId;
+                updateSetupTimeParams(targetResourceId);
+            });
+
+            // Call updateTimetableOptions to update timetable selections
+            updateTimetableOptions();
+            updateResourceOptions();
+        } 
         function removeResource(resourceId) {
             // Find the resourceDiv to be removed directly using its resourceId
             const resourceDiv = document.querySelector(`.resource-group[data-resource-id="${resourceId}"]`);
@@ -492,6 +572,54 @@
                 updateResourceOptions();
             } else {
                 console.error('Resource not found:', resourceId);
+            }
+        }
+
+        function updateSetupTimeParams(resourceId) {
+            const selectedType = document.getElementById(`${resourceId}_setupTimeType`).value;
+            const setupTimeContainer = document.querySelector(`.setup-time-container[data-resource-id="${resourceId}"]`);
+
+            const meanParam = setupTimeContainer.querySelector('.setup-time-param[data-param-type="mean"]');
+            const arg1Param = setupTimeContainer.querySelector('.setup-time-param[data-param-type="arg1"]');
+            const arg2Param = setupTimeContainer.querySelector('.setup-time-param[data-param-type="arg2"]');
+            const meanLabel = meanParam.querySelector('label');
+            const arg1Label = arg1Param.querySelector('label');
+
+            // Reset to defaults: Show 'mean', hide 'arg1' and 'arg2'
+            meanParam.style.display = 'block';
+            arg1Param.style.display = 'none';
+            arg2Param.style.display = 'none';
+            meanLabel.textContent = 'Mean:'; 
+
+            if (selectedType === 'FIXED') {
+                meanLabel.textContent = 'Amount:'; 
+            } else if (selectedType === 'NORMAL') {
+                arg1Param.style.display = 'block';
+                arg1Label.textContent = 'Std. Deviation:';
+            } else if (selectedType === 'UNIFORM') {
+                arg1Param.style.display = 'block';
+                arg2Param.style.display = 'block';
+                arg1Label.textContent = 'Low:';
+                arg2Param.querySelector('label').textContent = 'High:';
+            } else if (selectedType === 'TRIANGULAR') {
+                meanLabel.textContent = 'Mode:';
+                arg1Param.style.display = 'block';
+                arg2Param.style.display = 'block';
+                arg1Label.textContent = 'Low:';
+                arg2Param.querySelector('label').textContent = 'High:';
+            } else if (selectedType === 'LOGNORMAL') {
+                arg1Param.style.display = 'block';
+                arg1Label.textContent = 'Variance:';
+            } else if (selectedType === 'GAMMA') {
+                arg1Param.style.display = 'block';
+                arg1Label.textContent = 'Variance:';
+            } else if (selectedType === 'HISTOGRAM') {
+                arg1Param.style.display = 'block';
+                arg2Param.style.display = 'block';
+                arg1Label.textContent = 'Bin Edges (comma-separated):';
+                arg2Param.querySelector('label').textContent = 'Frequencies (comma-separated):';
+            } else { 
+                console.error(`Unknown distribution type: ${selectedType}`); 
             }
         }
 
@@ -634,7 +762,6 @@
                 ruleDiv.remove(); 
             }
         }
-        // ... (previous JavaScript code) ...
 
         function updateTimetableOptions() {
             // Update the options for each resource's timetable select
@@ -737,68 +864,81 @@
     } 
 }
 
-// Event Listener Attachment:
-document.addEventListener('DOMContentLoaded', () => { 
-    const bpmn_dict = JSON.parse('{{ bpmn_dict | tojson | safe}}'); 
-    const gatewayFlows = {}; 
+document.addEventListener('DOMContentLoaded', () => {
+    const bpmn_dict = JSON.parse('{{ bpmn_dict | tojson | safe}}');
+    const gatewaysContainer = document.getElementById('gateways-container');
 
-for (const processId in bpmn_dict['process_elements']) {
-    const processData = bpmn_dict['process_elements'][processId];
-
-    for (const flowId in bpmn_dict['sequence_flows']) {
-        const flowData = bpmn_dict['sequence_flows'][flowId];
-        const sourceGatewayId = flowData['sourceRef'];
-
-        if (sourceGatewayId in processData['node_details'] &&
-            ['exclusiveGateway', 'inclusiveGateway'].includes(processData['node_details'][sourceGatewayId]['type'])
-        ) {
-            if (!(sourceGatewayId in gatewayFlows)) {
-                gatewayFlows[sourceGatewayId] = [];
+    // Helper function to find a node within a process or its subprocess
+    function findNode(processData, nodeId) {
+        if (processData['node_details'][nodeId]) {
+            return processData['node_details'][nodeId];
+        } else {
+            for (const subProcessId in processData['node_details']) {
+                const subProcess = processData['node_details'][subProcessId];
+                if (subProcess['type'] === 'subProcess' && 
+                    subProcess['subprocess_details'][nodeId]) {
+                    return subProcess['subprocess_details'][nodeId];
+                }
             }
-            gatewayFlows[sourceGatewayId].push(flowData);
         }
+        return null; 
     }
 
-    for (const gatewayId in gatewayFlows) {
-        const outgoingFlows = gatewayFlows[gatewayId];
+    // Loop through each process in the BPMN
+    for (const processId in bpmn_dict['process_elements']) {
+        const processData = bpmn_dict['process_elements'][processId];
 
-        if (outgoingFlows.length > 1) { 
-            outgoingFlows.forEach(flowData => {
-                const gatewayData = processData['node_details'][gatewayId];
-                const targetRef = flowData['targetRef'];
-                const targetName = bpmn_dict['process_elements'][processId]['node_details'][targetRef] ? 
-                                  bpmn_dict['process_elements'][processId]['node_details'][targetRef]['name'] : 
-                                  'Unknown Target';
+        // Loop through each sequence flow
+        for (const flowId in bpmn_dict['sequence_flows']) {
+            const flowData = bpmn_dict['sequence_flows'][flowId];
+            const sourceId = flowData['sourceRef'];
+            const sourceNode = findNode(processData, sourceId); 
 
-                const gatewayDiv = `
-                    <div class="gateway-group mb-3 box" data-flow-id="${flowData['id']}" data-process-id="${processId}">
-                        <h4>Gateway: ${gatewayData['name']} (ID: ${gatewayId}) to
-                            ${targetName} (ID: ${targetRef})
-                        </h4>
-                        <div class="row">
-                            <div class="form-group col-md-6">
-                                <label for="executionProbability_${flowData['id']}">Execution Probability (0 to 1, i.e. 0.5):</label>
-                                <input type="number" step="0.01" min="0" max="1" class="form-control" id="executionProbability_${flowData['id']}" name="executionProbability_${flowData['id']}" required>
-                            </div>
-                        <div class="instance-types-container col-md-6" data-flow-id="${flowData['id']}">
-                            <div class="instance-type-input row mb-2">
-                                <div class="form-group">
-                                    <label for="forcedInstanceType_${flowData['id']}">Forced Instance Types:</label>
-                                    <select class="form-control" id="forcedInstanceType_${flowData['id']}_1" name="forcedInstanceType_${flowData['id']}_1">
-                                        <option value=""></option>    
-                                    </select>
+            // Check if the source node is an XOR or Inclusive gateway and has multiple outgoing flows
+            if (sourceNode && ['exclusiveGateway', 'inclusiveGateway'].includes(sourceNode['type'])) {
+                const outgoingFlows = Object.values(bpmn_dict['sequence_flows']).filter(
+                    flow => flow.sourceRef === sourceId
+                );
+
+                if (outgoingFlows.length >= 2) { 
+                    const targetRef = flowData['targetRef'];
+                    const targetNode = findNode(processData, targetRef); 
+                    const targetName = targetNode ? targetNode['name'] : 'Unknown Target';
+
+                    // Determine gateway type for display
+                    const gatewayTypeDisplay = sourceNode['type'] === 'exclusiveGateway'
+                        ? 'Exclusive Gateway'
+                        : 'Inclusive Gateway';
+
+                    const gatewayDiv = `
+                        <div class="gateway-group mb-3 box" data-flow-id="${flowData['id']}" data-process-id="${processId}">
+                            <h4>${gatewayTypeDisplay}: ${sourceNode['name']} (ID: ${sourceId}) to
+                                ${targetName} (ID: ${targetRef})
+                            </h4>
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label for="executionProbability_${flowData['id']}">Execution Probability (0 to 1, i.e. 0.5):</label>
+                                    <input type="number" step="0.01" min="0" max="1" class="form-control" id="executionProbability_${flowData['id']}" name="executionProbability_${flowData['id']}" required>
+                                </div>
+                                <div class="instance-types-container col-md-6" data-flow-id="${flowData['id']}">
+                                    <div class="instance-type-input row mb-2">
+                                        <div class="form-group">
+                                            <label for="forcedInstanceType_${flowData['id']}">Forced Instance Types:</label>
+                                            <select class="form-control" id="forcedInstanceType_${flowData['id']}_1" name="forcedInstanceType_${flowData['id']}_1">
+                                                <option value=""></option>    
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+                            <button type="button" class="btn btn-secondary btn-sm add-instance-type" data-flow-id="${flowData['id']}">Add Instance Type</button>
                         </div>
-                    </div>
-                        <button type="button" class="btn btn-secondary btn-sm add-instance-type" data-flow-id="${flowData['id']}">Add Instance Type</button>
-                    </div>
-                `;
-                gatewaysContainer.innerHTML += gatewayDiv; 
-            });
-        }
+                    `;
+                    gatewaysContainer.innerHTML += gatewayDiv;
+                }
+            }
+        } 
     }
-}
 
 
     const durationTypeSelects = document.querySelectorAll('.duration-type, .catch-event-duration-type');
