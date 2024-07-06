@@ -5,31 +5,6 @@ import json
 import sys
 import os
 import diagbpTagGenerator
-
-
-ET.register_namespace('', 'http://www.omg.org/spec/BPMN/20100524/MODEL')
-ET.register_namespace('bpmndi', 'http://www.omg.org/spec/BPMN/20100524/DI')
-ET.register_namespace('dc', 'http://www.omg.org/spec/DD/20100524/DC')
-ET.register_namespace('di', 'http://www.omg.org/spec/DD/20100524/DI')
-
-
-tagName="diagbp"
-extraPath="../json/extra.json"
-diagbpPath="../json/diagbp.json"
-bpmnPath="../json/bpmn.json"
-
-json_dir = "../json"  # Relative path to the json directory
-# Create the directory if it doesn't exist
-if not os.path.exists(json_dir):
-    os.makedirs(json_dir)
-
-import sys
-from bpmn_python import bpmn_diagram_rep as diagram
-import xml.etree.ElementTree as ET
-import json
-import sys
-import os
-import diagbpTagGenerator
 import time
 import subprocess 
 
@@ -42,6 +17,7 @@ tagName = "diagbp"
 extraPath = "../json/extra.json"
 diagbpPath = "../json/diagbp.json"
 bpmnPath = "../json/bpmn.json"
+DOWNLOAD_FOLDER="../download"
 
 json_dir = "../json"
 if not os.path.exists(json_dir):
@@ -137,7 +113,7 @@ def process_bpmn(name):
         }
     bpmnDictionary['process_elements'] = process_elements
 
-    stopFlag=False
+    noDiagBPTag=False
     # Print the dictionary
     with open(bpmnPath, "w") as outfile:
         json.dump(bpmnDictionary, outfile, indent=4)
@@ -151,22 +127,32 @@ def process_bpmn(name):
         with open(diagbpPath, "w") as outfile:
             outfile.write(diagbp_str)
     else:
-        """
-        diagbpTagGenerator.diagbp(diagbpPath, bpmnDictionary)
-        with open(diagbpPath, 'r') as f:
-            diagbp_text = f.read()
+        noDiagBPTag=True
+
+    if not noDiagBPTag:
+        if os.path.exists(extraPath):
+            with open(extraPath, 'r') as f:
+                diagbp_text = f.read()
+                f.seek(0)
+                extra=json.load(f)
+        else:
+            with open(diagbpPath, 'r') as f:
+                diagbp_text = f.read()
+                f.seek(0)
+                extra=json.load(f)
+
+        extra_json_path = os.path.join(DOWNLOAD_FOLDER, "extra.json")
+        with open(extra_json_path, 'w') as f:
+            json.dump(extra, f)
+
         with open(name, 'r') as file:
             bpmn_content = file.read()
-        bpmn_content = bpmn_content.replace('</bpmn:definitions>', f'<diagbp>{diagbp_text}</diagbp>\n</bpmn:definitions>')
-        confirm=""
-        while confirm=="":
-            confirm = input("Do you want to save those simulation parameters into the bpmn file? (Y/N) ")
-        if (confirm=="y" or confirm=="Y"):
-            with open(name, 'w') as file:
-                file.write(bpmn_content)
-        """
-        stopFlag=True
-    if not stopFlag:
+        if diagbp_tag is None:
+            bpmn_content = bpmn_content.replace('</bpmn:definitions>', f'<diagbp>{diagbp_text}</diagbp>\n</bpmn:definitions>')
+        bpmn_file_path = os.path.join(DOWNLOAD_FOLDER, "file.bpmn")
+        with open(bpmn_file_path, 'w') as file:
+            file.write(bpmn_content)
+
         cmd = ["/usr/local/python3.11/bin/python3.11", "/app/3.11/main.py"]
         try:
             process = subprocess.run(

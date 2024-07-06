@@ -11,10 +11,13 @@
     <div class="container">
         <h1 class="text-center mt-5">Simulation Complete!</h1>
         <p class="text-center">Your simulation is complete. Download the logs below:</p>
-
         <div class="text-center">
             <a href="{{ url_for('download_logs') }}" class="btn btn-primary">Download Logs</a>
-            <br><br>
+            <a href="{{ url_for('download_bpmn_with_parameters') }}" class="btn btn-secondary">Download BPMN with parameters</a>
+            <a href="{{ url_for('download_extra_json') }}" class="btn btn-secondary">Download extra.json</a> 
+        </div>
+        <br><br>
+        <div class="text-center">
             <a href="{{ url_for('index') }}" class="btn btn-secondary">Go back home</a>
         </div>
     </div>

@@ -9,6 +9,7 @@ import json
 
 app = Flask(__name__, template_folder='../templates', static_folder='../static')
 JSON_FOLDER='../json'
+DOWNLOAD_FOLDER='../download'
 UPLOAD_FOLDER = '../uploads'
 PREUPLOAD_FOLDER = '../preupload'
 LOGS_FOLDER = '../logs' # Directory for logs within the container
@@ -20,6 +21,7 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(LOGS_FOLDER, exist_ok=True)
 os.makedirs(PREUPLOAD_FOLDER, exist_ok=True)
 os.makedirs(JSON_FOLDER, exist_ok=True)
+os.makedirs(DOWNLOAD_FOLDER, exist_ok=True)
 
 def wait_for_and_remove_flag():
     # Wait for 'flag.txt' to appear in 'uploads' folder, created by main.py after simulation is over
@@ -38,8 +40,14 @@ def index():
     for filename in os.listdir(PREUPLOAD_FOLDER): # remove old log files
         file_path = os.path.join(PREUPLOAD_FOLDER, filename)
         os.remove(file_path)
+    for filename in os.listdir(DOWNLOAD_FOLDER): # remove old log files
+        file_path = os.path.join(DOWNLOAD_FOLDER, filename)
+        os.remove(file_path)
     for filename in os.listdir(LOGS_FOLDER): # remove old log files
         file_path = os.path.join(LOGS_FOLDER, filename)
+        os.remove(file_path)
+    for filename in os.listdir(JSON_FOLDER): # remove old log files
+        file_path = os.path.join(JSON_FOLDER, filename)
         os.remove(file_path)
     
     try:
@@ -65,7 +73,7 @@ def index():
             diagbpTag = root.find('.//' + tagName)
             if diagbpTag is not None or extra: #se è presente o il tag nel file o l'extra.json file
                 if extra:
-                    extra_path = os.path.join(JSON_FOLDER, extra.filename)
+                    extra_path = os.path.join(JSON_FOLDER, "extra.json")
                     extra.save(extra_path)
                 # Save uploaded BPMN
                 bpmn_path = os.path.join(UPLOAD_FOLDER, bpmn_file.filename)
@@ -220,6 +228,20 @@ def download_logs():
     response = send_from_directory(LOGS_FOLDER, zip_filename, as_attachment=True)
 
     return response 
+
+@app.route('/download_bpmn_with_parameters')
+def download_bpmn_with_parameters():
+    for filename in os.listdir(DOWNLOAD_FOLDER):
+        if filename.endswith('.bpmn'):
+            return send_from_directory(DOWNLOAD_FOLDER, filename, as_attachment=True)
+    return "BPMN file not found", 404
+
+@app.route('/download_extra_json')
+def download_extra_json():
+    for filename in os.listdir(DOWNLOAD_FOLDER):
+        if filename.endswith('.json'):
+            return send_from_directory(DOWNLOAD_FOLDER, filename, as_attachment=True)
+    return "JSON file not found", 404
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')

@@ -8,6 +8,7 @@ services:
       - uploads:/app/shared
       - logs:/app/logs
       - json:/app/json
+      - download:/app/download
 
   interface:
     build:
@@ -19,6 +20,7 @@ services:
       - uploads:/app/uploads
       - logs:/app/logs
       - json:/app/json
+      - download:/app/download
     ports:
       - "5000:5000"
     depends_on:
@@ -28,3 +30,4 @@ volumes:
   uploads:
   logs:
   json:
+  download:
