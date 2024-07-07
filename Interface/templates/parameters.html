@@ -332,12 +332,16 @@
         const arg2Group = document.getElementById('arg2-group');
         const meanLabel = document.querySelector('#mean-group label');
         const arg1Label = document.querySelector('#arg1-group label');
+        
 
         const now = new Date();
         const defaultDateTime = now.toISOString().slice(0, 16);
         document.getElementById('start_date').value = defaultDateTime;
 
         timeTypeSelect.addEventListener('change', () => {
+            meanGroup.querySelector('input').value = '';
+            arg1Group.querySelector('input').value = '';  
+            arg2Group.querySelector('input').value = '';
             const selectedType = timeTypeSelect.value;
             meanLabel.textContent = 'Mean:'; // Reset label text
 
@@ -584,6 +588,9 @@
             const arg2Param = setupTimeContainer.querySelector('.setup-time-param[data-param-type="arg2"]');
             const meanLabel = meanParam.querySelector('label');
             const arg1Label = arg1Param.querySelector('label');
+            meanParam.querySelector('input').value = '';
+            arg1Param.querySelector('input').value = '';  
+            arg2Param.querySelector('input').value = '';
 
             // Reset to defaults: Show 'mean', hide 'arg1' and 'arg2'
             meanParam.style.display = 'block';
@@ -796,7 +803,7 @@
             }
         });
 
-        function updateDurationParams(elementId, isCatchEvent) {
+function updateDurationParams(elementId, isCatchEvent) {
     // Determine the ID of the select element based on whether it's a catch event or not
     const typeSelectId = isCatchEvent 
         ? `catchEventDurationType_${elementId}` 
@@ -832,6 +839,9 @@
     meanParam.style.display = 'block';
     arg1Param.style.display = 'none';
     arg2Param.style.display = 'none';
+    meanParam.querySelector('input').value = '';
+    arg1Param.querySelector('input').value = '';  
+    arg2Param.querySelector('input').value = '';
 
     // Update visibility and labels based on selectedType
     if (selectedType === 'FIXED') {
@@ -911,27 +921,27 @@ document.addEventListener('DOMContentLoaded', () => {
                         : 'Inclusive Gateway';
 
                     const gatewayDiv = `
-                        <div class="gateway-group mb-3 box" data-flow-id="${flowData['id']}" data-process-id="${processId}">
+                        <div class="gateway-group mb-3 box" data-flow-id="${flowId}" data-process-id="${processId}">
                             <h4>${gatewayTypeDisplay}: ${sourceNode['name']} (ID: ${sourceId}) to
                                 ${targetName} (ID: ${targetRef})
                             </h4>
                             <div class="row">
                                 <div class="form-group col-md-6">
-                                    <label for="executionProbability_${flowData['id']}">Execution Probability (0 to 1, i.e. 0.5):</label>
-                                    <input type="number" step="0.01" min="0" max="1" class="form-control" id="executionProbability_${flowData['id']}" name="executionProbability_${flowData['id']}" required>
+                                    <label for="executionProbability_${flowId}">Execution Probability (0 to 1, i.e. 0.5):</label>
+                                    <input type="number" step="0.01" min="0" max="1" class="form-control" id="executionProbability_${flowId}" name="executionProbability_${flowId}" required>
                                 </div>
-                                <div class="instance-types-container col-md-6" data-flow-id="${flowData['id']}">
+                                <div class="instance-types-container col-md-6" data-flow-id="${flowId}">
                                     <div class="instance-type-input row mb-2">
                                         <div class="form-group">
-                                            <label for="forcedInstanceType_${flowData['id']}">Forced Instance Types:</label>
-                                            <select class="form-control" id="forcedInstanceType_${flowData['id']}_1" name="forcedInstanceType_${flowData['id']}_1">
+                                            <label for="forcedInstanceType_${flowId}">Forced Instance Types:</label>
+                                            <select class="form-control" id="forcedInstanceType_${flowId}_1" name="forcedInstanceType_${flowId}_1">
                                                 <option value=""></option>    
                                             </select>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <button type="button" class="btn btn-secondary btn-sm add-instance-type" data-flow-id="${flowData['id']}">Add Instance Type</button>
+                            <button type="button" class="btn btn-secondary btn-sm add-instance-type" data-flow-id="${flowId}">Add Instance Type</button>
                         </div>
                     `;
                     gatewaysContainer.innerHTML += gatewayDiv;
@@ -974,12 +984,14 @@ document.addEventListener('DOMContentLoaded', () => {
             instanceTypeInput.classList.add('instance-type-input', 'row', 'mb-2');
             instanceTypeInput.innerHTML = `
                 <div class="form-group col-md-12">
-                    <input type="text" class="form-control" placeholder="Instance Type" name="forcedInstanceType_${flowId}_${instanceTypeCount}">
+                    <select class="form-control" id="forcedInstanceType_${flowId}_${instanceTypeCount}" name="forcedInstanceType_${flowId}_${instanceTypeCount}">
+                        <option value=""></option> 
+                    </select>
                 </div>
             `;
             instanceTypesContainer.appendChild(instanceTypeInput);
+            updateInstanceTypeSelects(); // Update the select options
         }
-
         function updateInstanceTypeSelects() {
         // Get all available instance types 
         let instanceTypes = [];

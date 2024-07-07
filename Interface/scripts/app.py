@@ -93,17 +93,19 @@ def results():
     wait_for_and_remove_flag()
     return render_template('results.html')
 
+
 @app.route('/parameters', methods=['GET', 'POST'])
 def parameters():
     bpmn_filename = os.listdir(PREUPLOAD_FOLDER)[0]
     with open(os.path.join(JSON_FOLDER, "bpmn.json"), 'r') as f:
         bpmn_dict = json.load(f)
+
     if request.method == 'POST':
         diagbp_data = {
             "processInstances": [],
             "startDateTime": request.form.get('start_date'),
             "arrivalRateDistribution": {
-                "type": request.form.get('inter_arrival_time_type'),
+                "type": request.form.get('inter_arrival_time_type').lower(),  # Convert to lowercase
                 "mean": request.form.get('inter_arrival_time_mean'),
                 "arg1": request.form.get('inter_arrival_time_arg1'),
                 "arg2": request.form.get('inter_arrival_time_arg2'),
@@ -116,7 +118,7 @@ def parameters():
             "catchEvents": {}
         }
 
-        # Process instance types
+         # Process instance types
         for key, value in request.form.items():
             if key.startswith('instance_type_'):
                 instance_type = value
@@ -128,25 +130,6 @@ def parameters():
                     "count": instance_count
                 })
 
-        # Process resources
-        for key, value in request.form.items():
-            if key.startswith('resource_name_'):
-                resource_name = value
-                resource_amount_key = key.replace('resource_name_', 'resource_amount_')
-                resource_cost_key = key.replace('resource_name_', 'resource_cost_')
-                resource_timetable_key = key.replace('resource_name_', 'resource_timetable_')
-
-                resource_amount = int(request.form.get(resource_amount_key))
-                resource_cost = float(request.form.get(resource_cost_key))
-                resource_timetable = request.form.get(resource_timetable_key)
-
-                diagbp_data["resources"].append({
-                    "name": resource_name,
-                    "totalAmount": resource_amount,
-                    "costPerHour": resource_cost,
-                    "timetableName": resource_timetable
-                })
-               
         # Timetables
         for key, value in request.form.items():
             if key.startswith('timetable_name_'):
@@ -174,41 +157,137 @@ def parameters():
                     "rules": timetable_rules
                 })
 
-        # Process elements (example, needs to be adapted to your BPMN)
-        for element_id in bpmn_dict['process_elements']:
-            # Get element data from BPMN or form (example)
-            element_name = element_id  
-            diagbp_data["elements"].append({
-                "elementId": element_id,
-                "worklistId": "default_worklist",  
-                "fixedCost": "0",  
-                "costThreshold": "0",
-                "durationDistribution": {
-                    "type": "FIXED",  
-                    "mean": "10",  
-                    "arg1": "",
-                    "arg2": "",
-                    "timeUnit": "seconds" 
-                },
-                "durationThreshold": "0",
-                "durationThresholdTimeUnit": "seconds",
-                "resourceIds": []  
+
+        # Process resources 
+        for key, value in request.form.items():
+            if key.startswith('resource_name_'):
+                resource_index = key.split("_")[2]  # Extract the resource index from the key
+
+                resource_name = value 
+                resource_amount = int(request.form.get(f'resource_amount_{resource_index}'))
+                resource_cost = float(request.form.get(f'resource_cost_{resource_index}'))
+                resource_timetable = request.form.get(f'resource_timetable_{resource_index}')
+
+                # Setup Time parameters
+                setup_time_type = request.form.get(f'resource_{resource_index}_setupTimeType')
+                setup_time_mean = request.form.get(f'resource_{resource_index}_setupTimeMean')
+                setup_time_arg1 = request.form.get(f'resource_{resource_index}_setupTimeArg1')
+                setup_time_arg2 = request.form.get(f'resource_{resource_index}_setupTimeArg2')
+                setup_time_unit = request.form.get(f'resource_{resource_index}_setupTimeUnit')
+                max_usage = request.form.get(f'resource_maxUsage_{resource_index}')
+
+                diagbp_data["resources"].append({
+                    "name": resource_name,
+                    "totalAmount": resource_amount,
+                    "costPerHour": resource_cost,
+                    "timetableName": resource_timetable,
+                    "setupTime": {
+                        "type": setup_time_type.lower() if setup_time_type else "",
+                        "mean": setup_time_mean,
+                        "arg1": setup_time_arg1,
+                        "arg2": setup_time_arg2,
+                        "timeUnit": setup_time_unit
+                    },
+                    "maxUsage": max_usage 
+                })
+
+        # Process elements (including those within subprocesses - iterative approach)
+        for process_id, process_data in bpmn_dict['process_elements'].items():
+            nodes_to_process = [(node_id, node_data) for node_id, node_data in process_data['node_details'].items()]
+            while nodes_to_process:
+                node_id, node_data = nodes_to_process.pop()
+
+                if node_data['type'] == 'task':
+                    # Process task element
+                    element_data = {
+                        "elementId": node_id,
+                        "worklistId": request.form.get(f'worklistId_{node_id}', ''),
+                        "fixedCost": request.form.get(f'fixedCost_{node_id}', ''),
+                        "costThreshold": request.form.get(f'costThreshold_{node_id}', ''),
+                        "durationDistribution": {
+                            "type": request.form.get(f'durationType_{node_id}', 'FIXED').lower(),
+                            "mean": request.form.get(f'durationMean_{node_id}', ''),
+                            "arg1": request.form.get(f'durationArg1_{node_id}', ''),
+                            "arg2": request.form.get(f'durationArg2_{node_id}', ''),
+                            "timeUnit": request.form.get(f'durationTimeUnit_{node_id}', 'seconds')
+                        },
+                        "durationThreshold": request.form.get(f'durationThreshold_{node_id}', ''),
+                        "durationThresholdTimeUnit": request.form.get(f'durationThresholdTimeUnit_{node_id}', 'seconds'),
+                        "resourceIds": []
+                    }
+
+                    # Process resources for the current element
+                    i = 1
+                    while request.form.get(f'resourceName_{i}_{node_id}'):
+                        resource_name = request.form.get(f'resourceName_{i}_{node_id}')
+                        amount_needed = request.form.get(f'amountNeeded_{i}_{node_id}')
+                        group_id = request.form.get(f'groupId_{i}_{node_id}')
+                        if resource_name and amount_needed:
+                            element_data["resourceIds"].append({
+                                "resourceName": resource_name,
+                                "amountNeeded": amount_needed,
+                                "groupId": group_id
+                            })
+                        i += 1
+                    diagbp_data["elements"].append(element_data)
+
+                elif node_data['type'] == 'subProcess':
+                    # Add subprocess tasks to the nodes_to_process list
+                    for sub_node_id, sub_node_data in node_data['subprocess_details'].items():
+                        nodes_to_process.append((sub_node_id, sub_node_data))
+
+
+
+        # Process sequence flows
+        for flow_id in bpmn_dict['sequence_flows']:
+            execution_probability = request.form.get(f'executionProbability_{flow_id}', '1')
+            forced_instance_types = []
+            i = 1
+            while request.form.get(f'forcedInstanceType_{flow_id}_{i}'):
+                forced_instance_type = request.form.get(f'forcedInstanceType_{flow_id}_{i}')
+                if forced_instance_type: 
+                    forced_instance_types.append({"type": forced_instance_type})
+                i += 1
+
+            diagbp_data["sequenceFlows"].append({
+                "elementId": flow_id,
+                "executionProbability": execution_probability,
+                "types": forced_instance_types
             })
+            
+        # Process catch events (iterative approach)
+        for process_id, process_data in bpmn_dict['process_elements'].items():
+            nodes_to_process = [(node_id, node_data) for node_id, node_data in process_data['node_details'].items()]
+            while nodes_to_process:
+                node_id, node_data = nodes_to_process.pop()
+                if node_data['type'] in ['intermediateCatchEvent', 'startEvent'] and \
+                   node_data.get('subtype') not in ['messageEventDefinition', None]:
+                    diagbp_data["catchEvents"][node_id] = {
+                        "type": request.form.get(f'catchEventDurationType_{node_id}', 'FIXED').lower(),
+                        "mean": request.form.get(f'catchEventDurationMean_{node_id}', ''),
+                        "arg1": request.form.get(f'catchEventDurationArg1_{node_id}', ''),
+                        "arg2": request.form.get(f'catchEventDurationArg2_{node_id}', ''),
+                        "timeUnit": request.form.get(f'catchEventDurationTimeUnit_{node_id}', 'seconds')
+                    }
+                elif node_data['type'] == 'subProcess':
+                    for sub_node_id, sub_node_data in node_data['subprocess_details'].items():
+                        nodes_to_process.append((sub_node_id, sub_node_data))
+
+        # Logging option
+        diagbp_data["logging_opt"] = request.form.get('logging_opt', 0)  # Default to 0 (disabled)
 
         source_path = os.path.join(PREUPLOAD_FOLDER, bpmn_filename)
         destination_path = os.path.join(UPLOAD_FOLDER, bpmn_filename)
-        
-        #Write to upload folder so that diagbp can simulate it
+
         with open(destination_path, 'w') as file:
             bpmn_content = bpmn_dict.replace('</bpmn:definitions>', f'<diagbp>{diagbp_data}</diagbp>\n</bpmn:definitions>')
             file.write(bpmn_content)
-        
-        #Remove file from preupload folder
-        os.remove(source_path)    
+        os.remove(source_path)  
 
         return redirect(url_for('results'))
 
     return render_template('parameters.html', bpmn_dict=bpmn_dict)
+   
 
 @app.route('/download_logs')
 def download_logs():
