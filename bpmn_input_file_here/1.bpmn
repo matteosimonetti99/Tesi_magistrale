@@ -201,7 +201,7 @@
         }
     ],
     "catchEvents": {},
-    "logging_opt": 1
+    "logging_opt": 0
 }</diagbp>
 
 </bpmn:definitions>
