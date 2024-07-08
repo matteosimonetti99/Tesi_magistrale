@@ -259,4 +259,222 @@
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
+<diagbp>{
+  "processInstances": [
+      {
+          "type": "A",
+          "count": "5"
+      }
+  ],
+  "startDateTime": "2024-05-31T14:16:00",
+  "arrivalRateDistribution": {
+      "type": "FIXED",
+      "mean": "5",
+      "arg1": "",
+      "arg2": "",
+      "timeUnit": "minutes"
+  },
+  "timetables": [
+      {
+          "name": "tt1",
+          "rules": [
+              {
+                  "fromTime": "10:00:00",
+                  "toTime": "19:00:00",
+                  "fromWeekDay": "MONDAY",
+                  "toWeekDay": "FRIDAY"
+              }
+          ]
+      },
+      {
+          "name": "tt2",
+          "rules": [
+              {
+                  "fromTime": "14:20:00",
+                  "toTime": "19:00:00",
+                  "fromWeekDay": "MONDAY",
+                  "toWeekDay": "FRIDAY"
+              }
+          ]
+      }
+  ],
+  "resources": [
+      {
+          "name": "res1",
+          "totalAmount": "1",
+          "costPerHour": "10",
+          "timetableName": "tt1",
+          "setupTime": {
+              "type": "",
+              "mean": "",
+              "arg1": "",
+              "arg2": "",
+              "timeUnit": ""
+          },
+          "maxUsage": ""
+      },
+      {
+          "name": "res2",
+          "totalAmount": "1",
+          "costPerHour": "5",
+          "timetableName": "tt2",
+          "setupTime": {
+              "type": "",
+              "mean": "",
+              "arg1": "",
+              "arg2": "",
+              "timeUnit": ""
+          },
+          "maxUsage": ""
+      }
+  ],
+  "elements": [
+      {
+          "elementId": "Activity_10x08n3",
+          "worklistId": "",
+          "fixedCost": "10",
+          "costThreshold": "",
+          "durationDistribution": {
+              "type": "fixed",
+              "mean": "3",
+              "arg1": "",
+              "arg2": "",
+              "timeUnit": "minutes"
+          },
+          "durationThreshold": "",
+          "durationThresholdTimeUnit": "",
+          "resourceIds": [
+              {
+                  "resourceName": "res1",
+                  "amountNeeded": "1",
+                  "groupId": "1"
+              }
+          ]
+      },
+      {
+          "elementId": "Activity_14rjj9v",
+          "worklistId": "",
+          "fixedCost": "",
+          "costThreshold": "",
+          "durationDistribution": {
+              "type": "fixed",
+              "mean": "1",
+              "arg1": "",
+              "arg2": "",
+              "timeUnit": "minutes"
+          },
+          "durationThreshold": "",
+          "durationThresholdTimeUnit": "",
+          "resourceIds": [
+              {
+                  "resourceName": "res1",
+                  "amountNeeded": "1",
+                  "groupId": "1"
+              }
+          ]
+      },
+      {
+          "elementId": "Activity_0qykc8o",
+          "worklistId": "",
+          "fixedCost": "",
+          "costThreshold": "",
+          "durationDistribution": {
+              "type": "fixed",
+              "mean": "1",
+              "arg1": "",
+              "arg2": "",
+              "timeUnit": "minutes"
+          },
+          "durationThreshold": "",
+          "durationThresholdTimeUnit": "",
+          "resourceIds": [
+              {
+                  "resourceName": "res1",
+                  "amountNeeded": "1",
+                  "groupId": "1"
+              }
+          ]
+      },
+      {
+          "elementId": "Activity_1ijxuyk",
+          "worklistId": "",
+          "fixedCost": "",
+          "costThreshold": "",
+          "durationDistribution": {
+              "type": "fixed",
+              "mean": "1",
+              "arg1": "",
+              "arg2": "",
+              "timeUnit": "minutes"
+          },
+          "durationThreshold": "",
+          "durationThresholdTimeUnit": "",
+          "resourceIds": [
+              {
+                  "resourceName": "res2",
+                  "amountNeeded": "1",
+                  "groupId": "1"
+              }
+          ]
+      },
+      {
+          "elementId": "Activity_12afiek",
+          "worklistId": "",
+          "fixedCost": "",
+          "costThreshold": "",
+          "durationDistribution": {
+              "type": "normal",
+              "mean": "3",
+              "arg1": "1",
+              "arg2": "",
+              "timeUnit": "minutes"
+          },
+          "durationThreshold": "",
+          "durationThresholdTimeUnit": "",
+          "resourceIds": [
+              {
+                  "resourceName": "res2",
+                  "amountNeeded": "1",
+                  "groupId": "1"
+              }
+          ]
+      },
+      {
+          "elementId": "Activity_0qi2qug",
+          "worklistId": "",
+          "fixedCost": "",
+          "costThreshold": "",
+          "durationDistribution": {
+              "type": "fixed",
+              "mean": "5",
+              "arg1": "",
+              "arg2": "",
+              "timeUnit": "minutes"
+          },
+          "durationThreshold": "",
+          "durationThresholdTimeUnit": "",
+          "resourceIds": [
+              {
+                  "resourceName": "res1",
+                  "amountNeeded": "1",
+                  "groupId": "1"
+              }
+          ]
+      }
+  ],
+  "sequenceFlows": [
+      {
+          "elementId": "Flow_0d86tug",
+          "executionProbability": "0.1",
+          "types": []
+      },
+      {
+          "elementId": "Flow_0sub9wl",
+          "executionProbability": "0.9",
+          "types": []
+      }
+  ],
+  "catchEvents": {},
+  "logging_opt": 0
+}</diagbp>
 </bpmn:definitions>
