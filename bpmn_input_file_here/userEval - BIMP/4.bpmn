@@ -9,6 +9,7 @@
     <bpmn:messageFlow id="Flow_03e361w" sourceRef="Event_0iqs5ri" targetRef="Event_1dvkent" />
     <bpmn:messageFlow id="Flow_121s33e" sourceRef="Activity_1ur6qe3" targetRef="Event_0tqrgzi" />
     <bpmn:messageFlow id="Flow_0sae82g" sourceRef="Activity_14rjj9v" targetRef="Event_04utogt" />
+    <bpmn:messageFlow id="Flow_0p3lcqt" sourceRef="Activity_0qykc8o" targetRef="Event_1jc2z6e" />
   </bpmn:collaboration>
   <bpmn:process id="Process_1eu3tym" isExecutable="false">
     <bpmn:task id="Activity_10x08n3" name="main_1">
@@ -170,6 +171,7 @@
   <bpmn:process id="Process_15u79g0">
     <bpmn:startEvent id="Event_1jc2z6e" name="start 3">
       <bpmn:outgoing>Flow_10ebatw</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0bn3xlj"/>
     </bpmn:startEvent>
     <bpmn:sequenceFlow id="Flow_10ebatw" sourceRef="Event_1jc2z6e" targetRef="Gateway_1ml040o" />
     <bpmn:eventBasedGateway id="Gateway_1ml040o">
