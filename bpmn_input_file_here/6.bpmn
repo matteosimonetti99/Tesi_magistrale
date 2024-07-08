@@ -608,7 +608,7 @@
     "resources": [
         {
             "name": "res1",
-            "totalAmount": "4",
+            "totalAmount": "3",
             "costPerHour": "10",
             "timetableName": "tt1",
             "setupTime": {
@@ -622,8 +622,8 @@
         },
         {
             "name": "res2",
-            "totalAmount": "4",
-            "costPerHour": "15",
+            "totalAmount": "3",
+            "costPerHour": "5",
             "timetableName": "tt2",
             "setupTime": {
                 "type": "",
@@ -684,7 +684,7 @@
             "costThreshold": "",
             "durationDistribution": {
                 "type": "fixed",
-                "mean": "5",
+                "mean": "1",
                 "arg1": "",
                 "arg2": "",
                 "timeUnit": "minutes"
@@ -755,7 +755,7 @@
             "costThreshold": "",
             "durationDistribution": {
                 "type": "fixed",
-                "mean": "1",
+                "mean": "5",
                 "arg1": "",
                 "arg2": "",
                 "timeUnit": "minutes"
@@ -776,11 +776,11 @@
             "fixedCost": "",
             "costThreshold": "",
             "durationDistribution": {
-                "type": "fixed",
-                "mean": "30",
-                "arg1": "",
+                "type": "normal",
+                "mean": "3",
+                "arg1": "1",
                 "arg2": "",
-                "timeUnit": "seconds"
+                "timeUnit": "minutes"
             },
             "durationThreshold": "",
             "durationThresholdTimeUnit": "",
@@ -825,9 +825,9 @@
             "fixedCost": "",
             "costThreshold": "",
             "durationDistribution": {
-                "type": "fixed",
+                "type": "normal",
                 "mean": "20",
-                "arg1": "",
+                "arg1": "1",
                 "arg2": "",
                 "timeUnit": "seconds"
             },
