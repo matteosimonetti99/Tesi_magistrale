@@ -559,12 +559,8 @@
   <diagbp>{
     "processInstances": [
         {
-            "type": "B",
-            "count": "1"
-        },
-        {
             "type": "A",
-            "count": "4"
+            "count": "5"
         }
     ],
     "startDateTime": "2024-05-31T14:16:00",
@@ -592,12 +588,6 @@
             "rules": [
                 {
                     "fromTime": "10:00:00",
-                    "toTime": "14:00:00",
-                    "fromWeekDay": "MONDAY",
-                    "toWeekDay": "FRIDAY"
-                },
-                {
-                    "fromTime": "14:18:00",
                     "toTime": "19:00:00",
                     "fromWeekDay": "MONDAY",
                     "toWeekDay": "FRIDAY"
@@ -608,7 +598,7 @@
     "resources": [
         {
             "name": "res1",
-            "totalAmount": "3",
+            "totalAmount": "1",
             "costPerHour": "10",
             "timetableName": "tt1",
             "setupTime": {
@@ -622,7 +612,7 @@
         },
         {
             "name": "res2",
-            "totalAmount": "3",
+            "totalAmount": "1",
             "costPerHour": "5",
             "timetableName": "tt2",
             "setupTime": {
@@ -633,20 +623,6 @@
                 "timeUnit": ""
             },
             "maxUsage": ""
-        },
-        {
-            "name": "machinery",
-            "totalAmount": "1",
-            "costPerHour": "100",
-            "timetableName": "tt1",
-            "setupTime": {
-                "type": "FIXED",
-                "mean": "10",
-                "arg1": "",
-                "arg2": "",
-                "timeUnit": "minutes"
-            },
-            "maxUsage": "2"
         }
     ],
     "elements": [
@@ -666,21 +642,16 @@
             "durationThresholdTimeUnit": "",
             "resourceIds": [
                 {
-                    "resourceName": "res2",
+                    "resourceName": "res1",
                     "amountNeeded": "1",
                     "groupId": "1"
-                },
-                {
-                    "resourceName": "res1",
-                    "amountNeeded": "2",
-                    "groupId": "2"
                 }
             ]
         },
         {
             "elementId": "Activity_14rjj9v",
-            "worklistId": "1",
-            "fixedCost": "4",
+            "worklistId": "",
+            "fixedCost": "",
             "costThreshold": "",
             "durationDistribution": {
                 "type": "fixed",
@@ -696,11 +667,6 @@
                     "resourceName": "res1",
                     "amountNeeded": "1",
                     "groupId": "1"
-                },
-                {
-                    "resourceName": "res2",
-                    "amountNeeded": "1",
-                    "groupId": "2"
                 }
             ]
         },
@@ -711,7 +677,7 @@
             "costThreshold": "",
             "durationDistribution": {
                 "type": "fixed",
-                "mean": "2",
+                "mean": "1",
                 "arg1": "",
                 "arg2": "",
                 "timeUnit": "minutes"
@@ -811,11 +777,6 @@
                     "resourceName": "res2",
                     "amountNeeded": "1",
                     "groupId": "1"
-                },
-                {
-                    "resourceName": "machinery",
-                    "amountNeeded": "1",
-                    "groupId": "1"
                 }
             ]
         },
@@ -825,9 +786,9 @@
             "fixedCost": "",
             "costThreshold": "",
             "durationDistribution": {
-                "type": "normal",
+                "type": "fixed",
                 "mean": "20",
-                "arg1": "1",
+                "arg1": "",
                 "arg2": "",
                 "timeUnit": "seconds"
             },
@@ -835,14 +796,9 @@
             "durationThresholdTimeUnit": "",
             "resourceIds": [
                 {
-                    "resourceName": "res1",
-                    "amountNeeded": "1",
-                    "groupId": "1"
-                },
-                {
                     "resourceName": "res2",
                     "amountNeeded": "1",
-                    "groupId": "2"
+                    "groupId": "1"
                 }
             ]
         }
