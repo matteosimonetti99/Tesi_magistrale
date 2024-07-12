@@ -55,8 +55,11 @@ except Exception as e:
 bpmnGraph = diagram.BpmnDiagramGraph()
 bpmnGraph.create_new_diagram_graph(diagram_name="diagram1")
 
+
+
 # Load existing BPMN diagram
 bpmnGraph.load_diagram_from_xml_file(name)
+
 
 # Manually construct a dictionary from the bpmnGraph
 bpmnDictionary = {
@@ -65,6 +68,10 @@ bpmnDictionary = {
     'sequence_flows': bpmnGraph.sequence_flows,
     'collaboration': bpmnGraph.collaboration,
 }
+
+pool_names = {}
+for participant_id, participant in bpmnDictionary['collaboration']['participants'].items():
+    pool_names[participant['processRef']] = participant['name']
 
 process_elements = {}
 for process_id, process_element in bpmnGraph.process_elements.items():
@@ -107,7 +114,7 @@ for process_id, process_element in bpmnGraph.process_elements.items():
             node_details[node_id]['subprocess_details'] = subprocess_details
 
     process_elements[process_id] = {
-        'name': process_element.get('name', 'Unnamed'),
+        'name': pool_names.get(process_id, 'Unnamed'), 
         'isClosed': process_element.get('isClosed', 'false'),
         'isExecutable': process_element.get('isExecutable', 'false'),
         'processType': process_element.get('processType', 'None'),
