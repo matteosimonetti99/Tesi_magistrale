@@ -63,7 +63,7 @@
         <bpmn:incoming>Flow_0gk5xyl</bpmn:incoming>
       </bpmn:endEvent>
       <bpmn:sequenceFlow id="Flow_0gk5xyl" sourceRef="Activity_12afiek" targetRef="Event_1go337f" />
-      <bpmn:exclusiveGateway id="Gateway_1ifisy0">
+      <bpmn:exclusiveGateway id="Gateway_1ifisy0" name="open in subprocess">
         <bpmn:incoming>Flow_0xsv38h</bpmn:incoming>
         <bpmn:outgoing>Flow_1gbq3g3</bpmn:outgoing>
         <bpmn:outgoing>Flow_09o0oot</bpmn:outgoing>
@@ -145,13 +145,13 @@
     <bpmn:sequenceFlow id="Flow_0sygyyv" sourceRef="Activity_182s0e0" targetRef="Gateway_0j2mipn" />
     <bpmn:sequenceFlow id="Flow_0yujz0x" sourceRef="Gateway_0fie23m" targetRef="Activity_1ur6qe3" />
     <bpmn:sequenceFlow id="Flow_1ri8h7e" sourceRef="Gateway_0j2mipn" targetRef="Event_04utogt" />
-    <bpmn:inclusiveGateway id="Gateway_0j2mipn">
+    <bpmn:inclusiveGateway id="Gateway_0j2mipn" name="close">
       <bpmn:incoming>Flow_0sygyyv</bpmn:incoming>
       <bpmn:incoming>Flow_1u2iq3d</bpmn:incoming>
       <bpmn:outgoing>Flow_1ri8h7e</bpmn:outgoing>
     </bpmn:inclusiveGateway>
     <bpmn:sequenceFlow id="Flow_1u2iq3d" sourceRef="Activity_1ur6qe3" targetRef="Gateway_0j2mipn" />
-    <bpmn:inclusiveGateway id="Gateway_0fie23m">
+    <bpmn:inclusiveGateway id="Gateway_0fie23m" name="open">
       <bpmn:incoming>Flow_1o7qnb3</bpmn:incoming>
       <bpmn:outgoing>Flow_1ghjdwp</bpmn:outgoing>
       <bpmn:outgoing>Flow_0yujz0x</bpmn:outgoing>
@@ -184,7 +184,7 @@
     </bpmn:intermediateCatchEvent>
     <bpmn:sequenceFlow id="Flow_18usnw7" sourceRef="Gateway_1ml040o" targetRef="Event_0tqrgzi" />
     <bpmn:sequenceFlow id="Flow_10g05cm" sourceRef="Gateway_1ml040o" targetRef="Event_07udv0q" />
-    <bpmn:intermediateCatchEvent id="Event_07udv0q">
+    <bpmn:intermediateCatchEvent id="Event_07udv0q" name="timer">
       <bpmn:incoming>Flow_10g05cm</bpmn:incoming>
       <bpmn:outgoing>Flow_0ki17q0</bpmn:outgoing>
       <bpmn:timerEventDefinition id="TimerEventDefinition_02mfons" />

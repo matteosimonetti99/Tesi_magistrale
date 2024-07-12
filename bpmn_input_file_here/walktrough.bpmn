@@ -808,7 +808,7 @@
             "durationThresholdTimeUnit": "",
             "resourceIds": [
                 {
-                    "resourceName": "res2",
+                    "resourceName": "res1",
                     "amountNeeded": "1",
                     "groupId": "1"
                 },
@@ -835,12 +835,12 @@
             "durationThresholdTimeUnit": "",
             "resourceIds": [
                 {
-                    "resourceName": "res1",
+                    "resourceName": "res2",
                     "amountNeeded": "1",
                     "groupId": "1"
                 },
                 {
-                    "resourceName": "res2",
+                    "resourceName": "res1",
                     "amountNeeded": "1",
                     "groupId": "2"
                 }
