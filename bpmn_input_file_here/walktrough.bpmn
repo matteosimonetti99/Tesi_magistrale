@@ -567,7 +567,7 @@
             "count": "4"
         }
     ],
-    "startDateTime": "2024-05-31T14:16:18",
+    "startDateTime": "2024-05-31T14:16:00",
     "arrivalRateDistribution": {
         "type": "FIXED",
         "mean": "5",
@@ -653,7 +653,7 @@
         {
             "elementId": "Activity_10x08n3",
             "worklistId": "",
-            "fixedCost": "10",
+            "fixedCost": "",
             "costThreshold": "",
             "durationDistribution": {
                 "type": "fixed",
@@ -680,11 +680,11 @@
         {
             "elementId": "Activity_14rjj9v",
             "worklistId": "1",
-            "fixedCost": "4",
+            "fixedCost": "",
             "costThreshold": "",
             "durationDistribution": {
                 "type": "fixed",
-                "mean": "5",
+                "mean": "1",
                 "arg1": "",
                 "arg2": "",
                 "timeUnit": "minutes"
@@ -711,7 +711,7 @@
             "costThreshold": "",
             "durationDistribution": {
                 "type": "fixed",
-                "mean": "2",
+                "mean": "1",
                 "arg1": "",
                 "arg2": "",
                 "timeUnit": "minutes"
@@ -751,7 +751,7 @@
         {
             "elementId": "Activity_0qi2qug",
             "worklistId": "",
-            "fixedCost": "",
+            "fixedCost": "10",
             "costThreshold": "",
             "durationDistribution": {
                 "type": "fixed",

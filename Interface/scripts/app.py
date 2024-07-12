@@ -43,9 +43,9 @@ def index():
     for filename in os.listdir(DOWNLOAD_FOLDER): # remove old log files
         file_path = os.path.join(DOWNLOAD_FOLDER, filename)
         os.remove(file_path)
-    for filename in os.listdir(LOGS_FOLDER): # remove old log files
+    """for filename in os.listdir(LOGS_FOLDER): # remove old log files
         file_path = os.path.join(LOGS_FOLDER, filename)
-        os.remove(file_path)
+        os.remove(file_path)"""
     for filename in os.listdir(JSON_FOLDER): # remove old log files
         file_path = os.path.join(JSON_FOLDER, filename)
         os.remove(file_path)
@@ -101,6 +101,9 @@ def parameters():
         bpmn_dict = json.load(f)
 
     if request.method == 'POST':
+        time.sleep(3) 
+        return render_template('results.html')
+        
         diagbp_data = {
             "processInstances": [],
             "startDateTime": request.form.get('start_date'),
