@@ -103,7 +103,7 @@ def parameters():
     if request.method == 'POST':
         diagbp_data = {
             "processInstances": [],
-            "startDateTime": request.form.get('start_date'),
+            "startDateTime": str(request.form.get('start_date'))+":00",
             "arrivalRateDistribution": {
                 "type": request.form.get('inter_arrival_time_type').lower(),  # Convert to lowercase
                 "mean": request.form.get('inter_arrival_time_mean'),
