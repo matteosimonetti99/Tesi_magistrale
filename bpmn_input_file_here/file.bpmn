@@ -652,7 +652,7 @@
     "elements": [
         {
             "elementId": "Activity_0qi2qug",
-            "worklistId": "1",
+            "worklistId": "",
             "fixedCost": "",
             "costThreshold": "",
             "durationDistribution": {
@@ -674,7 +674,7 @@
         },
         {
             "elementId": "Activity_12afiek",
-            "worklistId": "1",
+            "worklistId": "",
             "fixedCost": "",
             "costThreshold": "",
             "durationDistribution": {
