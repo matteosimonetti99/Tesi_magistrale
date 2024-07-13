@@ -161,7 +161,7 @@
                                 </div>
                                 <div class="form-group col-md-3 duration-param" data-param-type="mean" data-element-id="{{ node_id }}">
                                     <label for="durationMean_{{ node_id }}">Mean:</label>
-                                    <input type="number" class="form-control" id="durationMean_{{ node_id }}" name="durationMean_{{ node_id }}" value="">
+                                    <input type="number" class="form-control" id="durationMean_{{ node_id }}" name="durationMean_{{ node_id }}" value="" required>
                                 </div>
                                 <div class="form-group col-md-3 duration-param" data-param-type="arg1" data-element-id="{{ node_id }}" style="display: none;">
                                     <label for="durationArg1_{{ node_id }}">Arg1:</label>
@@ -209,7 +209,7 @@
                                     </div>
                                     <div class="form-group col-md-4">
                                         <label for="amountNeeded_1_{{ node_id }}">Amount Needed:</label>
-                                        <input type="number" class="form-control" id="amountNeeded_1_{{ node_id }}" name="amountNeeded_1_{{ node_id }}">
+                                        <input type="number" class="form-control" id="amountNeeded_1_{{ node_id }}" name="amountNeeded_1_{{ node_id }}" required>
                                     </div>
                                     <div class="form-group col-md-4">
                                         <label for="groupId_1_{{ node_id }}">Group ID:</label>
@@ -282,7 +282,7 @@
                                     </div>
                                     <div class="form-group col-md-3 catch-event-duration-param" data-param-type="mean" data-element-id="{{ node_id }}">
                                         <label for="catchEventDurationMean_{{ node_id }}">Mean:</label>
-                                        <input type="number" class="form-control" id="catchEventDurationMean_{{ node_id }}" name="catchEventDurationMean_{{ node_id }}">
+                                        <input type="number" class="form-control" id="catchEventDurationMean_{{ node_id }}" name="catchEventDurationMean_{{ node_id }}" required>
                                     </div>
                                     <div class="form-group col-md-3 catch-event-duration-param" data-param-type="arg1" data-element-id="{{ node_id }}" style="display: none;">
                                         <label for="catchEventDurationArg1_{{ node_id }}">Arg1:</label>
@@ -641,7 +641,7 @@
             resourceInput.innerHTML = `
                 <div class="form-group col-md-4">
                     <label for="resourceName_${resourceCount}_${elementId}">Resource Name:</label>
-                    <select class="form-control" id="resourceName_${resourceCount}_${elementId}" name="resourceName_${resourceCount}_${elementId}">
+                    <select class="form-control" id="resourceName_${resourceCount}_${elementId}" name="resourceName_${resourceCount}_${elementId}" required>
                         <option value=""></option> 
                     </select>
                 </div>
