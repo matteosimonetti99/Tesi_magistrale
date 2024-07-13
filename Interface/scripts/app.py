@@ -105,7 +105,7 @@ def parameters():
             "processInstances": [],
             "startDateTime": str(request.form.get('start_date'))+":00",
             "arrivalRateDistribution": {
-                "type": request.form.get('inter_arrival_time_type').lower(),  # Convert to lowercase
+                "type": request.form.get('inter_arrival_time_type'),  # Convert to lowercase
                 "mean": request.form.get('inter_arrival_time_mean'),
                 "arg1": request.form.get('inter_arrival_time_arg1'),
                 "arg2": request.form.get('inter_arrival_time_arg2'),
@@ -123,7 +123,7 @@ def parameters():
             if key.startswith('instance_type_'):
                 instance_type = value
                 instance_count_key = key.replace('instance_type_', 'instance_count_')
-                instance_count = int(request.form.get(instance_count_key))
+                instance_count = request.form.get(instance_count_key)
 
                 diagbp_data["processInstances"].append({
                     "type": instance_type,
@@ -131,31 +131,30 @@ def parameters():
                 })
 
         # Timetables
+        timetable_data = {}  # Temporary dictionary to hold timetable data
         for key, value in request.form.items():
-            if key.startswith('timetable_name_'):
-                timetable_name = value
-                timetable_rules = []
+            if key.startswith('rule_from_time_'):
+                parts = key.split('_')
+                timetable_index = int(parts[3])  # Get the timetable index
+                rule_index = int(parts[4])        # Get the rule index
 
-                # Find rules related to this timetable
-                for rule_key, rule_value in request.form.items():
-                    if rule_key.startswith(f'rule_from_time_{key.split("_")[2]}_'):
-                        rule_index = rule_key.split("_")[3]  # Extract rule index
-                        from_time = rule_value
-                        to_time = request.form.get(f'rule_to_time_{key.split("_")[2]}_{rule_index}')
-                        from_day = request.form.get(f'rule_from_day_{key.split("_")[2]}_{rule_index}')
-                        to_day = request.form.get(f'rule_to_day_{key.split("_")[2]}_{rule_index}')
+                # If the timetable doesn't exist in the dictionary, create it
+                if timetable_index not in timetable_data:
+                    timetable_data[timetable_index] = {
+                        'name': request.form.get(f'timetable_name_{timetable_index}'),
+                        'rules': []
+                    }
 
-                        timetable_rules.append({
-                            "fromTime": from_time,
-                            "toTime": to_time,
-                            "fromWeekDay": from_day,
-                            "toWeekDay": to_day
-                        })
-
-                diagbp_data["timetables"].append({
-                    "name": timetable_name,
-                    "rules": timetable_rules
+                # Add the rule data to the appropriate timetable
+                timetable_data[timetable_index]['rules'].append({
+                    "fromTime": str(value)+":00",
+                    "toTime": str(request.form.get(f'rule_to_time_{timetable_index}_{rule_index}'))+":00",
+                    "fromWeekDay": request.form.get(f'rule_from_day_{timetable_index}_{rule_index}'),
+                    "toWeekDay": request.form.get(f'rule_to_day_{timetable_index}_{rule_index}')
                 })
+
+        # Now, add the timetables to diagbp_data in the correct order
+        diagbp_data["timetables"] = list(timetable_data.values()) 
 
 
         # Process resources 
@@ -164,8 +163,8 @@ def parameters():
                 resource_index = key.split("_")[2]  # Extract the resource index from the key
 
                 resource_name = value 
-                resource_amount = int(request.form.get(f'resource_amount_{resource_index}'))
-                resource_cost = float(request.form.get(f'resource_cost_{resource_index}'))
+                resource_amount = request.form.get(f'resource_amount_{resource_index}')
+                resource_cost = request.form.get(f'resource_cost_{resource_index}')
                 resource_timetable = request.form.get(f'resource_timetable_{resource_index}')
 
                 # Setup Time parameters
@@ -175,6 +174,9 @@ def parameters():
                 setup_time_arg2 = request.form.get(f'resource_{resource_index}_setupTimeArg2')
                 setup_time_unit = request.form.get(f'resource_{resource_index}_setupTimeUnit')
                 max_usage = request.form.get(f'resource_maxUsage_{resource_index}')
+                if str(setup_time_mean)=="":
+                    setup_time_type=""
+                    setup_time_unit=""
 
                 diagbp_data["resources"].append({
                     "name": resource_name,
@@ -182,7 +184,7 @@ def parameters():
                     "costPerHour": resource_cost,
                     "timetableName": resource_timetable,
                     "setupTime": {
-                        "type": setup_time_type.lower() if setup_time_type else "",
+                        "type": setup_time_type if setup_time_type else "",
                         "mean": setup_time_mean,
                         "arg1": setup_time_arg1,
                         "arg2": setup_time_arg2,
@@ -205,7 +207,7 @@ def parameters():
                         "fixedCost": request.form.get(f'fixedCost_{node_id}', ''),
                         "costThreshold": request.form.get(f'costThreshold_{node_id}', ''),
                         "durationDistribution": {
-                            "type": request.form.get(f'durationType_{node_id}', 'FIXED').lower(),
+                            "type": request.form.get(f'durationType_{node_id}', 'FIXED'),
                             "mean": request.form.get(f'durationMean_{node_id}', ''),
                             "arg1": request.form.get(f'durationArg1_{node_id}', ''),
                             "arg2": request.form.get(f'durationArg2_{node_id}', ''),
@@ -265,7 +267,7 @@ def parameters():
                 if node_data['type'] in ['intermediateCatchEvent', 'startEvent'] and \
                    node_data.get('subtype') not in ['messageEventDefinition', None]:
                     diagbp_data["catchEvents"][node_id] = {
-                        "type": request.form.get(f'catchEventDurationType_{node_id}', 'FIXED').lower(),
+                        "type": request.form.get(f'catchEventDurationType_{node_id}', 'FIXED'),
                         "mean": request.form.get(f'catchEventDurationMean_{node_id}', ''),
                         "arg1": request.form.get(f'catchEventDurationArg1_{node_id}', ''),
                         "arg2": request.form.get(f'catchEventDurationArg2_{node_id}', ''),

@@ -420,6 +420,7 @@
         function removeInstanceGroup(button) {
             const instanceGroupDiv = button.parentElement.parentElement.parentElement;
             instanceGroupDiv.remove();
+            instanceGroupCounter=instanceGroupCounter-1
         }
 
 
@@ -709,6 +710,7 @@
             const timetableDiv = button.closest('.timetable-group'); // Use closest()
             if (timetableDiv) { 
                 timetableDiv.remove();
+                timetableCounter=timetableCounter-1
                 updateTimetableOptions(); 
             }
         }
