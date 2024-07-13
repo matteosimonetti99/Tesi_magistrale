@@ -569,7 +569,7 @@
     ],
     "startDateTime": "2024-07-10T15:36:00",
     "arrivalRateDistribution": {
-        "type": "FIXED",
+        "type": "fixed",
         "mean": "5",
         "arg1": "",
         "arg2": "",
@@ -608,7 +608,7 @@
     "resources": [
         {
             "name": "res1",
-            "totalAmount": "1",
+            "totalAmount": "4",
             "costPerHour": "10",
             "timetableName": "tt1",
             "setupTime": {
@@ -622,7 +622,7 @@
         },
         {
             "name": "res2",
-            "totalAmount": "1",
+            "totalAmount": "4",
             "costPerHour": "15",
             "timetableName": "tt2",
             "setupTime": {
@@ -640,7 +640,7 @@
             "costPerHour": "100",
             "timetableName": "tt1",
             "setupTime": {
-                "type": "FIXED",
+                "type": "fixed",
                 "mean": "10",
                 "arg1": "",
                 "arg2": "",
@@ -656,7 +656,7 @@
             "fixedCost": "",
             "costThreshold": "",
             "durationDistribution": {
-                "type": "FIXED",
+                "type": "fixed",
                 "mean": "3",
                 "arg1": "",
                 "arg2": "",
@@ -678,7 +678,7 @@
             "fixedCost": "",
             "costThreshold": "",
             "durationDistribution": {
-                "type": "FIXED",
+                "type": "fixed",
                 "mean": "1",
                 "arg1": "",
                 "arg2": "",
@@ -700,7 +700,7 @@
             "fixedCost": "",
             "costThreshold": "",
             "durationDistribution": {
-                "type": "FIXED",
+                "type": "fixed",
                 "mean": "1",
                 "arg1": "",
                 "arg2": "",
@@ -727,7 +727,7 @@
             "fixedCost": "",
             "costThreshold": "",
             "durationDistribution": {
-                "type": "FIXED",
+                "type": "fixed",
                 "mean": "1",
                 "arg1": "",
                 "arg2": "",
@@ -749,7 +749,7 @@
             "fixedCost": "10",
             "costThreshold": "",
             "durationDistribution": {
-                "type": "FIXED",
+                "type": "fixed",
                 "mean": "5",
                 "arg1": "",
                 "arg2": "",
@@ -771,7 +771,7 @@
             "fixedCost": "",
             "costThreshold": "",
             "durationDistribution": {
-                "type": "FIXED",
+                "type": "fixed",
                 "mean": "1",
                 "arg1": "",
                 "arg2": "",
@@ -793,7 +793,7 @@
             "fixedCost": "",
             "costThreshold": "",
             "durationDistribution": {
-                "type": "FIXED",
+                "type": "fixed",
                 "mean": "1",
                 "arg1": "",
                 "arg2": "",
@@ -820,7 +820,7 @@
             "fixedCost": "",
             "costThreshold": "",
             "durationDistribution": {
-                "type": "FIXED",
+                "type": "fixed",
                 "mean": "30",
                 "arg1": "",
                 "arg2": "",
@@ -875,7 +875,7 @@
     ],
     "catchEvents": {
         "Event_07udv0q": {
-            "type": "FIXED",
+            "type": "fixed",
             "mean": "7",
             "arg1": "",
             "arg2": "",
