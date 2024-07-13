@@ -230,7 +230,7 @@ def parameters():
                     while request.form.get(f'resourceName_{i}_{node_id}'):
                         resource_name = request.form.get(f'resourceName_{i}_{node_id}')
                         amount_needed = request.form.get(f'amountNeeded_{i}_{node_id}')
-                        group_id = request.form.get(f'groupId_{i}_{node_id}')
+                        group_id = request.form.get(f'groupId_{i}_{node_id}','1')
                         if resource_name and amount_needed:
                             element_data["resourceIds"].append({
                                 "resourceName": resource_name,

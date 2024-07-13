@@ -15,8 +15,8 @@
     </style>
 </head>
 <body>
-    <div class="container mt-3">
-        <div class="row d-flex align-items-center mb-5">
+    <div class="container mt-3 mb-3">
+        <div class="row d-flex align-items-center">
             <div class="col-md-9 text-left">
                 <h1>Simulation Parameters insertion</h1>
             </div>
@@ -24,6 +24,7 @@
                 <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">Home</a>
             </div>
         </div>
+        <p class="mb-5">Attention: giving the same worklistId to tasks that use different resources will result in the simulation crashing. Only give a worklistId to tasks using identical resources</p>
 
         <form method="POST" action="{{ url_for('parameters') }}" class="mt-4">
             <div class="form-group">
@@ -213,7 +214,7 @@
                                     </div>
                                     <div class="form-group col-md-4">
                                         <label for="groupId_1_{{ node_id }}">Group ID:</label>
-                                        <input type="text" class="form-control" id="groupId_1_{{ node_id }}" name="groupId_1_{{ node_id }}">
+                                        <input type="text" class="form-control" id="groupId_1_{{ node_id }}" name="groupId_1_{{ node_id }}" required>
                                     </div>
                                 </div>
                             </div>
