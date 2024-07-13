@@ -40,6 +40,9 @@ def index():
     for filename in os.listdir(PREUPLOAD_FOLDER): # remove old log files
         file_path = os.path.join(PREUPLOAD_FOLDER, filename)
         os.remove(file_path)
+    for filename in os.listdir(UPLOAD_FOLDER): # remove old log files
+        file_path = os.path.join(UPLOAD_FOLDER, filename)
+        os.remove(file_path)
     for filename in os.listdir(DOWNLOAD_FOLDER): # remove old log files
         file_path = os.path.join(DOWNLOAD_FOLDER, filename)
         os.remove(file_path)
@@ -200,6 +203,10 @@ def parameters():
                 node_id, node_data = nodes_to_process.pop()
 
                 if node_data['type'] == 'task':
+                    durationThreshold= request.form.get(f'durationThreshold_{node_id}', '')
+                    duration_threshold_time_unit = request.form.get(f'durationThresholdTimeUnit_{node_id}', 'seconds')
+                    if durationThreshold=='':
+                        duration_threshold_time_unit = ''
                     # Process task element
                     element_data = {
                         "elementId": node_id,
@@ -213,8 +220,8 @@ def parameters():
                             "arg2": request.form.get(f'durationArg2_{node_id}', ''),
                             "timeUnit": request.form.get(f'durationTimeUnit_{node_id}', 'seconds')
                         },
-                        "durationThreshold": request.form.get(f'durationThreshold_{node_id}', ''),
-                        "durationThresholdTimeUnit": request.form.get(f'durationThresholdTimeUnit_{node_id}', 'seconds'),
+                        "durationThreshold":durationThreshold,
+                        "durationThresholdTimeUnit": duration_threshold_time_unit,
                         "resourceIds": []
                     }
 
