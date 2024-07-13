@@ -240,7 +240,9 @@ def parameters():
 
         # Process sequence flows
         for flow_id in bpmn_dict['sequence_flows']:
-            execution_probability = request.form.get(f'executionProbability_{flow_id}', '1')
+            execution_probability = request.form.get(f'executionProbability_{flow_id}')
+            if execution_probability is None:  # Skip if not provided
+                continue 
             forced_instance_types = []
             i = 1
             while request.form.get(f'forcedInstanceType_{flow_id}_{i}'):
@@ -275,12 +277,15 @@ def parameters():
 
         # Logging option
         diagbp_data["logging_opt"] = request.form.get('logging_opt', 0)  # Default to 0 (disabled)
+        diagbp_json = json.dumps(diagbp_data, indent=4)
 
         source_path = os.path.join(PREUPLOAD_FOLDER, bpmn_filename)
         destination_path = os.path.join(UPLOAD_FOLDER, bpmn_filename)
+        with open(source_path, 'r') as bpmn_file:
+            bpmn_content = bpmn_file.read()
 
         with open(destination_path, 'w') as file:
-            bpmn_content = bpmn_dict.replace('</bpmn:definitions>', f'<diagbp>{diagbp_data}</diagbp>\n</bpmn:definitions>')
+            bpmn_content = bpmn_content.replace('</bpmn:definitions>', f'<diagbp>{diagbp_json}</diagbp>\n</bpmn:definitions>')
             file.write(bpmn_content)
         os.remove(source_path)  
 

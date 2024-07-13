@@ -49,7 +49,7 @@ try:
         bpmn = json.load(file)
 except FileNotFoundError:
     print(f"-----ERROR-----: bpmn file not found")
-    sys.exit()
+    #sys.exit()
 except json.JSONDecodeError:
     print(f"-----ERROR-----: bpmn file bad syntax")
     #sys.exit()

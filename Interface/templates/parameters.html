@@ -665,7 +665,7 @@
 
                 for (const resourceId in resourcesData) {
                     const resourceName = resourcesData[resourceId].name;
-                    const option = new Option(resourceName, resourceId, false, resourceId === selectedResourceId);
+                    const option = new Option(resourceName, resourceName, false, resourceName === selectedResourceId);
                     select.add(option);
                 }
             });
@@ -786,7 +786,7 @@
                         const timetableNameInput = document.getElementById(`timetable_name_${j}`);
                         if (timetableNameInput) {
                             const timetableName = timetableNameInput.value;
-                            const option = new Option(timetableName, `timetable_${j}`, false, `timetable_${j}` === selectedTimetable);
+                            const option = new Option(timetableName, timetableName, false, timetableName === selectedTimetable);
                             timetableSelect.add(option);
                         }
                     }

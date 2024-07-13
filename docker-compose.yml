@@ -9,6 +9,7 @@ services:
       - logs:/app/logs
       - json:/app/json
       - download:/app/download
+    restart: unless-stopped
 
   interface:
     build:
