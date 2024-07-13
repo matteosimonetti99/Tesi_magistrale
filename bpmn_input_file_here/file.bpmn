@@ -567,13 +567,13 @@
             "count": "4"
         }
     ],
-    "startDateTime": "2024-07-10T15:36:00",
+    "startDateTime": "2024-07-13T16:56:00",
     "arrivalRateDistribution": {
-        "type": "fixed",
-        "mean": "5",
+        "type": "FIXED",
+        "mean": "1",
         "arg1": "",
         "arg2": "",
-        "timeUnit": "minutes"
+        "timeUnit": "seconds"
     },
     "timetables": [
         {
@@ -583,7 +583,7 @@
                     "fromTime": "10:00:00",
                     "toTime": "19:00:00",
                     "fromWeekDay": "MONDAY",
-                    "toWeekDay": "FRIDAY"
+                    "toWeekDay": "SUNDAY"
                 }
             ]
         },
@@ -594,13 +594,13 @@
                     "fromTime": "10:00:00",
                     "toTime": "14:00:00",
                     "fromWeekDay": "MONDAY",
-                    "toWeekDay": "FRIDAY"
+                    "toWeekDay": "SUNDAY"
                 },
                 {
                     "fromTime": "14:30:00",
                     "toTime": "19:00:00",
                     "fromWeekDay": "MONDAY",
-                    "toWeekDay": "FRIDAY"
+                    "toWeekDay": "SUNDAY"
                 }
             ]
         }
@@ -640,7 +640,7 @@
             "costPerHour": "100",
             "timetableName": "tt1",
             "setupTime": {
-                "type": "fixed",
+                "type": "FIXED",
                 "mean": "10",
                 "arg1": "",
                 "arg2": "",
@@ -650,14 +650,14 @@
         }
     ],
     "elements": [
-	    {
-            "elementId": "Activity_10x08n3",
-            "worklistId": "",
+        {
+            "elementId": "Activity_0qi2qug",
+            "worklistId": "1",
             "fixedCost": "",
             "costThreshold": "",
             "durationDistribution": {
-                "type": "fixed",
-                "mean": "3",
+                "type": "FIXED",
+                "mean": "5",
                 "arg1": "",
                 "arg2": "",
                 "timeUnit": "minutes"
@@ -672,13 +672,13 @@
                 }
             ]
         },
-		{
-            "elementId": "Activity_14rjj9v",
-            "worklistId": "",
+        {
+            "elementId": "Activity_12afiek",
+            "worklistId": "1",
             "fixedCost": "",
             "costThreshold": "",
             "durationDistribution": {
-                "type": "fixed",
+                "type": "FIXED",
                 "mean": "1",
                 "arg1": "",
                 "arg2": "",
@@ -694,13 +694,57 @@
                 }
             ]
         },
-		{
-            "elementId": "Activity_0qykc8o",
+        {
+            "elementId": "Activity_1ijxuyk",
             "worklistId": "",
             "fixedCost": "",
             "costThreshold": "",
             "durationDistribution": {
-                "type": "fixed",
+                "type": "FIXED",
+                "mean": "1",
+                "arg1": "",
+                "arg2": "",
+                "timeUnit": "minutes"
+            },
+            "durationThreshold": "",
+            "durationThresholdTimeUnit": "",
+            "resourceIds": [
+                {
+                    "resourceName": "res2",
+                    "amountNeeded": "1",
+                    "groupId": "1"
+                }
+            ]
+        },
+        {
+            "elementId": "Activity_0qykc8o",
+            "worklistId": "",
+            "fixedCost": "10",
+            "costThreshold": "",
+            "durationDistribution": {
+                "type": "FIXED",
+                "mean": "1",
+                "arg1": "",
+                "arg2": "",
+                "timeUnit": "minutes"
+            },
+            "durationThreshold": "",
+            "durationThresholdTimeUnit": "",
+            "resourceIds": [
+                {
+                    "resourceName": "res1",
+                    "amountNeeded": "1",
+                    "groupId": "1"
+                }
+            ]
+        },
+        {
+            "elementId": "Activity_14rjj9v",
+            "worklistId": "",
+            "fixedCost": "",
+            "costThreshold": "",
+            "durationDistribution": {
+                "type": "FIXED",
                 "mean": "1",
                 "arg1": "",
                 "arg2": "",
@@ -721,13 +765,35 @@
                 }
             ]
         },
-		{
-            "elementId": "Activity_1ijxuyk",
+        {
+            "elementId": "Activity_10x08n3",
             "worklistId": "",
             "fixedCost": "",
             "costThreshold": "",
             "durationDistribution": {
-                "type": "fixed",
+                "type": "FIXED",
+                "mean": "3",
+                "arg1": "",
+                "arg2": "",
+                "timeUnit": "minutes"
+            },
+            "durationThreshold": "",
+            "durationThresholdTimeUnit": "",
+            "resourceIds": [
+                {
+                    "resourceName": "res1",
+                    "amountNeeded": "1",
+                    "groupId": "1"
+                }
+            ]
+        },
+        {
+            "elementId": "Activity_1ur6qe3",
+            "worklistId": "",
+            "fixedCost": "",
+            "costThreshold": "",
+            "durationDistribution": {
+                "type": "FIXED",
                 "mean": "1",
                 "arg1": "",
                 "arg2": "",
@@ -744,56 +810,12 @@
             ]
         },
         {
-            "elementId": "Activity_0qi2qug",
-            "worklistId": "",
-            "fixedCost": "10",
-            "costThreshold": "",
-            "durationDistribution": {
-                "type": "fixed",
-                "mean": "5",
-                "arg1": "",
-                "arg2": "",
-                "timeUnit": "minutes"
-            },
-            "durationThreshold": "",
-            "durationThresholdTimeUnit": "",
-            "resourceIds": [
-                {
-                    "resourceName": "res1",
-                    "amountNeeded": "1",
-                    "groupId": "1"
-                }
-            ]
-        },
-        {
-            "elementId": "Activity_12afiek",
-            "worklistId": "",
-            "fixedCost": "",
-            "costThreshold": "",
-            "durationDistribution": {
-                "type": "fixed",
-                "mean": "1",
-                "arg1": "",
-                "arg2": "",
-                "timeUnit": "minutes"
-            },
-            "durationThreshold": "",
-            "durationThresholdTimeUnit": "",
-            "resourceIds": [
-                {
-                    "resourceName": "res1",
-                    "amountNeeded": "1",
-                    "groupId": "1"
-                }
-            ]
-        },
-		{
             "elementId": "Activity_182s0e0",
             "worklistId": "",
             "fixedCost": "",
             "costThreshold": "",
             "durationDistribution": {
-                "type": "fixed",
+                "type": "FIXED",
                 "mean": "1",
                 "arg1": "",
                 "arg2": "",
@@ -809,28 +831,6 @@
                 },
                 {
                     "resourceName": "machinery",
-                    "amountNeeded": "1",
-                    "groupId": "1"
-                }
-            ]
-        },
-        {
-            "elementId": "Activity_1ur6qe3",
-            "worklistId": "",
-            "fixedCost": "",
-            "costThreshold": "",
-            "durationDistribution": {
-                "type": "fixed",
-                "mean": "30",
-                "arg1": "",
-                "arg2": "",
-                "timeUnit": "seconds"
-            },
-            "durationThreshold": "",
-            "durationThresholdTimeUnit": "",
-            "resourceIds": [
-                {
-                    "resourceName": "res2",
                     "amountNeeded": "1",
                     "groupId": "1"
                 }
@@ -875,7 +875,7 @@
     ],
     "catchEvents": {
         "Event_07udv0q": {
-            "type": "fixed",
+            "type": "FIXED",
             "mean": "7",
             "arg1": "",
             "arg2": "",
